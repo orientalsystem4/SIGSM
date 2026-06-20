@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.I.G.S.M. | Unidad de Enlace</title>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/unidadEnlace.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar Base -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="btn-close-menu" id="closeMenuBtn"><i data-lucide="layout-dashboard"></i></button>
+                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo" class="sidebar-logo">
+                <span>S.I.G.S.M.</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-target="sec-traslados">
+                    <i data-lucide="ambulance" class="icon-sm"></i> Control de Traslados
+                </button>
+                <button class="nav-btn" data-target="sec-archivos">
+                    <i data-lucide="folder" class="icon-sm"></i> Documentos y Métricas
+                </button>
+            </nav>
+
+            <div class="sidebar-profile">
+                <i data-lucide="layout-dashboard"></i>
+                <div class="profile-info">
+                    <span class="profile-name">Coord. Central</span>
+                    <span class="profile-role">Unidad de Enlace</span>
+                </div>
+                <a href="../../serviciosComunes/vistaGeneral/bifurcacion.html" class="btn-logout" title="Volver">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn-menu" id="openMenuBtn"><i data-lucide="menu"></i></button>
+                    <h2 class="section-title mb-0">Portal Unidad de Enlace</h2>
+                </div>
+            </header>
+
+            <section class="content-wrapper">
+                
+                <!-- SECCIÓN TRASLADOS -->
+                <div id="sec-traslados" class="view-section active">
+                    
+                    <!-- Sub-Navegación Interna -->
+                    <div class="sub-nav">
+                        <button class="sub-btn active" data-sub="sub-curso">En Curso (2)</button>
+                        <button class="sub-btn" data-sub="sub-pendientes">Pendientes (3)</button>
+                        <button class="sub-btn" data-sub="sub-historial">Historial</button>
+                    </div>
+
+                    <!-- PESTAÑA: EN CURSO -->
+                    <div id="sub-curso" class="sub-content active">
+                        
+                        <!-- Traslado 1 (El espejo del chofer) -->
+                        <div class="card-traslado">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="header-info">
+                                    <h3>TR-0492 - Móvil 04</h3>
+                                    <span class="badge badge-warning">En Proceso</span>
+                                </div>
+                                <i data-lucide="chevron-down" class="accordion-icon" style="transform: rotate(180deg);"></i>
+                            </div>
+                            <div class="accordion-content open">
+                                <div class="timeline">
+                                    <div class="timeline-step completed">
+                                        <div class="step-marker"><i data-lucide="check"></i></div>
+                                        <div class="step-content">
+                                            <h4>1. Buscar Paciente 1: Norma</h4>
+                                            <div class="chat-message received mb-1"><span class="chat-author">Chofer:</span> Paciente a bordo, vamos por el siguiente.</div>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-step active">
+                                        <div class="step-marker"><i data-lucide="car"></i></div>
+                                        <div class="step-content">
+                                            <h4>2. Buscar Paciente 2: Carlos</h4>
+                                            <div class="chat-container">
+                                                <div class="chat-message system"><i data-lucide="play-circle" class="icon-sm"></i> <span>Chofer marcó <strong>Saliendo</strong> (10:20)</span></div>
+                                                <div class="chat-message sent"><span class="chat-author">Tú:</span> Carlos baja en silla de ruedas, esperen en la rampa de acceso sur.</div>
+                                            </div>
+                                            <!-- Panel de respuesta de enlace -->
+                                            <div class="chat-input-wrapper mt-2">
+                                                <input type="text" class="form-input" placeholder="Enviar directiva al móvil...">
+                                                <button class="btn-primary" style="width: auto; margin-top: 0;"><i data-lucide="send"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-step pending"><div class="step-marker">3</div><div class="step-content"><h4>3. Trasladar al Hospital Policial</h4></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Traslado 2 -->
+                        <div class="card-traslado">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="header-info">
+                                    <h3>TR-0493 - Móvil 01</h3>
+                                    <span class="badge badge-warning">En Proceso</span>
+                                </div>
+                                <i data-lucide="chevron-down" class="accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p class="text-muted">Traslado de insumos médicos hacia Sanatorio BPS. Móvil reportó tráfico pesado.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PESTAÑA: PENDIENTES -->
+                    <div id="sub-pendientes" class="sub-content hidden">
+                        <!-- Pendiente 1 -->
+                        <div class="card-pendiente">
+                            <div class="item-header">
+                                <h3 class="card-title">Solicitud: Traslado Especializado</h3>
+                                <span class="badge badge-gray">Hace 10 min</span>
+                            </div>
+                            <p class="detail-item"><strong>Paciente:</strong> Ana Rodríguez (C.I: 3.456.789-0)</p>
+                            <p class="detail-item"><strong>Solicitante:</strong> Lic. Carmen Torres (Enfermería)</p>
+                            <p class="detail-item"><strong>Motivo:</strong> Estudio neurológico urgente.</p>
+                            
+                            <div class="acciones-pendientes">
+                                <button class="btn-action btn-success" onclick="abrirModal('modalAprobar')"><i data-lucide="check"></i> Aprobar y Rutear</button>
+                                <button class="btn-action btn-danger" onclick="abrirModal('modalDenegar')"><i data-lucide="x"></i> Denegar</button>
+                            </div>
+                        </div>
+
+                        <!-- Pendiente 2 -->
+                        <div class="card-pendiente">
+                            <div class="item-header">
+                                <h3 class="card-title">Solicitud: Alta Médica</h3>
+                                <span class="badge badge-gray">Hace 25 min</span>
+                            </div>
+                            <p class="detail-item"><strong>Paciente:</strong> Luis Pérez</p>
+                            <div class="acciones-pendientes">
+                                <button class="btn-action btn-success" onclick="abrirModal('modalAprobar')"><i data-lucide="check"></i> Aprobar y Rutear</button>
+                                <button class="btn-action btn-danger" onclick="abrirModal('modalDenegar')"><i data-lucide="x"></i> Denegar</button>
+                            </div>
+                        </div>
+
+                        <!-- Pendiente 3 -->
+                        <div class="card-pendiente">
+                            <div class="item-header">
+                                <h3 class="card-title">Solicitud: Traslado de Insumos</h3>
+                                <span class="badge badge-gray">Hace 1 hora</span>
+                            </div>
+                            <p class="detail-item"><strong>Material:</strong> Sangre / Hemoterapia</p>
+                            <div class="acciones-pendientes">
+                                <button class="btn-action btn-success" onclick="abrirModal('modalAprobar')"><i data-lucide="check"></i> Aprobar y Rutear</button>
+                                <button class="btn-action btn-danger" onclick="abrirModal('modalDenegar')"><i data-lucide="x"></i> Denegar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PESTAÑA: HISTORIAL -->
+                    <div id="sub-historial" class="sub-content hidden">
+                        <div class="search-container mb-md">
+                            <i data-lucide="search" class="icon-sm text-muted"></i>
+                            <input type="text" class="search-input" placeholder="Buscar por código, paciente o móvil...">
+                        </div>
+                        
+                        <div class="tabla-responsive">
+                            <table class="tabla-historial">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Fecha/Hora</th>
+                                        <th>Móvil</th>
+                                        <th>Acompañante</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>TR-0491</strong></td>
+                                        <td>Hoy, 10:30 AM</td>
+                                        <td>Móvil 02</td>
+                                        <td>Lic. Roberto Díaz</td>
+                                        <td><span class="badge badge-success">Completado</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>TR-0490</strong></td>
+                                        <td>Hoy, 08:30 AM</td>
+                                        <td>Móvil 04</td>
+                                        <td>Lic. Ana Silva</td>
+                                        <td><span class="badge badge-success">Completado</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>TR-0489</strong></td>
+                                        <td>Hoy, 07:15 AM</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td><span class="badge badge-danger">Denegado</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>TR-0488</strong></td>
+                                        <td>Ayer, 18:45 PM</td>
+                                        <td>Móvil 01</td>
+                                        <td>Lic. Carmen Torres</td>
+                                        <td><span class="badge badge-success">Completado</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DOCUMENTOS (Placeholder para la próxima entrega) -->
+                <div id="sec-archivos" class="view-section hidden">
+                    <h2 class="mb-md">Directorio Central y Métricas</h2>
+                    <p>Aquí irá la gestión de QR y encuestas.</p>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- MODALES DE APROBACIÓN Y DENEGACIÓN -->
+    <!-- Modal Aprobar -->
+    <div id="modalAprobar" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Aprobar y Asignar Ruta</h3>
+                <button class="btn-close-modal" onclick="cerrarModal('modalAprobar')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Asignar Vehículo</label>
+                        <select class="form-input" required>
+                            <option value="">Seleccione móvil disponible...</option>
+                            <option value="1">Móvil 02 - Libre</option>
+                            <option value="2">Móvil 03 - Libre en 10 min</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Configurar Paradas (Ruta)</label>
+                        <textarea class="form-input" rows="3" placeholder="Ej: 1. Buscar en Clínica Sur&#10;2. Trasladar a Hospital Clínicas" required></textarea>
+                    </div>
+                    <button type="button" class="btn-primary w-100" onclick="cerrarModal('modalAprobar')">Confirmar Traslado</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Denegar -->
+    <div id="modalDenegar" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Denegar Solicitud</h3>
+                <button class="btn-close-modal" onclick="cerrarModal('modalDenegar')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Motivo de la denegación (Obligatorio)</label>
+                        <textarea class="form-input" rows="3" placeholder="Explique al solicitante por qué se rechaza este traslado..." required></textarea>
+                    </div>
+                    <button type="button" class="btn-danger w-100 p-3" style="border:none; border-radius:0.5rem; color:white; cursor:pointer;" onclick="cerrarModal('modalDenegar')">Confirmar Denegación</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
+    <script src="assets/js/unidadEnlace.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
