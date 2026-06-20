@@ -1,0 +1,122 @@
+:root {
+    --primary: #0284c7;
+    --primary-light: #e0f2fe;
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --sidebar-width: 280px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background-color: var(--bg-color); color: var(--text-main); }
+
+/* Layout Base */
+.app-layout { display: flex; height: 100vh; overflow: hidden; }
+
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%); /* Oculto por defecto en móviles */
+    transition: transform 0.3s ease;
+}
+
+.sidebar.active { transform: translateX(0); } /* Mostrar en móviles */
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: bold;
+}
+
+.sidebar-logo { width: 32px; }
+
+/* Botones de menú */
+.btn-menu, .btn-close-menu {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close-menu { display: block; margin-right: 0.5rem; }
+
+/* Navegación */
+.sidebar-nav {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.nav-btn {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem; border-radius: 0.5rem;
+    color: var(--text-muted); background: transparent;
+    border: none; font-size: 0.875rem; font-weight: 500; cursor: pointer;
+}
+
+.nav-btn:hover { background-color: var(--bg-color); color: var(--text-main); }
+.nav-btn.active { background-color: var(--primary-light); color: var(--primary); }
+
+/* SECCIÓN DE PERFIL */
+.sidebar-profile {
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--bg-color);
+}
+
+.profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.profile-info { flex: 1; display: flex; flex-direction: column; }
+.profile-name { font-weight: bold; font-size: 0.875rem; }
+.profile-role { font-size: 0.75rem; color: var(--text-muted); }
+.btn-logout { color: #ef4444; cursor: pointer; }
+
+/* Overlay oscuro para móviles */
+.sidebar-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.5); z-index: 999;
+    opacity: 0; visibility: hidden; transition: 0.3s ease;
+}
+.sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+/* Contenido Principal */
+.main-content {
+    flex: 1; width: 100%; display: flex; flex-direction: column;
+}
+
+.topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 1.5rem; background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.topbar-left { display: flex; align-items: center; gap: 1rem; }
+.section-title { font-size: 1.25rem; font-weight: bold; }
+.content-wrapper { padding: 1.5rem; overflow-y: auto; flex: 1; }
+
+/* Para pantallas grandes (PC/Tablets) */
+@media (min-width: 1024px) {
+    .sidebar { position: static; transform: translateX(0); }
+    .btn-menu, .btn-close-menu { display: none; }
+    .sidebar-overlay { display: none; }
+}

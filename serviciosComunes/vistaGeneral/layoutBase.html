@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.I.G.S.M. | Plantilla Base</title>
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Overlay para móviles -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Barra Lateral Desplegable -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- Botón para cerrar en móviles -->
+                <button class="btn-close-menu" id="closeMenuBtn">
+                    <i data-lucide="x"></i>
+                </button>
+                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo" class="sidebar-logo">
+                <span>S.I.G.S.M.</span>
+            </div>
+
+            <!-- Navegación -->
+            <nav class="sidebar-nav">
+                <button class="nav-btn active">
+                    <i data-lucide="home" class="icon-sm"></i> Inicio
+                </button>
+            </nav>
+
+            <!-- SECCIÓN DE PERFIL -->
+            <div class="sidebar-profile">
+                <img src="../../Autenticacion/Vista/assets/img/chofer_avatar.png" alt="Avatar" class="profile-avatar">
+                <div class="profile-info">
+                    <span class="profile-name">Juan Pérez</span>
+                    <span class="profile-role">Chofer - Móvil 04</span>
+                </div>
+                <a href="../../Autenticacion/Vista/sesion.html" class="btn-logout" title="Cerrar Sesión">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="main-content">
+            <!-- Barra Superior (Topbar) con el botón -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn-menu" id="openMenuBtn">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h2 class="section-title mb-0">Título de la Sección</h2>
+                </div>
+            </header>
+
+            <!-- Aquí irá el contenido específico de cada módulo -->
+            <section class="content-wrapper">
+                <p>Contenido base de la plantilla.</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- JS General del Layout -->
+    <script src="assets/js/layout.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
