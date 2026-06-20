@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.I.G.S.M. | Portal Choferes</title>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/choferes.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="btn-close-menu" id="closeMenuBtn"><i data-lucide="x"></i></button>
+                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo" class="sidebar-logo">
+                <span>S.I.G.S.M.</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="bifurcacion.html" class="nav-btn">
+                    <i data-lucide="arrow-left" class="icon-sm"></i> Volver a Selección
+                </a>
+                <button class="nav-btn active" data-target="seccion-traslados">
+                    <i data-lucide="map-pin" class="icon-sm"></i> Mis Traslados
+                </button>
+                <button class="nav-btn" data-target="seccion-planilla">
+                    <i data-lucide="clipboard-list" class="icon-sm"></i> Planilla Diaria
+                </button>
+            </nav>
+
+            <div class="sidebar-profile">
+                <img src="assets/img/chofer_avatar.png" alt="Avatar" class="profile-avatar">
+                <div class="profile-info">
+                    <span class="profile-name" id="user-name">Juan Pérez</span>
+                    <span class="profile-role">Chofer</span>
+                </div>
+                <a href="../../serviciosComunes/vistaGeneral/bifurcacion.html" class="btn-logout" title="Volver">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn-menu" id="openMenuBtn"><i data-lucide="menu"></i></button>
+                    <h2 class="section-title mb-0">Portal de Choferes</h2>
+                </div>
+            </header>
+
+            <section class="content-wrapper">
+                
+                <div id="seccion-traslados" class="view-section active">
+                    <div class="tabs-container">
+                        <button class="tab-btn active" data-tab="tab-proceso">Traslado en Proceso</button>
+                        <button class="tab-btn" data-tab="tab-historial">Historial de Traslados</button>
+                    </div>
+
+                    <div id="tab-proceso" class="tab-content active">
+                        <div class="card-traslado-activo">
+                            <div class="traslado-header">
+                                <h3>Código: TR-0492</h3>
+                                <span class="badge urgencia-alta">Prioridad Alta</span>
+                            </div>
+                            <div class="traslado-body">
+                                <p><strong>Origen:</strong> Hospital de Clínicas</p>
+                                <p><strong>Destino:</strong> Policlínica Centro</p>
+                                <p><strong>Paciente:</strong> María Gómez (CI: 4.123.456-7)</p>
+                            </div>
+                            
+                            <div class="acciones-conduccion">
+                                <button class="btn-gigante btn-saliendo">
+                                    <i data-lucide="play-circle"></i> Saliendo
+                                </button>
+                                <button class="btn-gigante btn-llegando">
+                                    <i data-lucide="navigation"></i> Llegando
+                                </button>
+                                <button class="btn-gigante btn-puerta">
+                                    <i data-lucide="check-circle"></i> En Puerta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-historial" class="tab-content hidden">
+                        <div class="card-historial">
+                            <h4>TR-0491</h4>
+                            <p>Destino: Sanatorio Mautone - <span class="text-success">Completado (10:30 AM)</span></p>
+                        </div>
+                        <div class="card-historial">
+                            <h4>TR-0490</h4>
+                            <p>Destino: Hospital Maciel - <span class="text-success">Completado (08:15 AM)</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="seccion-planilla" class="view-section hidden">
+                    <div class="card-formulario">
+                        <h3>Iniciar Turno - Planilla</h3>
+                        <p class="text-muted">Sus datos personales y fecha se registran automáticamente.</p>
+                        
+                        <form class="planilla-form mt-3">
+                            <div class="form-group">
+                                <label>Vehículo Asignado</label>
+                                <select class="form-input" required>
+                                    <option value="">Seleccione el móvil...</option>
+                                    <option value="Movil_01">Móvil 01 - Mercedes Benz Sprinter</option>
+                                    <option value="Movil_02">Móvil 02 - Hyundai H1</option>
+                                    <option value="Movil_04">Móvil 04 - Fiat Ducato</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Enfermero Acompañante</label>
+                                <select class="form-input" required>
+                                    <option value="">Seleccione el enfermero...</option>
+                                    <option value="enf_1">Lic. Ana Silva</option>
+                                    <option value="enf_2">Lic. Roberto Díaz</option>
+                                    <option value="enf_3">Lic. Carmen Torres</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn-primary w-100 mt-2">Guardar Planilla</button>
+                        </form>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
+    <script src="assets/js/choferes.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
