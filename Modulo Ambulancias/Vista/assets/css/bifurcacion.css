@@ -1,0 +1,142 @@
+:root {
+    --primary: #0284c7;
+    --primary-light: #e0f2fe;
+    --primary-hover: #0369a1;
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.bifurcacion-container {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 2rem 1.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+.subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 columna en celulares */
+    gap: 1.5rem;
+}
+
+.module-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.module-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary);
+}
+
+.icon-wrapper {
+    background: var(--primary-light);
+    color: var(--primary);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.module-card:hover .icon-wrapper {
+    background: var(--primary);
+    color: white;
+}
+
+/* Imagen especial para el chofer */
+.img-wrapper {
+    background: transparent; /* Fondo transparente para la imagen */
+    overflow: hidden;
+}
+
+.chofer-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-main);
+}
+
+.card-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* Media Queries para Tablets y PCs */
+@media (min-width: 640px) {
+    .modules-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 columnas en pantallas más grandes */
+    }
+    .card {
+        padding: 3rem 2.5rem;
+    }
+}

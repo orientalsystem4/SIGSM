@@ -1,0 +1,126 @@
+/* Variables Globales */
+:root {
+    --primary: #0284c7;
+    --primary-hover: #0369a1;
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Reset Básico (Mobile First) */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Contenedores */
+.login-container {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 2rem 1.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 400px; /* El tope máximo para que no se estire en monitores de PC */
+    text-align: center;
+}
+
+/* Cabecera */
+.header-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.logo-img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* Formulario */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem; /* Reemplaza los margin-bottom sueltos */
+    text-align: left;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem; /* 1rem evita que los iPhones hagan zoom automático al escribir */
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+    border-color: var(--primary);
+}
+
+/* Botones */
+.btn-primary {
+    width: 100%;
+    padding: 0.875rem;
+    margin-top: 0.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Media Queries (Para PC y Tablets) */
+@media (min-width: 768px) {
+    .card {
+        padding: 2.5rem 2rem; /* Respira más en pantallas grandes */
+    }
+}

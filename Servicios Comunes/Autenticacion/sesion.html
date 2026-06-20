@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.I.G.S.M. | Iniciar Sesión</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <main class="login-container">
+        <div class="card">
+            <div class="header-logo">
+                <img src="assets/image.png" alt="Logo S.I.G.S.M." class="logo-img">
+                <h1 class="title">S.I.G.S.M.</h1>
+            </div>
+            
+            <form action="../../Modulo Ambulancias/Vista/bifurcacion.html" method="GET" class="login-form">
+                <div class="form-group">
+                    <label for="usuario" class="form-label">Usuario</label>
+                    <input type="text" id="usuario" name="usuario" class="form-input" placeholder="Ingrese su usuario" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    Iniciar Sesión
+                </button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
