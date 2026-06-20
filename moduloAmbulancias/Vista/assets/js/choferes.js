@@ -43,3 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+// Función Global para abrir/cerrar Acordeones
+window.toggleAccordion = function(headerElement) {
+    const content = headerElement.nextElementSibling;
+    const icon = headerElement.querySelector('.accordion-icon');
+    
+    content.classList.toggle('open');
+    
+    if(content.classList.contains('open')) {
+        icon.style.transform = "rotate(180deg)";
+    } else {
+        icon.style.transform = "rotate(0deg)";
+    }
+};

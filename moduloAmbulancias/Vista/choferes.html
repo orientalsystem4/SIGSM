@@ -20,9 +20,6 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a href="bifurcacion.html" class="nav-btn">
-                    <i data-lucide="arrow-left" class="icon-sm"></i> Volver a Selección
-                </a>
                 <button class="nav-btn active" data-target="seccion-traslados">
                     <i data-lucide="map-pin" class="icon-sm"></i> Mis Traslados
                 </button>
@@ -32,7 +29,7 @@
             </nav>
 
             <div class="sidebar-profile">
-                <img src="assets/img/chofer_avatar.png" alt="Avatar" class="profile-avatar">
+              <i data-lucide="ambulance"></i>
                 <div class="profile-info">
                     <span class="profile-name" id="user-name">Juan Pérez</span>
                     <span class="profile-role">Chofer</span>
@@ -52,48 +49,150 @@
             </header>
 
             <section class="content-wrapper">
-                
+
+                                <!-- SECCIÓN 1: TRASLADOS -->
                 <div id="seccion-traslados" class="view-section active">
                     <div class="tabs-container">
                         <button class="tab-btn active" data-tab="tab-proceso">Traslado en Proceso</button>
                         <button class="tab-btn" data-tab="tab-historial">Historial de Traslados</button>
                     </div>
 
+                    <!-- Traslado en Proceso (Hoja de Ruta Compleja) -->
                     <div id="tab-proceso" class="tab-content active">
-                        <div class="card-traslado-activo">
-                            <div class="traslado-header">
-                                <h3>Código: TR-0492</h3>
-                                <span class="badge urgencia-alta">Prioridad Alta</span>
-                            </div>
-                            <div class="traslado-body">
-                                <p><strong>Origen:</strong> Hospital de Clínicas</p>
-                                <p><strong>Destino:</strong> Policlínica Centro</p>
-                                <p><strong>Paciente:</strong> María Gómez (CI: 4.123.456-7)</p>
+                        <div class="card-traslado">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="header-info">
+                                    <h3>Ruta Múltiple: TR-0492</h3>
+                                    <span class="badge urgencia-media">Ruta Asignada</span>
+                                </div>
+                                <i data-lucide="chevron-down" class="accordion-icon" style="transform: rotate(180deg);"></i>
                             </div>
                             
-                            <div class="acciones-conduccion">
-                                <button class="btn-gigante btn-saliendo">
-                                    <i data-lucide="play-circle"></i> Saliendo
-                                </button>
-                                <button class="btn-gigante btn-llegando">
-                                    <i data-lucide="navigation"></i> Llegando
-                                </button>
-                                <button class="btn-gigante btn-puerta">
-                                    <i data-lucide="check-circle"></i> En Puerta
-                                </button>
+                            <div class="accordion-content open">
+                                <div class="timeline">
+                                    
+                                    <!-- HITO 1: Completado -->
+                                    <div class="timeline-step completed">
+                                        <div class="step-marker"><i data-lucide="check"></i></div>
+                                        <div class="step-content">
+                                            <h4>1. Buscar Paciente 1: Norma</h4>
+                                            <p class="text-muted"><i data-lucide="map-pin" class="icon-sm"></i> 18 de Julio y Ejido</p>
+                                            
+                                            <div class="chat-container">
+                                                <div class="chat-message system">
+                                                    <i data-lucide="play-circle" class="icon-sm"></i> <span>Registro: Chofer marcó <strong>Saliendo</strong> (10:05)</span>
+                                                </div>
+                                                <div class="chat-message system">
+                                                    <i data-lucide="check-circle" class="icon-sm"></i> <span>Registro: Chofer marcó <strong>En Puerta</strong> (10:15)</span>
+                                                </div>
+                                                <div class="chat-message sent">
+                                                    <span class="chat-author">Tú:</span> Paciente a bordo, vamos por el siguiente.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- HITO 2: ACTIVO (Acá están los botones) -->
+                                    <div class="timeline-step active">
+                                        <div class="step-marker"><i data-lucide="car"></i></div>
+                                        <div class="step-content">
+                                            <h4>2. Buscar Paciente 2: Carlos</h4>
+                                            <p class="text-muted"><i data-lucide="map-pin" class="icon-sm"></i> Av. Italia y Propios</p>
+                                            
+                                            <div class="chat-container">
+                                                <div class="chat-message system">
+                                                    <i data-lucide="play-circle" class="icon-sm"></i> <span>Registro: Chofer marcó <strong>Saliendo</strong> (10:20)</span>
+                                                </div>
+                                                <div class="chat-message received">
+                                                    <span class="chat-author">Enlace:</span> Carlos baja en silla de ruedas, esperen en la rampa de acceso sur.
+                                                </div>
+                                            </div>
+
+                                            <!-- Botones Gigantes de Acción Rápida para el Hito Actual -->
+                                            <div class="acciones-conduccion">
+                                                <button class="btn-gigante btn-llegando"><i data-lucide="navigation"></i> Llegando</button>
+                                                <button class="btn-gigante btn-puerta"><i data-lucide="check-circle"></i> En Puerta</button>
+                                            </div>
+                                            
+                                            <!-- Input de chat manual -->
+                                            <div class="chat-input-wrapper mt-2">
+                                                <input type="text" class="form-input" placeholder="Escribir mensaje a enlace...">
+                                                <button class="btn-primary" style="width: auto; margin-top: 0;"><i data-lucide="send"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- HITO 3: Pendiente -->
+                                    <div class="timeline-step pending">
+                                        <div class="step-marker">3</div>
+                                        <div class="step-content">
+                                            <h4>3. Trasladar al Hospital Policial</h4>
+                                            <p class="text-muted"><i data-lucide="map-pin" class="icon-sm"></i> Bv. Batlle y Ordóñez</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- HITO 4: Pendiente -->
+                                    <div class="timeline-step pending">
+                                        <div class="step-marker">4</div>
+                                        <div class="step-content">
+                                            <h4>4. Retorno a Base</h4>
+                                            <p class="text-muted"><i data-lucide="map-pin" class="icon-sm"></i> Hospital de Clínicas</p>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Historial de Traslados (Más robusto) -->
                     <div id="tab-historial" class="tab-content hidden">
-                        <div class="card-historial">
-                            <h4>TR-0491</h4>
-                            <p>Destino: Sanatorio Mautone - <span class="text-success">Completado (10:30 AM)</span></p>
+                        
+                        <!-- Historial 1 -->
+                        <div class="card-traslado">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="header-info">
+                                    <h4>TR-0490 - Alta Complejidad</h4>
+                                    <span class="text-success" style="font-weight: bold; font-size: 0.85rem;">Finalizado (08:30)</span>
+                                </div>
+                                <i data-lucide="chevron-down" class="accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="timeline">
+                                    <div class="timeline-step completed">
+                                        <div class="step-marker"><i data-lucide="check"></i></div>
+                                        <div class="step-content">
+                                            <h4>1. Buscar Paciente: Juan</h4>
+                                            <div class="chat-message system mb-1"><i data-lucide="check-circle" class="icon-sm"></i> <span>En Puerta (07:15)</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-step completed">
+                                        <div class="step-marker"><i data-lucide="check"></i></div>
+                                        <div class="step-content">
+                                            <h4>2. Ingreso a block CTI</h4>
+                                            <div class="chat-message received mb-1"><span class="chat-author">Enlace:</span> Cama liberada, pueden ingresar.</div>
+                                            <div class="chat-message system"><i data-lucide="check-circle" class="icon-sm"></i> <span>En Puerta (07:45)</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-historial">
-                            <h4>TR-0490</h4>
-                            <p>Destino: Hospital Maciel - <span class="text-success">Completado (08:15 AM)</span></p>
+
+                        <!-- Historial 2 -->
+                        <div class="card-traslado">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="header-info">
+                                    <h4>TR-0485 - Estudios Imagenológicos</h4>
+                                    <span class="text-success" style="font-weight: bold; font-size: 0.85rem;">Finalizado (Ayer)</span>
+                                </div>
+                                <i data-lucide="chevron-down" class="accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p class="text-muted mb-2">Ruta de 4 pacientes a Sanatorio Mautone y retorno.</p>
+                                <button class="btn-outline w-100"><i data-lucide="file-text"></i> Ver detalles de ruta</button>
+                            </div>
                         </div>
+
                     </div>
                 </div>
 

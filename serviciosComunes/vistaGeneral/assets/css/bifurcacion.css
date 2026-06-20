@@ -140,3 +140,23 @@ a {
         padding: 3rem 2.5rem;
     }
 }
+/* --- Sección de Cierre de Sesión --- */
+.logout-section {
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.btn-logout-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #ef4444;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.btn-logout-link:hover {
+    color: #b91c1c;
+}

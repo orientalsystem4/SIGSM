@@ -111,3 +111,160 @@
         flex-direction: row; /* En tablet/PC los botones gigantes van uno al lado del otro */
     }
 }
+/* --- ACORDEONES --- */
+.card-traslado {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    background-color: var(--card-bg);
+    transition: background-color 0.2s;
+}
+
+.accordion-header:hover { background-color: var(--bg-color); }
+.header-info { display: flex; align-items: center; gap: 1rem; }
+.accordion-icon { transition: transform 0.3s ease; }
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    padding: 0 1.5rem;
+    background-color: var(--bg-color);
+}
+
+.accordion-content.open {
+    max-height: 1000px; /* Suficiente para que se despliegue */
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* --- CHAT --- */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.chat-message {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    max-width: 85%;
+}
+
+.chat-author { font-weight: bold; margin-right: 0.25rem; }
+.received { background-color: #f1f5f9; align-self: flex-start; border-bottom-left-radius: 0; }
+.sent { background-color: var(--primary-light); color: var(--primary-hover); align-self: flex-end; border-bottom-right-radius: 0; }
+/* --- LINEA DE TIEMPO (TIMELINE) --- */
+.timeline {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* La línea conectora */
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--border-color);
+}
+
+.timeline-step {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.timeline-step:last-child {
+    margin-bottom: 0;
+}
+
+/* El círculo del hito */
+.step-marker {
+    position: absolute;
+    left: -2.3rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--card-bg);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    z-index: 1;
+}
+
+.timeline-step.completed .step-marker {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.timeline-step.active .step-marker {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.step-content h4 {
+    margin-bottom: 0.25rem;
+    color: var(--text-main);
+}
+
+.timeline-step.pending .step-content h4,
+.timeline-step.pending .step-content p {
+    color: var(--text-muted);
+}
+
+/* Sistema de mensajes en el chat (Automáticos de los botones) */
+.chat-message.system {
+    background-color: #f8fafc;
+    border: 1px dashed var(--border-color);
+    color: var(--text-muted);
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    align-self: center; /* Centrado en el contenedor de chat */
+    width: 100%;
+    max-width: 100%;
+}
+
+.chat-message.system strong {
+    color: var(--text-main);
+}
+
+.chat-input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.urgencia-media { background: #fef08a; color: #854d0e; }
+.btn-outline { background: transparent; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 0.5rem; cursor: pointer; transition: 0.2s; }
+.btn-outline:hover { background: var(--bg-color); }
