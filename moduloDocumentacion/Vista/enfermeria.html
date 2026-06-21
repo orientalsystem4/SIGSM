@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.I.G.S.M. | Portal Enfermería</title>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
+    <link rel="stylesheet" href="Assets/css/enfermeria.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="btn-close-menu" id="closeMenuBtn"><i data-lucide="x"></i></button>
+                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo" class="sidebar-logo">
+                <span>S.I.G.S.M.</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-target="sec-traslados">
+                    <i data-lucide="ambulance" class="icon-sm"></i> Solicitar Traslado
+                </button>
+                <button class="nav-btn" data-target="sec-doc-estatica">
+                    <i data-lucide="folder-open" class="icon-sm"></i> Documentación (QR)
+                </button>
+                <button class="nav-btn" data-target="sec-formularios">
+                    <i data-lucide="qr-code" class="icon-sm"></i> Formularios Pacientes
+                </button>
+            </nav>
+
+            <div class="sidebar-profile">
+                <div class="avatar-placeholder bg-blue"><i data-lucide="user"></i></div>
+                <div class="profile-info">
+                    <span class="profile-name">Lic. Carmen Torres</span>
+                    <span class="profile-role">Enfermería - Piso 3</span>
+                </div>
+                <a href="../../serviciosComunes/vistaGeneral/bifurcacion.html" class="btn-logout" title="Cerrar Sesión">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn-menu" id="openMenuBtn"><i data-lucide="menu"></i></button>
+                    <h2 class="section-title mb-0">Portal de Enfermería</h2>
+                </div>
+            </header>
+
+            <section class="content-wrapper">
+                
+                <div id="sec-traslados" class="view-section active">
+                    <div class="card-formulario">
+                        <div class="card-header">
+                            <h3><i data-lucide="ambulance" class="icon-md text-primary"></i> Nueva Solicitud de Traslado</h3>
+                            <p class="text-muted">Complete los datos para enviar a la Unidad de Enlace.</p>
+                        </div>
+                        
+                        <form id="form-traslado" class="mt-3">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nombre del Paciente</label>
+                                    <input type="text" class="form-input" placeholder="Ej. Ana Rodríguez" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Cédula de Identidad</label>
+                                    <input type="text" class="form-input" placeholder="Ej. 1.234.567-8" required>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Origen (Sala/Piso actual)</label>
+                                    <input type="text" class="form-input" value="Hospital Clínicas - Piso 3" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Destino (Sanatorio/Hospital)</label>
+                                    <input type="text" class="form-input" placeholder="Ej. Sanatorio Mautone" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Motivo del Traslado / Observaciones</label>
+                                <textarea class="form-input" rows="3" placeholder="Ej. Estudio neurológico urgente. Requiere silla de ruedas." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Nivel de Urgencia</label>
+                                <select class="form-input" required>
+                                    <option value="baja">Baja (Traslado programado)</option>
+                                    <option value="media">Media (En el día)</option>
+                                    <option value="alta">Alta (Urgencia / CTI)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn-primary w-100 mt-2">
+                                <i data-lucide="send"></i> Enviar Solicitud a Enlace
+                            </button>
+                        </form>
+
+                        <div id="mensaje-exito" class="alerta-exito hidden mt-3">
+                            <i data-lucide="check-circle"></i> Solicitud enviada correctamente a la Unidad de Enlace.
+                        </div>
+                    </div>
+                </div>
+
+                <div id="sec-doc-estatica" class="view-section hidden">
+                    <h3 class="mb-md">Directorio de Documentación Médica</h3>
+                    <p class="text-muted mb-3">Escanee los siguientes códigos QR para acceder rápidamente a los protocolos, guías y documentos de cada área.</p>
+                    
+                    <div class="qr-grid">
+                        <div class="qr-card">
+                            <div class="qr-header urologia">
+                                <h4>Urología</h4>
+                            </div>
+                            <div class="qr-body">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Protocolos_Urologia" alt="QR Urología" class="qr-img">
+                                <p class="text-muted text-center mt-2">Protocolos y guías de cateterismo</p>
+                            </div>
+                        </div>
+
+                        <div class="qr-card">
+                            <div class="qr-header cardiologia">
+                                <h4>Cardiología</h4>
+                            </div>
+                            <div class="qr-body">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Protocolos_Cardiologia" alt="QR Cardiología" class="qr-img">
+                                <p class="text-muted text-center mt-2">Manejo de arritmias y ECG</p>
+                            </div>
+                        </div>
+
+                        <div class="qr-card">
+                            <div class="qr-header traumatologia">
+                                <h4>Traumatología</h4>
+                            </div>
+                            <div class="qr-body">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Protocolos_Traumatologia" alt="QR Traumatología" class="qr-img">
+                                <p class="text-muted text-center mt-2">Inmovilización y traslados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="sec-formularios" class="view-section hidden">
+                    <div class="generador-container">
+                        
+                        <div class="card-formulario">
+                            <div class="card-header">
+                                <h3><i data-lucide="qr-code" class="icon-md text-primary"></i> Generar QR para Paciente</h3>
+                                <p class="text-muted">Cree un código único para que el paciente complete encuestas o formularios desde su móvil.</p>
+                            </div>
+                            
+                            <form id="form-generador" class="mt-3">
+                                <div class="form-group">
+                                    <label>Paciente</label>
+                                    <input type="text" id="qr-paciente" class="form-input" placeholder="Nombre completo" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tipo de Documento</label>
+                                    <select id="qr-tipo" class="form-input" required>
+                                        <option value="">Seleccione el formulario...</option>
+                                        <option value="encuesta">Encuesta de Satisfacción (Traslado)</option>
+                                        <option value="consentimiento">Consentimiento Informado</option>
+                                        <option value="alta">Formulario de Alta Médica</option>
+                                    </select>
+                                </div>
+                                <button type="button" id="btn-generar-qr" class="btn-primary w-100 mt-2">
+                                    Generar Código QR
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="card-resultado-qr">
+                            <div id="qr-vacio" class="qr-placeholder">
+                                <i data-lucide="smartphone" class="icon-xl text-muted"></i>
+                                <p>El código QR generado aparecerá aquí.</p>
+                            </div>
+
+                            <div id="qr-generado" class="qr-display hidden">
+                                <h4 class="mb-2">Código Dinámico Generado</h4>
+                                <img id="qr-dinamico-img" src="" alt="QR Dinámico" class="qr-img">
+                                <div class="qr-info mt-3">
+                                    <p><strong>Paciente:</strong> <span id="lbl-paciente">-</span></p>
+                                    <p><strong>Formulario:</strong> <span id="lbl-formulario">-</span></p>
+                                </div>
+                                <button class="btn-outline w-100 mt-3" onclick="window.print()"><i data-lucide="printer"></i> Imprimir QR</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
+    <script src="Assets/js/enfermeria.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

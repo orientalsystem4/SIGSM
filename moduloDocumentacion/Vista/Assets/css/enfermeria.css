@@ -1,0 +1,77 @@
+/* --- Utilidades y Base --- */
+.view-section { display: none; }
+.view-section.active { display: block; }
+.hidden { display: none !important; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-md { margin-bottom: 2rem; }
+.w-100 { width: 100%; }
+.text-center { text-align: center; }
+.text-primary { color: var(--primary); }
+.icon-md { width: 24px; height: 24px; }
+.icon-xl { width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.5; }
+
+/* Placeholder Avatar en lugar de imagen */
+.avatar-placeholder {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: bold;
+}
+.bg-blue { background-color: var(--primary); }
+
+/* --- Formularios --- */
+.card-formulario {
+    background: var(--card-bg); padding: 1.5rem; border-radius: 1rem;
+    box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
+}
+.card-header h3 { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; font-weight: bold; margin-bottom: 0.5rem; color: var(--text-main); }
+.form-input { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; background: var(--bg-color); font-family: inherit; }
+.form-input:read-only { background: #e2e8f0; cursor: not-allowed; }
+.btn-primary { background: var(--primary); color: white; border: none; padding: 0.875rem; border-radius: 0.5rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: 0.2s; }
+.btn-primary:hover { background: var(--primary-hover); }
+
+.alerta-exito {
+    background-color: #dcfce7; color: #166534; padding: 1rem; border-radius: 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem; font-weight: 500;
+}
+
+/* --- QR Estáticos (Categorías) --- */
+.qr-grid {
+    display: grid; grid-template-columns: 1fr; gap: 1.5rem;
+}
+.qr-card {
+    background: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-color);
+    overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;
+}
+.qr-card:hover { transform: translateY(-5px); }
+.qr-header { padding: 1rem; text-align: center; color: white; font-weight: bold; }
+.urologia { background-color: #3b82f6; }
+.cardiologia { background-color: #ef4444; }
+.traumatologia { background-color: #f59e0b; }
+.qr-body { padding: 1.5rem; display: flex; flex-direction: column; align-items: center; }
+.qr-img { width: 150px; height: 150px; border: 4px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 0.5rem; }
+
+/* --- QR Dinámico (Generador) --- */
+.generador-container { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.card-resultado-qr {
+    background: var(--card-bg); padding: 1.5rem; border-radius: 1rem;
+    border: 2px dashed var(--border-color); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; min-height: 300px;
+}
+.qr-placeholder { color: var(--text-muted); }
+.qr-display { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.qr-info { width: 100%; background: var(--bg-color); padding: 1rem; border-radius: 0.5rem; text-align: left; border: 1px solid var(--border-color); }
+.btn-outline { background: transparent; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 0.5rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+.btn-outline:hover { background: var(--bg-color); }
+
+/* --- Responsive para Tablets y PC --- */
+@media (min-width: 768px) {
+    .form-grid { grid-template-columns: 1fr 1fr; }
+    .qr-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+    .generador-container { grid-template-columns: 1fr 1fr; } /* Formulario a la izq, QR a la der */
+}
