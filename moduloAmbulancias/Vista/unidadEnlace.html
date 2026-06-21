@@ -216,10 +216,160 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN DOCUMENTOS (Placeholder para la próxima entrega) -->
                 <div id="sec-archivos" class="view-section hidden">
-                    <h2 class="mb-md">Directorio Central y Métricas</h2>
-                    <p>Aquí irá la gestión de QR y encuestas.</p>
+                    
+                <!-- Sub-Navegación Interna de Documentos -->
+                    <div class="sub-nav">
+                        <button class="sub-btn active" data-sub="doc-directorio">Directorio Médico</button>
+                        <button class="sub-btn" data-sub="doc-metricas">Métricas de Encuestas</button>
+                    </div>
+
+                    <div id="doc-directorio" class="sub-content active">
+                        <div class="item-header mb-md">
+                            <div>
+                                <h3 class="section-title">Repositorio Central de Protocolos</h3>
+                                <p class="text-muted">Gestión de documentos vinculados a QR estáticos por área.</p>
+                            </div>
+                            <button class="btn-primary"><i data-lucide="plus"></i> Nuevo Documento</button>
+                        </div>
+
+                        <div class="card-traslado">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="header-info">
+                                    <div class="avatar-placeholder bg-red"><i data-lucide="heart" class="icon-sm"></i></div>
+                                    <h3>Cardiología</h3>
+                                </div>
+                                <i data-lucide="chevron-down" class="accordion-icon" style="transform: rotate(180deg);"></i>
+                            </div>
+                            <div class="accordion-content open">
+                                <ul class="doc-list">
+                                    <li class="doc-item">
+                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Centellograma de perfusión miocárdica</div>
+                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
+                                    </li>
+                                    <li class="doc-item">
+                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Indicaciones ecocardiograma con dobutamina</div>
+                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
+                                    </li>
+                                    <li class="doc-item">
+                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Indicaciones ecocardiograma transesofágico</div>
+                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
+                                    </li>
+                                    <li class="doc-item">
+                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Tratamiento con warfarina (Indicaciones)</div>
+                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card-traslado">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="header-info">
+                                    <div class="avatar-placeholder bg-blue"><i data-lucide="activity" class="icon-sm"></i></div>
+                                    <h3>Urología y Nefrología</h3>
+                                </div>
+                                <i data-lucide="chevron-down" class="accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <ul class="doc-list">
+                                    <li class="doc-item">
+                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Prostatectomía radical (Información al paciente)</div>
+                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
+                                    </li>
+                                    <li class="doc-item">
+                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Ingreso a centro de nefrología y trasplante</div>
+                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
+                                    </li>
+                                    <li class="doc-item">
+                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Plan de alta enfermería (Nefrología)</div>
+                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card-traslado">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="header-info">
+                                    <div class="avatar-placeholder bg-orange"><i data-lucide="microscope" class="icon-sm"></i></div>
+                                    <h3>Generales e Imagenología</h3>
+                                </div>
+                                <i data-lucide="chevron-down" class="accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <ul class="doc-list">
+                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Preparación para estudios imagenológicos</div></li>
+                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Estudios diagnósticos con pertecneciato</div></li>
+                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Prevención de infecciones</div></li>
+                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Pauta para pacientes ostomizados</div></li>
+                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Interrupción voluntaria del embarazo (Indicaciones)</div></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+<!-- PESTAÑA: MÉTRICAS DE ENCUESTAS -->
+                    <div id="doc-metricas" class="sub-content hidden">
+                        
+                        <!-- Encabezado reutilizando la estructura de Nuevo Documento -->
+                        <div class="item-header mb-md">
+                            <div>
+                                <h3 class="section-title">Métricas y Formularios</h3>
+                                <p class="text-muted">Análisis de encuestas y gestión de plantillas dinámicas.</p>
+                            </div>
+                            <button class="btn-primary"><i data-lucide="edit"></i> Editar Formulario</button>
+                        </div>
+
+                        <!-- Grilla de KPIs -->
+                        <div class="kpi-grid mb-md">
+                            <div class="kpi-card">
+                                <i data-lucide="qr-code" class="kpi-icon text-primary"></i>
+                                <div class="kpi-data">
+                                    <h4>342</h4>
+                                    <p>QR Generados (Mes)</p>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <i data-lucide="file-check-2" class="kpi-icon text-success"></i>
+                                <div class="kpi-data">
+                                    <h4>289</h4>
+                                    <p>Formularios Completados</p>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <i data-lucide="star" class="kpi-icon text-warning"></i>
+                                <div class="kpi-data">
+                                    <h4>4.8/5</h4>
+                                    <p>Satisfacción Promedio</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel de Barras -->
+                        <div class="card-traslado" style="padding: 1.5rem;">
+                            <h3 class="mb-3">Satisfacción de Traslados (Últimos 30 días)</h3>
+                            
+                            <!-- Barra de progreso CSS -->
+                            <div class="metric-row">
+                                <span>Excelente (75%)</span>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-success" style="width: 75%;"></div></div>
+                            </div>
+                            <div class="metric-row">
+                                <span>Bueno (18%)</span>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-primary" style="width: 18%;"></div></div>
+                            </div>
+                            <div class="metric-row">
+                                <span>Regular (5%)</span>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-warning" style="width: 5%;"></div></div>
+                            </div>
+                            <div class="metric-row">
+                                <span>Malo (2%)</span>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-danger" style="width: 2%;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </section>

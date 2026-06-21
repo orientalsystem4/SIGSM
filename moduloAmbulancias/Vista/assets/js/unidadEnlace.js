@@ -25,16 +25,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 2. Navegación Secundaria (En Curso / Pendientes / Historial)
+    // 2. Navegación Secundaria Inteligente (Reutilizable para cualquier módulo)
     const subButtons = document.querySelectorAll('.sub-btn');
-    const subContents = document.querySelectorAll('.sub-content');
 
     subButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            subButtons.forEach(b => b.classList.remove('active'));
-            subContents.forEach(c => c.classList.add('hidden'));
-            subContents.forEach(c => c.classList.remove('active'));
+            // A. Encontrar la sección principal actual (para no romper otras pestañas ocultas)
+            const parentSection = btn.closest('.view-section');
+            
+            // B. Encontrar solo los botones y contenidos de ESTA sección
+            const sectionButtons = parentSection.querySelectorAll('.sub-btn');
+            const sectionContents = parentSection.querySelectorAll('.sub-content');
 
+            // C. Limpiar estado 'active' y ocultar contenidos solo de esta sección
+            sectionButtons.forEach(b => b.classList.remove('active'));
+            sectionContents.forEach(c => {
+                c.classList.add('hidden');
+                c.classList.remove('active');
+            });
+
+            // D. Activar el botón presionado y mostrar su contenido
             btn.classList.add('active');
             const targetId = btn.getAttribute('data-sub');
             const targetContent = document.getElementById(targetId);
