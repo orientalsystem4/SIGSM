@@ -230,7 +230,7 @@
                                 <h3 class="section-title">Repositorio Central de Protocolos</h3>
                                 <p class="text-muted">Gestión de documentos vinculados a QR estáticos por área.</p>
                             </div>
-                            <button class="btn-primary"><i data-lucide="plus"></i> Nuevo Documento</button>
+                            <button class="btn-primary" onclick="abrirModal('modalNuevoDoc')"><i data-lucide="plus"></i> Nuevo Documento</button>
                         </div>
 
                         <div class="card-traslado">
@@ -318,7 +318,7 @@
                                 <h3 class="section-title">Métricas y Formularios</h3>
                                 <p class="text-muted">Análisis de encuestas y gestión de plantillas dinámicas.</p>
                             </div>
-                            <button class="btn-primary"><i data-lucide="edit"></i> Editar Formulario</button>
+                            <button class="btn-primary" onclick="abrirModal('modalEditarForm')"><i data-lucide="edit"></i> Editar Formulario</button>
                         </div>
 
                         <!-- Grilla de KPIs -->
@@ -376,8 +376,9 @@
         </main>
     </div>
 
-    <!-- MODALES DE APROBACIÓN Y DENEGACIÓN -->
-    <!-- Modal Aprobar -->
+<!-- MODALES DE GESTIÓN Y DOCUMENTACIÓN -->
+
+    <!-- Modal 1: Aprobar -->
     <div id="modalAprobar" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -385,7 +386,7 @@
                 <button class="btn-close-modal" onclick="cerrarModal('modalAprobar')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form class="form-simulado">
                     <div class="form-group">
                         <label>Asignar Vehículo</label>
                         <select class="form-input" required>
@@ -395,16 +396,17 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Configurar Paradas (Ruta)</label>
+                        <label>Configurar Paradas (Ruta/Destinos)</label>
                         <textarea class="form-input" rows="3" placeholder="Ej: 1. Buscar en Clínica Sur&#10;2. Trasladar a Hospital Clínicas" required></textarea>
                     </div>
-                    <button type="button" class="btn-primary w-100" onclick="cerrarModal('modalAprobar')">Confirmar Traslado</button>
+                    <p class="text-muted mb-2" style="font-size: 0.85rem;"><i data-lucide="user-check" class="icon-sm"></i> Aprobado por: <strong class="responsable-nombre"></strong></p>
+                    <button type="submit" class="btn-primary w-100">Confirmar Traslado</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Modal Denegar -->
+    <!-- Modal 2: Denegar -->
     <div id="modalDenegar" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -412,12 +414,78 @@
                 <button class="btn-close-modal" onclick="cerrarModal('modalDenegar')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form class="form-simulado">
                     <div class="form-group">
                         <label>Motivo de la denegación (Obligatorio)</label>
-                        <textarea class="form-input" rows="3" placeholder="Explique al solicitante por qué se rechaza este traslado..." required></textarea>
+                        <textarea class="form-input" rows="3" placeholder="Especifique el motivo clínico o logístico del rechazo..." required></textarea>
                     </div>
-                    <button type="button" class="btn-danger w-100 p-3" style="border:none; border-radius:0.5rem; color:white; cursor:pointer;" onclick="cerrarModal('modalDenegar')">Confirmar Denegación</button>
+                    <p class="text-muted mb-2" style="font-size: 0.85rem;"><i data-lucide="user-x" class="icon-sm"></i> Rechazado por: <strong class="responsable-nombre"></strong></p>
+                    <button type="submit" class="btn-danger w-100 p-3" style="border:none; border-radius:0.5rem; color:white; cursor:pointer;">Confirmar Denegación</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Nuevo Documento -->
+    <div id="modalNuevoDoc" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Subir Nuevo Documento</h3>
+                <button class="btn-close-modal" onclick="cerrarModal('modalNuevoDoc')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <form class="form-simulado">
+                    <div class="form-group">
+                        <label>Nombre / Título del Documento</label>
+                        <input type="text" class="form-input" placeholder="Ej: Protocolo de Traslado Neonatal" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría Médica</label>
+                        <select class="form-input" required>
+                            <option value="">Seleccione categoría...</option>
+                            <option value="cardiologia">Cardiología</option>
+                            <option value="urologia">Urología y Nefrología</option>
+                            <option value="generales">Generales e Imagenología</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Archivo PDF</label>
+                        <!-- accept=".pdf" restringe a que solo se puedan subir PDFs -->
+                        <input type="file" class="form-input" accept=".pdf" required style="background: transparent; border: none; padding-left: 0;">
+                    </div>
+                    <p class="text-muted mb-2" style="font-size: 0.85rem;"><i data-lucide="upload-cloud" class="icon-sm"></i> Subido por: <strong class="responsable-nombre"></strong></p>
+                    <button type="submit" class="btn-primary w-100">Guardar Documento</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Editar Formulario -->
+    <div id="modalEditarForm" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Plantilla de Formulario</h3>
+                <button class="btn-close-modal" onclick="cerrarModal('modalEditarForm')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <form class="form-simulado">
+                    <div class="form-group">
+                        <label>Seleccionar Formulario a Editar</label>
+                        <select class="form-input" required>
+                            <option value="encuesta_traslado">Encuesta de Satisfacción (Traslados)</option>
+                            <option value="alta_medica">Formulario de Alta Médica</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Texto de Introducción</label>
+                        <textarea class="form-input" rows="2" required>Por favor, califique la calidad del servicio recibido durante su traslado.</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Opciones de respuesta (Separadas por comas)</label>
+                        <input type="text" class="form-input" value="Excelente, Bueno, Regular, Malo" required>
+                    </div>
+                    <p class="text-muted mb-2" style="font-size: 0.85rem;"><i data-lucide="edit-3" class="icon-sm"></i> Última edición por: <strong class="responsable-nombre"></strong></p>
+                    <button type="submit" class="btn-primary w-100">Actualizar Formulario</button>
                 </form>
             </div>
         </div>

@@ -71,9 +71,38 @@ window.toggleAccordion = function(headerElement) {
 };
 
 window.abrirModal = function(modalId) {
+    // 1. Obtener el nombre del usuario desde el perfil del Sidebar
+    const nombreUsuario = document.querySelector('.profile-name').textContent;
+    
+    // 2. Inyectar ese nombre en todos los campos 'responsable-nombre' del sistema
+    document.querySelectorAll('.responsable-nombre').forEach(span => {
+        span.textContent = nombreUsuario;
+    });
+
+    // 3. Mostrar el Modal
     document.getElementById(modalId).classList.add('active');
 };
 
 window.cerrarModal = function(modalId) {
     document.getElementById(modalId).classList.remove('active');
 };
+
+// 4. Simulación de Envío de Formularios en Modales
+const formulariosSimulados = document.querySelectorAll('.form-simulado');
+formulariosSimulados.forEach(form => {
+    form.addEventListener('submit', (e) => {
+        e.preventDefault(); // Evita que la página se recargue
+        
+        // Simular un guardado exitoso
+        alert("Acción registrada correctamente en el sistema.");
+        
+        // Cerrar el modal activo
+        const modalActivo = form.closest('.modal-overlay');
+        if (modalActivo) {
+            modalActivo.classList.remove('active');
+        }
+        
+        // Limpiar los campos del formulario
+        form.reset();
+    });
+});
