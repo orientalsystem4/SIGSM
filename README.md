@@ -40,17 +40,18 @@ El proyecto está estructurado bajo el patrón de diseño **MVC (Modelo - Vista 
 │       └── layout_base.html
 ├── index.html (Redirección para el Deployment)
 └── README.md
+```
 
-## 🛠️ Convenciones y Metodología de Trabajo
+#### 🛠️ Convenciones y Metodología de Trabajo
 
 Para mantener el orden, la trazabilidad del código y el profesionalismo durante todo el ciclo de vida del proyecto, el equipo adoptó metodologías estándar de la industria para el control de versiones y la gestión del código fuente.
 
-### 1. Control de Versiones (Feature Branch Workflow)
+##### . Control de Versiones (Feature Branch Workflow)
 Todo el control de código fuente se realizó utilizando **Git** y alojado en **GitHub**. Se implementó un flujo de trabajo basado en la creación de ramas por funcionalidad (*Feature Branching*):
 * **`main` (Rama Principal):** Contiene únicamente código funcional, estable y testeado. Refleja la versión de producción o entregables oficiales. Nunca se programa directamente sobre esta rama.
 * **`test` (Rama de Desarrollo/Pruebas):** Se utilizó para desarrollar nuevas vistas, probar la compatibilidad de los estilos CSS compartidos (layout) y validar el código JavaScript antes de integrarlo. Una vez validado el funcionamiento cruzado, se realizaba la fusión (`merge`) hacia `main`.
 
-### 2. Lógica de Commits (Conventional Commits)
+###### . Lógica de Commits (Conventional Commits)
 Se estableció una convención estricta para los mensajes de guardado (*commits*), utilizando la metodología **Conventional Commits**. Esto permite que el historial del repositorio explique no solo *qué* cambió, sino *por qué* y *qué tipo* de cambio es. 
 Los prefijos utilizados durante el proyecto fueron:
 * `feat:` Implementación de una nueva característica o funcionalidad (Ej: *feat: implementa vista de choferes con layout base*).
@@ -58,7 +59,7 @@ Los prefijos utilizados durante el proyecto fueron:
 * `refactor:` Reestructuración del código para mejorar su legibilidad o eficiencia sin alterar su comportamiento externo (Ej: *refactor: rediseño de bifurcación y limpieza de estilos*).
 * `docs:` Cambios exclusivos en la documentación, como este archivo README.
 
-### 3. Versionamiento Semántico (Semantic Versioning - SemVer)
+###### . Versionamiento Semántico (Semantic Versioning - SemVer)
 El avance del proyecto se catalogó utilizando **SemVer** (`MAYOR.MENOR.PARCHE`). Según este estándar, todas las versiones `0.x.x` representan el proceso de desarrollo inicial, iteración y prototipado. La versión `1.0.0` marca el primer lanzamiento estable del prototipo.
 
 A continuación, se detalla el registro de evolución del proyecto mediante etiquetas (*Tags*):
