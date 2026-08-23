@@ -14,6 +14,7 @@
             <p class="subtitle">Seleccione el módulo al que desea ingresar</p>
             
             <div class="modules-grid">
+                <!-- Portal Unidad de Enlace -->
                 <a href="../../moduloAmbulancias/Vista/unidadEnlace.html" class="module-card">
                     <div class="icon-wrapper">
                         <i data-lucide="layout-dashboard"></i>
@@ -21,7 +22,8 @@
                     <h3 class="card-title">Portal Unidad de Enlace</h3>
                     <p class="card-subtitle">Coordinación y Archivos</p>
                 </a>
-
+                
+                <!-- Portal Choferes -->
                 <a href="../../moduloAmbulancias/Vista/choferes.html" class="module-card">
                     <div class="icon-wrapper img-wrapper">
                         <i data-lucide="ambulance"></i>
@@ -29,7 +31,8 @@
                     <h3 class="card-title">Portal Choferes</h3>
                     <p class="card-subtitle">Planilla y Rutas Activas</p>
                 </a>
-
+                
+                <!-- Portal Enfermería -->
                 <a href="../../moduloDocumentacion/Vista/enfermeria.html" class="module-card">
                     <div class="icon-wrapper">
                         <i data-lucide="clipboard-plus"></i>
@@ -37,7 +40,17 @@
                     <h3 class="card-title">Portal Enfermería</h3>
                     <p class="card-subtitle">Solicitudes y Documentación</p>
                 </a>
+
+                <!-- NUEVO: Portal Documentación y Encuestas -->
+                <a href="../../moduloDocumentacion/Vista/documentacion.html" class="module-card">
+                    <div class="icon-wrapper">
+                        <i data-lucide="folder-open"></i>
+                    </div>
+                    <h3 class="card-title">Portal Documentación</h3>
+                    <p class="card-subtitle">Archivos y Encuestas</p>
+                </a>
             </div>
+
             <div class="logout-section">
                 <a href="../autenticacion/sesion.html" class="btn-logout-link">
                     <i data-lucide="log-out"></i> Cerrar Sesión
@@ -45,8 +58,8 @@
             </div>
         </div>
     </main>
-    <script>
-        lucide.createIcons();
-    </script>
+
+    <!-- Script separado para mantener el estándar -->
+    <script src="assets/js/bifurcacion.js"></script>
 </body>
 </html>

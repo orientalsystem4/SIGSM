@@ -24,16 +24,12 @@
                 <button class="nav-btn active" data-target="sec-traslados">
                     <i data-lucide="ambulance" class="icon-sm"></i> Control de Traslados
                 </button>
-                <button class="nav-btn" data-target="sec-archivos">
-                    <i data-lucide="folder" class="icon-sm"></i> Documentos y Métricas
-                </button>
             </nav>
 
             <div class="sidebar-profile">
                 <i data-lucide="layout-dashboard"></i>
                 <div class="profile-info">
                     <span class="profile-name">Coord. Central</span>
-                    <span class="profile-role">Unidad de Enlace</span>
                 </div>
                 <a href="../../serviciosComunes/vistaGeneral/bifurcacion.html" class="btn-logout" title="Volver">
                     <i data-lucide="log-out"></i>
@@ -308,68 +304,6 @@
                             </div>
                         </div>
                     </div>
-
-<!-- PESTAÑA: MÉTRICAS DE ENCUESTAS -->
-                    <div id="doc-metricas" class="sub-content hidden">
-                        
-                        <!-- Encabezado reutilizando la estructura de Nuevo Documento -->
-                        <div class="item-header mb-md">
-                            <div>
-                                <h3 class="section-title">Métricas y Formularios</h3>
-                                <p class="text-muted">Análisis de encuestas y gestión de plantillas dinámicas.</p>
-                            </div>
-                            <button class="btn-primary" onclick="abrirModal('modalEditarForm')"><i data-lucide="edit"></i> Editar Formulario</button>
-                        </div>
-
-                        <!-- Grilla de KPIs -->
-                        <div class="kpi-grid mb-md">
-                            <div class="kpi-card">
-                                <i data-lucide="qr-code" class="kpi-icon text-primary"></i>
-                                <div class="kpi-data">
-                                    <h4>342</h4>
-                                    <p>QR Generados (Mes)</p>
-                                </div>
-                            </div>
-                            <div class="kpi-card">
-                                <i data-lucide="file-check-2" class="kpi-icon text-success"></i>
-                                <div class="kpi-data">
-                                    <h4>289</h4>
-                                    <p>Formularios Completados</p>
-                                </div>
-                            </div>
-                            <div class="kpi-card">
-                                <i data-lucide="star" class="kpi-icon text-warning"></i>
-                                <div class="kpi-data">
-                                    <h4>4.8/5</h4>
-                                    <p>Satisfacción Promedio</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Panel de Barras -->
-                        <div class="card-traslado" style="padding: 1.5rem;">
-                            <h3 class="mb-3">Satisfacción de Traslados (Últimos 30 días)</h3>
-                            
-                            <!-- Barra de progreso CSS -->
-                            <div class="metric-row">
-                                <span>Excelente (75%)</span>
-                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-success" style="width: 75%;"></div></div>
-                            </div>
-                            <div class="metric-row">
-                                <span>Bueno (18%)</span>
-                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-primary" style="width: 18%;"></div></div>
-                            </div>
-                            <div class="metric-row">
-                                <span>Regular (5%)</span>
-                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-warning" style="width: 5%;"></div></div>
-                            </div>
-                            <div class="metric-row">
-                                <span>Malo (2%)</span>
-                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-danger" style="width: 2%;"></div></div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
             </section>
@@ -421,71 +355,6 @@
                     </div>
                     <p class="text-muted mb-2" style="font-size: 0.85rem;"><i data-lucide="user-x" class="icon-sm"></i> Rechazado por: <strong class="responsable-nombre"></strong></p>
                     <button type="submit" class="btn-danger w-100 p-3" style="border:none; border-radius:0.5rem; color:white; cursor:pointer;">Confirmar Denegación</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal 3: Nuevo Documento -->
-    <div id="modalNuevoDoc" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Subir Nuevo Documento</h3>
-                <button class="btn-close-modal" onclick="cerrarModal('modalNuevoDoc')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <form class="form-simulado">
-                    <div class="form-group">
-                        <label>Nombre / Título del Documento</label>
-                        <input type="text" class="form-input" placeholder="Ej: Protocolo de Traslado Neonatal" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Categoría Médica</label>
-                        <select class="form-input" required>
-                            <option value="">Seleccione categoría...</option>
-                            <option value="cardiologia">Cardiología</option>
-                            <option value="urologia">Urología y Nefrología</option>
-                            <option value="generales">Generales e Imagenología</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Archivo PDF</label>
-                        <!-- accept=".pdf" restringe a que solo se puedan subir PDFs -->
-                        <input type="file" class="form-input" accept=".pdf" required style="background: transparent; border: none; padding-left: 0;">
-                    </div>
-                    <p class="text-muted mb-2" style="font-size: 0.85rem;"><i data-lucide="upload-cloud" class="icon-sm"></i> Subido por: <strong class="responsable-nombre"></strong></p>
-                    <button type="submit" class="btn-primary w-100">Guardar Documento</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal 4: Editar Formulario -->
-    <div id="modalEditarForm" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Editar Plantilla de Formulario</h3>
-                <button class="btn-close-modal" onclick="cerrarModal('modalEditarForm')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <form class="form-simulado">
-                    <div class="form-group">
-                        <label>Seleccionar Formulario a Editar</label>
-                        <select class="form-input" required>
-                            <option value="encuesta_traslado">Encuesta de Satisfacción (Traslados)</option>
-                            <option value="alta_medica">Formulario de Alta Médica</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Texto de Introducción</label>
-                        <textarea class="form-input" rows="2" required>Por favor, califique la calidad del servicio recibido durante su traslado.</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Opciones de respuesta (Separadas por comas)</label>
-                        <input type="text" class="form-input" value="Excelente, Bueno, Regular, Malo" required>
-                    </div>
-                    <p class="text-muted mb-2" style="font-size: 0.85rem;"><i data-lucide="edit-3" class="icon-sm"></i> Última edición por: <strong class="responsable-nombre"></strong></p>
-                    <button type="submit" class="btn-primary w-100">Actualizar Formulario</button>
                 </form>
             </div>
         </div>
