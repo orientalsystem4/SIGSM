@@ -53,6 +53,10 @@
 .urologia { background-color: #3b82f6; }
 .cardiologia { background-color: #ef4444; }
 .traumatologia { background-color: #f59e0b; }
+.gastroenterologia { background-color: #10b981; }
+.ginecobstetricia { background-color: #ec4899; }
+.imagenologia { background-color: #8b5cf6; }
+.medicina_nuclear { background-color: #06b6d4; }
 .qr-body { padding: 1.5rem; display: flex; flex-direction: column; align-items: center; }
 .qr-img { width: 150px; height: 150px; border: 4px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 0.5rem; }
 

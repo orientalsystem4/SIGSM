@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Validar que no estén vacíos
             if (pacienteInput.value.trim() === "" || tipoInput.value === "") {
-                alert("Por favor, ingrese el nombre del paciente y seleccione un tipo de formulario.");
+                alert("Por favor, complete todos los campos antes de generar el QR.");
                 return;
             }
 
