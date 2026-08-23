@@ -37,7 +37,7 @@
                     <span class="profile-name">Lic. Carmen Torres</span>
                     <span class="profile-role">Enfermería - Piso 3</span>
                 </div>
-                <a href="../../serviciosComunes/vistaGeneral/bifurcacion.html" class="btn-logout" title="Cerrar Sesión">
+                <a href="../../serviciosComunes/vistaGeneral/bifurcacion.html" class="btn-logout" title="Volver">
                     <i data-lucide="log-out"></i>
                 </a>
             </div>
@@ -142,6 +142,42 @@
                                 <p class="text-muted text-center mt-2">Inmovilización y traslados</p>
                             </div>
                         </div>
+                        <div class="qr-card">
+                            <div class="qr-header gastroenterologia">
+                                <h4>Gastroenterología</h4>
+                            </div>
+                            <div class="qr-body">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Protocolos_Gastroenterologia" alt="QR Gastroenterología" class="qr-img">
+                                <p class="text-muted text-center mt-2">Diagnóstico y tratamiento de enfermedades del aparato digestivo</p>
+                            </div>
+                        </div>
+                        <div class="qr-card">
+                            <div class="qr-header ginecobstetricia">
+                                <h4>Ginecobstetricia</h4>
+                            </div>
+                            <div class="qr-body">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Protocolos_Ginecobstetricia" alt="QR Ginecobstetricia" class="qr-img">
+                                <p class="text-muted text-center mt-2">Atención al embarazo y parto</p>
+                            </div>
+                        </div>
+                        <div class="qr-card">
+                            <div class="qr-header imagenologia">
+                                <h4>Imagenología</h4>
+                            </div>
+                            <div class="qr-body">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Protocolos_Imagenologia" alt="QR Imagenología" class="qr-img">
+                                <p class="text-muted text-center mt-2">Procedimientos y técnicas de imagen</p>
+                            </div>
+                        </div>
+                        <div class="qr-card">
+                            <div class="qr-header medicina_nuclear">
+                                <h4>Medicina Nuclear</h4>
+                            </div>
+                            <div class="qr-body">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Protocolos_Medicina_Nuclear" alt="QR Medicina Nuclear" class="qr-img">
+                                <p class="text-muted text-center mt-2">Procedimientos y técnicas de medicina nuclear</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -156,16 +192,28 @@
                             
                             <form id="form-generador" class="mt-3">
                                 <div class="form-group">
-                                    <label>Paciente</label>
-                                    <input type="text" id="qr-paciente" class="form-input" placeholder="Nombre completo" required>
+                                    <label>Edad del paciente</label>
+                                    <input type="text" id="qr-paciente" class="form-input" placeholder="Ej: 20" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Tipo de Documento</label>
+                                    <label>Sexo</label>
+                                    <select id="qr-sexo" class="form-input" required>
+                                        <option value="">Seleccione el sexo...</option>
+                                        <option value="masculino">Masculino</option>
+                                        <option value="femenino">Femenino</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Sector</label>
                                     <select id="qr-tipo" class="form-input" required>
-                                        <option value="">Seleccione el formulario...</option>
-                                        <option value="encuesta">Encuesta de Satisfacción (Traslado)</option>
-                                        <option value="consentimiento">Consentimiento Informado</option>
-                                        <option value="alta">Formulario de Alta Médica</option>
+                                        <option value="">Seleccione el sector...</option>
+                                        <option value="urologia">Urología</option>
+                                        <option value="cardiologia">Cardiología</option>
+                                        <option value="traumatologia">Traumatología</option>
+                                        <option value="gastroenterologia">Gastroenterología</option>
+                                        <option value="ginecobstetricia">Ginecobstetricia</option>
+                                        <option value="imagenologia">Imagenología</option>
+                                        <option value="medicina_nuclear">Medicina Nuclear</option>
                                     </select>
                                 </div>
                                 <button type="button" id="btn-generar-qr" class="btn-primary w-100 mt-2">
