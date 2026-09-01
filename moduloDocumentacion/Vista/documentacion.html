@@ -1,441 +1,1070 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>S.I.G.S.M. | Portal de Documentación y Encuestas</title>
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
-    <link rel="stylesheet" href="Assets/css/documentacion.css">
+
+    <link rel="stylesheet"
+        href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
+
+    <link rel="stylesheet"
+        href="Assets/css/documentacion.css">
+
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
+
     <div class="app-layout">
+
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
+
             <div class="sidebar-header">
-                <button class="btn-close-menu" id="closeMenuBtn"><i data-lucide="x"></i></button>
-                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo" class="sidebar-logo">
+
+                <button class="btn-close-menu" id="closeMenuBtn">
+                    <i data-lucide="x"></i>
+                </button>
+
+                <img
+                    src="../../serviciosComunes/autenticacion/assets/image.png"
+                    alt="Logo"
+                    class="sidebar-logo">
+
                 <span>S.I.G.S.M.</span>
+
             </div>
-            
+
+
             <nav class="sidebar-nav">
-                <button class="nav-btn active" data-target="sec-documentos">
-                    <i data-lucide="folder-open" class="icon-sm"></i> Documentos (Categorías)
+
+                <button
+                    class="nav-btn active"
+                    data-target="sec-documentos">
+
+                    <i
+                        data-lucide="folder-open"
+                        class="icon-sm">
+                    </i>
+
+                    Documentos (Categorías)
+
                 </button>
-                <button class="nav-btn" data-target="sec-encuestas">
-                    <i data-lucide="pie-chart" class="icon-sm"></i> Encuestas y Métricas
+
+
+                <button
+                    class="nav-btn"
+                    data-target="sec-encuestas">
+
+                    <i
+                        data-lucide="pie-chart"
+                        class="icon-sm">
+                    </i>
+
+                    Encuestas y Métricas
+
                 </button>
+
             </nav>
 
+
             <div class="sidebar-profile">
-                <div class="avatar-placeholder bg-primary"><i data-lucide="shield"></i></div>
-                <div class="profile-info">
-                    <span class="profile-name">Administrador Doc</span>
-                    <span class="profile-role">Gestión Documental</span>
+
+                <div class="avatar-placeholder bg-primary">
+                    <i data-lucide="shield"></i>
                 </div>
-                <a href="../../serviciosComunes/vistaGeneral/bifurcacion.html" class="btn-logout" title="Volver">
+
+                <div class="profile-info">
+
+                    <span class="profile-name">
+                        admin_dti
+                    </span>
+
+                    <span class="profile-role">
+                        Administrador de DTI
+                    </span>
+
+                </div>
+
+
+                <a
+                    href="../../serviciosComunes/vistaGeneral/bifurcacion.html"
+                    class="btn-logout"
+                    title="Volver">
+
                     <i data-lucide="log-out"></i>
+
                 </a>
+
             </div>
+
         </aside>
 
+
+        <!-- CONTENIDO PRINCIPAL -->
         <main class="main-content">
+
             <header class="topbar">
+
                 <div class="topbar-left">
-                    <button class="btn-menu" id="openMenuBtn"><i data-lucide="menu"></i></button>
-                    <h2 class="section-title mb-0">Portal de Documentación y Encuestas</h2>
+
+                    <button
+                        class="btn-menu"
+                        id="openMenuBtn">
+
+                        <i data-lucide="menu"></i>
+
+                    </button>
+
+
+                    <h2 class="section-title mb-0">
+                        Portal de Documentación y Encuestas
+                    </h2>
+
                 </div>
+
             </header>
 
+
             <section class="content-wrapper">
-                
+
+
+                <!-- ================================================= -->
                 <!-- SECCIÓN 1: DOCUMENTOS POR CATEGORÍA -->
-                <div id="sec-documentos" class="view-section active">
+                <!-- ================================================= -->
+
+                <div
+                    id="sec-documentos"
+                    class="view-section active">
+
+
                     <div class="flex-between mb-3">
-                        <h3>Directorio de Archivos</h3>
-                        <button class="btn-primary" onclick="abrirModal('modal-subir-doc')">
-                            <i data-lucide="upload"></i> Subir Documento
+
+                        <h3>
+                            Directorio de Archivos
+                        </h3>
+
+
+                        <button
+                            class="btn-primary"
+                            onclick="abrirModal('modal-subir-doc')">
+
+                            <i data-lucide="upload"></i>
+
+                            Subir Documento
+
                         </button>
+
                     </div>
 
-                    <!-- Sub-Navegación de Categorías -->
+
+                    <!-- SUBNAVEGACIÓN -->
+
                     <div class="sub-nav">
-                        <button class="sub-btn active" data-sub="cat-cardiologia">Cardiología</button>
-                        <button class="sub-btn" data-sub="cat-gastroenterologia">Gastroenterología</button>
-                        <button class="sub-btn" data-sub="cat-ginecobstetricia">Ginecobstetricia</button>
-                        <button class="sub-btn" data-sub="cat-imagenologia">Imagenología</button>
-                        <button class="sub-btn" data-sub="cat-medicina-nuclear">Medicina Nuclear</button>
-                        <button class="sub-btn" data-sub="cat-urologia">Urología</button>
+
+                        <button
+                            class="sub-btn active"
+                            data-sub="cat-urologia">
+
+                            Urología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-cardiologia">
+
+                            Cardiología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-traumatologia">
+
+                            Traumatología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-gastroenterologia">
+
+                            Gastroenterología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-ginecobstetricia">
+
+                            Ginecobstetricia
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-imagenologia">
+
+                            Imagenología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-medicina-nuclear">
+
+                            Medicina Nuclear
+
+                        </button>
+
                     </div>
 
-                    <!-- Pestaña: Cardiología -->
-                    <div id="cat-cardiologia" class="sub-content active">
+
+
+                    <!-- ================================================= -->
+                    <!-- UROLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-urologia"
+                        class="sub-content active">
+
                         <div class="card-formulario tabla-responsive">
+
                             <table class="tabla-admin">
+
                                 <thead>
+
                                     <tr>
-                                        <th>Título del Documento</th>
-                                        <th>Fecha de Carga</th>
-                                        <th>Responsable</th>
-                                        <th>Acciones</th>
+
+                                        <th>
+                                            Documento
+                                        </th>
+
+                                        <th>
+                                            Fecha de Carga
+                                        </th>
+
+                                        <th>
+                                            Responsable
+                                        </th>
+
+                                        <th>
+                                            Acciones
+                                        </th>
+
                                     </tr>
+
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Indicaciones ecocardiograma con dobutamina</strong></td>
-                                        <td>11/08/2026</td>
-                                        <td>Admin Doc</td>
-                                        <td>
-                                            <button class="btn-icon" title="Editar"><i data-lucide="edit"></i></button>
-                                            <button class="btn-icon text-danger" title="Dar de baja"><i data-lucide="trash-2"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Indicaciones para pacientes en tratamiento con warfarina</strong></td>
-                                        <td>11/08/2026</td>
-                                        <td>Admin Doc</td>
-                                        <td>
-                                            <button class="btn-icon" title="Editar"><i data-lucide="edit"></i></button>
-                                            <button class="btn-icon text-danger" title="Dar de baja"><i data-lucide="trash-2"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Indicaciones ecocardiograma transesofágico</strong></td>
-                                        <td>11/08/2026</td>
-                                        <td>Admin Doc</td>
-                                        <td>
-                                            <button class="btn-icon" title="Editar"><i data-lucide="edit"></i></button>
-                                            <button class="btn-icon text-danger" title="Dar de baja"><i data-lucide="trash-2"></i></button>
-                                        </td>
-                                    </tr>
+
+
+                                <tbody id="tabla-documentos-1">
                                 </tbody>
+
                             </table>
+
+
+                            <p
+                                id="vacio-1"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
                         </div>
+
                     </div>
 
-                    <!-- Pestaña: Gastroenterología / Unidad de Ostomías -->
-                    <div id="cat-gastroenterologia" class="sub-content hidden">
+
+
+                    <!-- ================================================= -->
+                    <!-- CARDIOLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-cardiologia"
+                        class="sub-content hidden">
+
                         <div class="card-formulario tabla-responsive">
+
                             <table class="tabla-admin">
+
                                 <thead>
+
                                     <tr>
-                                        <th>Título del Documento</th>
+
+                                        <th>Documento</th>
+
                                         <th>Fecha de Carga</th>
+
                                         <th>Responsable</th>
+
                                         <th>Acciones</th>
+
                                     </tr>
+
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Pauta para pacientes ostomizados</strong></td>
-                                        <td>11/08/2026</td>
-                                        <td>Admin Doc</td>
-                                        <td>
-                                            <button class="btn-icon" title="Editar"><i data-lucide="edit"></i></button>
-                                            <button class="btn-icon text-danger" title="Dar de baja"><i data-lucide="trash-2"></i></button>
-                                        </td>
-                                    </tr>
+
+
+                                <tbody id="tabla-documentos-2">
                                 </tbody>
+
                             </table>
+
+
+                            <p
+                                id="vacio-2"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
                         </div>
+
                     </div>
 
-                    <!-- Pestaña: Ginecobstetricia -->
-                    <div id="cat-ginecobstetricia" class="sub-content hidden">
+
+
+                    <!-- ================================================= -->
+                    <!-- TRAUMATOLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-traumatologia"
+                        class="sub-content hidden">
+
                         <div class="card-formulario tabla-responsive">
+
                             <table class="tabla-admin">
+
                                 <thead>
+
                                     <tr>
-                                        <th>Título del Documento</th>
+
+                                        <th>Documento</th>
+
                                         <th>Fecha de Carga</th>
+
                                         <th>Responsable</th>
+
                                         <th>Acciones</th>
+
                                     </tr>
+
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Indicaciones de interrupción voluntaria del embarazo</strong></td>
-                                        <td>11/08/2026</td>
-                                        <td>Admin Doc</td>
-                                        <td>
-                                            <button class="btn-icon" title="Editar"><i data-lucide="edit"></i></button>
-                                            <button class="btn-icon text-danger" title="Dar de baja"><i data-lucide="trash-2"></i></button>
-                                        </td>
-                                    </tr>
+
+
+                                <tbody id="tabla-documentos-3">
                                 </tbody>
+
                             </table>
+
+
+                            <p
+                                id="vacio-3"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
                         </div>
+
                     </div>
 
-                    <!-- Pestaña: Imagenología -->
-                    <div id="cat-imagenologia" class="sub-content hidden">
+
+
+                    <!-- ================================================= -->
+                    <!-- GASTROENTEROLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-gastroenterologia"
+                        class="sub-content hidden">
+
                         <div class="card-formulario tabla-responsive">
+
                             <table class="tabla-admin">
+
                                 <thead>
+
                                     <tr>
-                                        <th>Título del Documento</th>
+
+                                        <th>Documento</th>
+
                                         <th>Fecha de Carga</th>
+
                                         <th>Responsable</th>
+
                                         <th>Acciones</th>
+
                                     </tr>
+
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Preparación para estudios imagenológicos</strong></td>
-                                        <td>11/08/2026</td>
-                                        <td>Admin Doc</td>
-                                        <td>
-                                            <button class="btn-icon" title="Editar"><i data-lucide="edit"></i></button>
-                                            <button class="btn-icon text-danger" title="Dar de baja"><i data-lucide="trash-2"></i></button>
-                                        </td>
-                                    </tr>
+
+
+                                <tbody id="tabla-documentos-4">
                                 </tbody>
+
                             </table>
+
+
+                            <p
+                                id="vacio-4"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
                         </div>
+
                     </div>
 
-                    <!-- Pestaña: Medicina Nuclear -->
-                    <div id="cat-medicina-nuclear" class="sub-content hidden">
+
+
+                    <!-- ================================================= -->
+                    <!-- GINECOBSTETRICIA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-ginecobstetricia"
+                        class="sub-content hidden">
+
                         <div class="card-formulario tabla-responsive">
+
                             <table class="tabla-admin">
+
                                 <thead>
+
                                     <tr>
-                                        <th>Título del Documento</th>
+
+                                        <th>Documento</th>
+
                                         <th>Fecha de Carga</th>
+
                                         <th>Responsable</th>
+
                                         <th>Acciones</th>
+
                                     </tr>
+
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Estudios diagnósticos con pertecneciato</strong></td>
-                                        <td>11/08/2026</td>
-                                        <td>Admin Doc</td>
-                                        <td>
-                                            <button class="btn-icon" title="Editar"><i data-lucide="edit"></i></button>
-                                            <button class="btn-icon text-danger" title="Dar de baja"><i data-lucide="trash-2"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Información sobre Centellograma de perfusión miocárdica</strong></td>
-                                        <td>11/08/2026</td>
-                                        <td>Admin Doc</td>
-                                        <td>
-                                            <button class="btn-icon" title="Editar"><i data-lucide="edit"></i></button>
-                                            <button class="btn-icon text-danger" title="Dar de baja"><i data-lucide="trash-2"></i></button>
-                                        </td>
-                                    </tr>
+
+
+                                <tbody id="tabla-documentos-5">
                                 </tbody>
+
                             </table>
+
+
+                            <p
+                                id="vacio-5"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
                         </div>
+
                     </div>
 
-                    <!-- Pestaña: Urología -->
-                    <div id="cat-urologia" class="sub-content hidden">
+
+
+                    <!-- ================================================= -->
+                    <!-- IMAGENOLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-imagenologia"
+                        class="sub-content hidden">
+
                         <div class="card-formulario tabla-responsive">
+
                             <table class="tabla-admin">
+
                                 <thead>
+
                                     <tr>
-                                        <th>Título del Documento</th>
+
+                                        <th>Documento</th>
+
                                         <th>Fecha de Carga</th>
+
                                         <th>Responsable</th>
+
                                         <th>Acciones</th>
+
                                     </tr>
+
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Prostatectomía radical (indicaciones e información para el paciente)</strong></td>
-                                        <td>11/08/2026</td>
-                                        <td>Admin Doc</td>
-                                        <td>
-                                            <button class="btn-icon" title="Editar"><i data-lucide="edit"></i></button>
-                                            <button class="btn-icon text-danger" title="Dar de baja"><i data-lucide="trash-2"></i></button>
-                                        </td>
-                                    </tr>
+
+
+                                <tbody id="tabla-documentos-6">
                                 </tbody>
+
                             </table>
+
+
+                            <p
+                                id="vacio-6"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
                         </div>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- MEDICINA NUCLEAR -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-medicina-nuclear"
+                        class="sub-content hidden">
+
+                        <div class="card-formulario tabla-responsive">
+
+                            <table class="tabla-admin">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Documento</th>
+
+                                        <th>Fecha de Carga</th>
+
+                                        <th>Responsable</th>
+
+                                        <th>Acciones</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="tabla-documentos-7">
+                                </tbody>
+
+                            </table>
+
+
+                            <p
+                                id="vacio-7"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
+                        </div>
+
                     </div>
 
                 </div>
 
+
+
+                <!-- ================================================= -->
                 <!-- SECCIÓN 2: ENCUESTAS Y MÉTRICAS -->
-                <div id="sec-encuestas" class="view-section hidden">
+                <!-- ================================================= -->
+
+                <div
+                    id="sec-encuestas"
+                    class="view-section hidden">
+
+
                     <div class="sub-nav">
-                        <button class="sub-btn active" data-sub="enc-metricas"><i data-lucide="bar-chart-2" class="icon-sm"></i> Métricas Generales</button>
-                        <button class="sub-btn" data-sub="enc-editor"><i data-lucide="settings" class="icon-sm"></i> Editar Formulario (4 Secciones)</button>
+
+                        <button
+                            class="sub-btn active"
+                            data-sub="enc-metricas">
+
+                            <i
+                                data-lucide="bar-chart-2"
+                                class="icon-sm">
+                            </i>
+
+                            Métricas Generales
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="enc-estado">
+
+                            <i
+                                data-lucide="clipboard-list"
+                                class="icon-sm">
+                            </i>
+
+                            Encuestas
+
+                        </button>
+
                     </div>
 
-                    <!-- Pestaña: Métricas -->
+
+
+                    <!-- ================================================= -->
+                    <!-- MÉTRICAS -->
+                    <!-- ================================================= -->
+
                     <div id="enc-metricas" class="sub-content active">
-                        <h3 class="mb-3">Métricas de Satisfacción de Pacientes</h3>
-                        <div class="kpi-grid mb-md">
-                            <div class="kpi-card">
-                                <i data-lucide="file-check" class="kpi-icon text-primary"></i>
-                                <div class="kpi-data">
-                                    <h4>145</h4>
-                                    <p>Encuestas Completadas</p>
-                                </div>
-                            </div>
-                            <div class="kpi-card">
-                                <i data-lucide="star" class="kpi-icon text-warning"></i>
-                                <div class="kpi-data">
-                                    <h4>4.2 / 5</h4>
-                                    <p>Promedio de Satisfacción</p>
-                                </div>
-                            </div>
-                            <div class="kpi-card">
-                                <i data-lucide="qr-code" class="kpi-icon text-success"></i>
-                                <div class="kpi-data">
-                                    <h4>210</h4>
-                                    <p>QR Generados (Mes)</p>
-                                </div>
-                            </div>
-                        </div>
+
+    <div class="flex-between mb-3">
+
+        <h3>
+            Métricas de Satisfacción de Pacientes
+        </h3>
+
+        <span class="badge badge-gray">
+            Datos de demostración
+        </span>
+
+    </div>
+
+
+    <!-- TARJETAS DE MÉTRICAS -->
+
+    <div class="kpi-grid mb-md">
+
+        <!-- ENCUESTAS COMPLETADAS -->
+
+        <div class="kpi-card">
+
+            <i
+                data-lucide="file-check"
+                class="kpi-icon text-primary">
+            </i>
+
+            <div class="kpi-data">
+
+                <h4>
+                    145
+                </h4>
+
+                <p>
+                    Encuestas Completadas
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROMEDIO DE SATISFACCIÓN -->
+
+        <div class="kpi-card">
+
+            <i
+                data-lucide="star"
+                class="kpi-icon text-warning">
+            </i>
+
+            <div class="kpi-data">
+
+                <h4>
+                    4.2 / 5
+                </h4>
+
+                <p>
+                    Promedio de Satisfacción
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- QR GENERADOS -->
+
+        <div class="kpi-card">
+
+            <i
+                data-lucide="qr-code"
+                class="kpi-icon text-success">
+            </i>
+
+            <div class="kpi-data">
+
+                <h4>
+                    210
+                </h4>
+
+                <p>
+                    QR Generados (Mes)
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DISTRIBUCIÓN DE SATISFACCIÓN -->
+
+    <div class="card-formulario">
+
+        <h4 class="mb-3">
+            Distribución de Satisfacción (General)
+        </h4>
+
+
+        <!-- EXCELENTE -->
+
+        <div class="metric-row">
+
+            <span>
+                Excelente (65%)
+            </span>
+
+            <div class="progress-bar-bg">
+
+                <div
+                    class="progress-bar-fill bg-success"
+                    style="width: 65%;">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BUENO -->
+
+        <div class="metric-row">
+
+            <span>
+                Bueno (20%)
+            </span>
+
+            <div class="progress-bar-bg">
+
+                <div
+                    class="progress-bar-fill bg-primary"
+                    style="width: 20%;">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REGULAR -->
+
+        <div class="metric-row">
+
+            <span>
+                Regular (10%)
+            </span>
+
+            <div class="progress-bar-bg">
+
+                <div
+                    class="progress-bar-fill bg-warning"
+                    style="width: 10%;">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MALO -->
+
+        <div class="metric-row">
+
+            <span>
+                Malo (5%)
+            </span>
+
+            <div class="progress-bar-bg">
+
+                <div
+                    class="progress-bar-fill bg-danger"
+                    style="width: 5%;">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+                    <!-- ================================================= -->
+                    <!-- ESTADO DE LAS ENCUESTAS -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="enc-estado"
+                        class="sub-content hidden">
+
+
+                        <h3 class="mb-3">
+                            Encuestas
+                        </h3>
+
 
                         <div class="card-formulario">
-                            <h4 class="mb-3">Distribución de Satisfacción (General)</h4>
-                            <div class="metric-row">
-                                <span>Excelente (65%)</span>
-                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-success" style="width: 65%;"></div></div>
-                            </div>
-                            <div class="metric-row">
-                                <span>Bueno (20%)</span>
-                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-primary" style="width: 20%;"></div></div>
-                            </div>
-                            <div class="metric-row">
-                                <span>Regular (10%)</span>
-                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-warning" style="width: 10%;"></div></div>
-                            </div>
-                            <div class="metric-row">
-                                <span>Malo (5%)</span>
-                                <div class="progress-bar-bg"><div class="progress-bar-fill bg-danger" style="width: 5%;"></div></div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Pestaña: Editor de Encuesta -->
-                    <div id="enc-editor" class="sub-content hidden">
-                        <div class="flex-between mb-3">
-                            <h3>Estructura de la Encuesta</h3>
-                            <button class="btn-outline" onclick="abrirModal('modal-nueva-pregunta')">
-                                <i data-lucide="plus"></i> Añadir Pregunta
-                            </button>
-                        </div>
-                        
-                        <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="header-info">
-                                    <h4>Sección 1: Infraestructura y Equipamiento</h4>
-                                    <span class="badge badge-gray">3 Preguntas</span>
-                                </div>
-                                <i data-lucide="chevron-down" class="accordion-icon"></i>
-                            </div>
-                            <div class="accordion-content">
-                                <ul class="doc-list">
-                                    <li class="doc-item">
-                                        <div class="doc-info">1.1 ¿Cómo califica la limpieza de la unidad de traslado?</div>
-                                        <button class="btn-icon"><i data-lucide="edit-2"></i></button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
 
-                        <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="header-info">
-                                    <h4>Sección 2: Tiempos de Atención</h4>
-                                    <span class="badge badge-gray">2 Preguntas</span>
-                                </div>
-                                <i data-lucide="chevron-down" class="accordion-icon"></i>
-                            </div>
-                            <div class="accordion-content">
-                                <ul class="doc-list">
-                                    <li class="doc-item">
-                                        <div class="doc-info">2.1 ¿El tiempo de espera fue el adecuado?</div>
-                                        <button class="btn-icon"><i data-lucide="edit-2"></i></button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    gap: 15px;
+                                    align-items: flex-start;
+                                ">
 
-                        <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="header-info">
-                                    <h4>Sección 3: Trato Humanizado</h4>
-                                    <span class="badge badge-gray">4 Preguntas</span>
-                                </div>
-                                <i data-lucide="chevron-down" class="accordion-icon"></i>
-                            </div>
-                            <div class="accordion-content">
-                                <ul class="doc-list">
-                                    <li class="doc-item">
-                                        <div class="doc-info">3.1 ¿El personal se identificó y le explicó el procedimiento?</div>
-                                        <button class="btn-icon"><i data-lucide="edit-2"></i></button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
 
-                        <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="header-info">
-                                    <h4>Sección 4: Inquietudes y Sugerencias</h4>
-                                    <span class="badge badge-gray">1 Pregunta (Texto Libre)</span>
+                                <i
+                                    data-lucide="info"
+                                    class="text-primary">
+                                </i>
+
+
+                                <div>
+
+                                    <h4>
+                                        Encuestas pendientes de definición
+                                    </h4>
+
+
+                                    <p
+                                        class="text-muted"
+                                        style="
+                                            margin-top: 8px;
+                                            margin-bottom: 0;
+                                        ">
+
+                                        El Hospital de Clínicas proporcionará
+                                        cuatro modelos de encuesta.
+
+                                    </p>
+
+
+                                 
+
                                 </div>
-                                <i data-lucide="chevron-down" class="accordion-icon"></i>
+
                             </div>
-                            <div class="accordion-content">
-                                <ul class="doc-list">
-                                    <li class="doc-item">
-                                        <div class="doc-info">4.1 ¿Tiene algún comentario adicional para mejorar nuestro servicio?</div>
-                                        <button class="btn-icon"><i data-lucide="edit-2"></i></button>
-                                    </li>
-                                </ul>
-                            </div>
+
                         </div>
 
                     </div>
+
                 </div>
 
             </section>
+
         </main>
+
     </div>
 
-    <!-- MODALES -->
-    <div class="modal-overlay" id="modal-subir-doc">
+
+
+    <!-- ================================================= -->
+    <!-- MODAL SUBIR DOCUMENTO -->
+    <!-- ================================================= -->
+
+    <div
+        class="modal-overlay"
+        id="modal-subir-doc">
+
+
         <div class="modal-content">
+
+
             <div class="modal-header">
-                <h3>Subir Documento</h3>
-                <button class="btn-close-modal" onclick="cerrarModal('modal-subir-doc')"><i data-lucide="x"></i></button>
+
+                <h3>
+                    Subir Documento
+                </h3>
+
+
+                <button
+                    type="button"
+                    class="btn-close-modal"
+                    onclick="cerrarModal('modal-subir-doc')">
+
+                    <i data-lucide="x"></i>
+
+                </button>
+
             </div>
-            <form class="form-simulado">
+
+
+
+            <form
+                id="form-subir-documento"
+                class="form-simulado">
+
+
                 <div class="form-group">
-                    <label>Título del Documento</label>
-                    <input type="text" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label>Categoría</label>
-                    <select class="form-input" required>
-                        <option value="cardiologia">Cardiología</option>
-                        <option value="gastroenterologia">Gastroenterología</option>
-                        <option value="ginecobstetricia">Ginecobstetricia</option>
-                        <option value="imagenologia">Imagenología</option>
-                        <option value="medicina_nuclear">Medicina Nuclear</option>
-                        <option value="urologia">Urología</option>
+
+                    <label for="categoriaDocumento">
+                        Categoría
+                    </label>
+
+
+                    <select
+                        id="categoriaDocumento"
+                        class="form-input"
+                        required>
+
+
+                        <option value="">
+                            Seleccione una categoría...
+                        </option>
+
+
+                        <option value="1">
+                            Urología
+                        </option>
+
+
+                        <option value="2">
+                            Cardiología
+                        </option>
+
+
+                        <option value="3">
+                            Traumatología
+                        </option>
+
+
+                        <option value="4">
+                            Gastroenterología
+                        </option>
+
+
+                        <option value="5">
+                            Ginecobstetricia
+                        </option>
+
+
+                        <option value="6">
+                            Imagenología
+                        </option>
+
+
+                        <option value="7">
+                            Medicina Nuclear
+                        </option>
+
                     </select>
+
                 </div>
+
+
+
                 <div class="form-group">
-                    <label>Archivo (PDF)</label>
-                    <input type="file" class="form-input" accept=".pdf" required>
+
+                    <label for="archivoDocumento">
+                        Archivo (PDF)
+                    </label>
+
+
+                    <input
+                        type="file"
+                        id="archivoDocumento"
+                        class="form-input"
+                        accept=".pdf,application/pdf"
+                        required>
+
                 </div>
-                <button type="submit" class="btn-primary w-100 mt-2">Guardar Documento</button>
+
+
+
+                <button
+                    type="submit"
+                    class="btn-primary w-100 mt-2">
+
+                    Guardar Documento
+
+                </button>
+
             </form>
+
         </div>
+
     </div>
 
-    <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
-    <script src="Assets/js/documentacion.js"></script>
-    <script>lucide.createIcons();</script>
+
+
+    <script
+        src="../../serviciosComunes/vistaGeneral/assets/js/layout.js">
+    </script>
+
+
+    <script
+        src="Assets/js/documentacion.js">
+    </script>
+
+
+    <script>
+        lucide.createIcons();
+    </script>
+
 </body>
+
 </html>
