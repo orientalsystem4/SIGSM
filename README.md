@@ -38,6 +38,57 @@ El proyecto está estructurado bajo el patrón de diseño **MVC (Modelo - Vista 
 │       ├── 📂 assets/ (Layout global y paleta de colores)
 │       ├── bifurcacion.html
 │       └── layout_base.html
+├── 📂 documento
+│       ├── sigsm.sql
+│   ├── 📂 Controlador
+│   ├── 📂 Modelo
+│   └── 📂 Vista/
+│       ├── 📂 assets/ 
+│            ├── 📂 css
+│                 ├── chofer.css
+│                 ├── unidadEnlace.css
+│            ├── 📂 img 
+│            └── 📂 js
+│                 ├── choferes.html
+│                 └── unidad_enlace.html
+├── 📂 moduloDocumentacion/
+│   ├── 📂 Controlador
+│   ├── 📂 Modelo
+│   └── 📂 Vista/
+│       └── 📂 assets/ 
+│            ├── 📂 css
+│                 ├── documemtacion.css
+│                 ├── enfermeria.css
+│            └── 📂 img
+│       └── documentacion.js
+│       └── enfermeria.js
+│       └── documentacion.html
+│       └── enfermeria.html
+├── 📂 moduloEncuesta/
+│   ├── 📂 Controlador
+│   ├── 📂 Modelo
+│   └── 📂 Vista/
+│       └── 📂 assets (css, img, js)
+├── 📂 serviciosComunes/
+│   ├── 📂 autenticacion
+│       ├── login.css
+│       ├── sesiones.html
+│   ├── 📂 conexionBD
+│   ├── 📂 permisos
+│   ├── 📂 seguridad
+│   ├── 📂 validaciones
+│   └── 📂 vistaGeneral/
+│       ├── 📂 assets/ (css, js, Layout global y paleta de colores)
+│       ├── bifurcacion.html
+│       └── layout_base.html
+├── 📂 usuario/
+│   ├── 📂 Controlador
+│   ├── 📂 Modelo
+│   └── 📂 Vista
+│       ├── crear.php
+│       ├── editar.php
+│       ├── listado.php
+│       └── ver.php
 ├── index.html (Redirección para el Deployment)
 └── README.md
 ```
