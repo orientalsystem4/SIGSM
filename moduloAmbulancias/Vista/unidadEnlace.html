@@ -1,367 +1,1164 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.I.G.S.M. | Unidad de Enlace</title>
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
-    <link rel="stylesheet" href="assets/css/unidadEnlace.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body>
-    <div class="app-layout">
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- Sidebar Base -->
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>S.I.G.S.M. | Unidad de Enlace</title>
+
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
+
+    <link rel="stylesheet" href="assets/css/unidadEnlace.css">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+
+<body>
+
+    <div class="app-layout">
+
+
+        <!-- ================================================= -->
+        <!-- SIDEBAR -->
+        <!-- ================================================= -->
+
+        <div class="sidebar-overlay" id="sidebarOverlay">
+        </div>
+
+
         <aside class="sidebar" id="sidebar">
+
+
             <div class="sidebar-header">
-                <button class="btn-close-menu" id="closeMenuBtn"><i data-lucide="layout-dashboard"></i></button>
+
+                <button class="btn-close-menu" id="closeMenuBtn">
+
+                    <i data-lucide="layout-dashboard"></i>
+
+                </button>
+
+
                 <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo" class="sidebar-logo">
+
+
                 <span>S.I.G.S.M.</span>
+
             </div>
+
+
 
             <nav class="sidebar-nav">
+
                 <button class="nav-btn active" data-target="sec-traslados">
-                    <i data-lucide="ambulance" class="icon-sm"></i> Control de Traslados
+
+                    <i data-lucide="ambulance" class="icon-sm">
+                    </i>
+
+                    Control de Traslados
+
                 </button>
+
             </nav>
 
+
+
             <div class="sidebar-profile">
+
                 <i data-lucide="layout-dashboard"></i>
+
+
                 <div class="profile-info">
-                    <span class="profile-name">Coord. Central</span>
+
+                    <span class="profile-name">
+                        Coord. Central
+                    </span>
+
                 </div>
+
+
                 <a href="../../serviciosComunes/vistaGeneral/bifurcacion.html" class="btn-logout" title="Volver">
+
                     <i data-lucide="log-out"></i>
+
                 </a>
+
             </div>
+
         </aside>
 
-        <!-- Contenido Principal -->
+
+
+        <!-- ================================================= -->
+        <!-- CONTENIDO PRINCIPAL -->
+        <!-- ================================================= -->
+
         <main class="main-content">
+
+
             <header class="topbar">
+
                 <div class="topbar-left">
-                    <button class="btn-menu" id="openMenuBtn"><i data-lucide="menu"></i></button>
-                    <h2 class="section-title mb-0">Portal Unidad de Enlace</h2>
+
+                    <button class="btn-menu" id="openMenuBtn">
+
+                        <i data-lucide="menu"></i>
+
+                    </button>
+
+
+                    <h2 class="section-title mb-0">
+                        Portal Unidad de Enlace
+                    </h2>
+
                 </div>
+
             </header>
 
+
+
             <section class="content-wrapper">
-                
+
+
+                <!-- ========================================= -->
                 <!-- SECCIÓN TRASLADOS -->
+                <!-- ========================================= -->
+
                 <div id="sec-traslados" class="view-section active">
-                    
-                    <!-- Sub-Navegación Interna -->
+
+
+                    <!-- SUB NAVEGACIÓN -->
+
                     <div class="sub-nav">
-                        <button class="sub-btn active" data-sub="sub-curso">En Curso (2)</button>
-                        <button class="sub-btn" data-sub="sub-pendientes">Pendientes (3)</button>
-                        <button class="sub-btn" data-sub="sub-historial">Historial</button>
+
+                        <button class="sub-btn active" data-sub="sub-curso">
+
+                            Traslados activos
+
+                        </button>
+
+
+                        <button class="sub-btn" data-sub="sub-pendientes">
+
+                            Solicitudes pendientes
+
+                        </button>
+
+
+                        <button class="sub-btn" data-sub="sub-historial">
+
+                            Historial
+
+                        </button>
+
                     </div>
 
-                    <!-- PESTAÑA: EN CURSO -->
+
+
+                    <!-- ===================================== -->
+                    <!-- TRASLADOS ACTIVOS -->
+                    <!-- ===================================== -->
+
                     <div id="sub-curso" class="sub-content active">
-                        
-                        <!-- Traslado 1 (El espejo del chofer) -->
+
+
+                        <!-- TRASLADO #1 -->
+
                         <div class="card-traslado">
+
+
                             <div class="accordion-header" onclick="toggleAccordion(this)">
+
+
                                 <div class="header-info">
-                                    <h3>TR-0492 - Móvil 04</h3>
-                                    <span class="badge badge-warning">En Proceso</span>
+
+                                    <h3>
+                                        Traslado #1 - AMB001
+                                    </h3>
+
+                                    <span class="badge badge-warning">
+                                        Asignado
+                                    </span>
+
                                 </div>
-                                <i data-lucide="chevron-down" class="accordion-icon" style="transform: rotate(180deg);"></i>
+
+
+                                <i data-lucide="chevron-down" class="accordion-icon" style="transform: rotate(180deg);">
+                                </i>
+
                             </div>
+
+
+
                             <div class="accordion-content open">
+                                <div style="padding: 15px;">
+
+                                    <p class="detail-item">
+                                        <strong>Tipo de elemento:</strong>
+                                        Paciente
+                                    </p>
+
+                                    <p class="detail-item">
+                                        <strong>Origen:</strong>
+                                        Hospital de Clínicas
+                                    </p>
+
+                                    <p class="detail-item">
+                                        <strong>Destino:</strong>
+                                        Hospital Maciel
+                                    </p>
+
+                                    <p class="detail-item">
+                                        <strong>Ruta:</strong>
+                                        Hospital de Clínicas → Hospital Maciel
+                                    </p>
+
+                                    <p class="detail-item">
+                                        <strong>Vehículo:</strong>
+                                        Ambulancia - AMB001
+                                    </p>
+
+                                    <p class="detail-item">
+                                        <strong>Chofer:</strong>
+                                        Pedro Miniño
+                                    </p>
+
+                                    <p class="detail-item">
+                                        <strong>Enfermero:</strong>
+                                        Lucía Pereira
+                                    </p>
+
+                                    <p class="detail-item">
+                                        <strong>Proveedor externo:</strong>
+                                        Sin proveedor externo
+                                    </p>
+
+                                    <p class="detail-item">
+                                        <strong>Canal:</strong>
+                                        Gestión Salud
+                                    </p>
+
+                                    <p class="detail-item">
+                                        <strong>Solicitante:</strong>
+                                        admin_dti
+                                    </p>
+
+                                </div>
+
+
                                 <div class="timeline">
+
+
+                                    <!-- SOLICITADO -->
+
                                     <div class="timeline-step completed">
-                                        <div class="step-marker"><i data-lucide="check"></i></div>
-                                        <div class="step-content">
-                                            <h4>1. Buscar Paciente 1: Norma</h4>
-                                            <div class="chat-message received mb-1"><span class="chat-author">Chofer:</span> Paciente a bordo, vamos por el siguiente.</div>
+
+
+                                        <div class="step-marker">
+
+                                            <i data-lucide="check"></i>
+
                                         </div>
+
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                Solicitado
+                                            </h4>
+
+
+                                            <div class="chat-message received mb-1">
+
+                                                Traslado solicitado.
+
+                                            </div>
+
+                                        </div>
+
                                     </div>
+
+
+
+                                    <!-- ASIGNADO -->
+
                                     <div class="timeline-step active">
-                                        <div class="step-marker"><i data-lucide="car"></i></div>
-                                        <div class="step-content">
-                                            <h4>2. Buscar Paciente 2: Carlos</h4>
-                                            <div class="chat-container">
-                                                <div class="chat-message system"><i data-lucide="play-circle" class="icon-sm"></i> <span>Chofer marcó <strong>Saliendo</strong> (10:20)</span></div>
-                                                <div class="chat-message sent"><span class="chat-author">Tú:</span> Carlos baja en silla de ruedas, esperen en la rampa de acceso sur.</div>
-                                            </div>
-                                            <!-- Panel de respuesta de enlace -->
-                                            <div class="chat-input-wrapper mt-2">
-                                                <input type="text" class="form-input" placeholder="Enviar directiva al móvil...">
-                                                <button class="btn-primary" style="width: auto; margin-top: 0;"><i data-lucide="send"></i></button>
-                                            </div>
+
+
+                                        <div class="step-marker">
+
+                                            <i data-lucide="car"></i>
+
                                         </div>
+
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                Asignado
+                                            </h4>
+
+
+                                            <div class="chat-container">
+
+                                                <div class="chat-message system">
+
+                                                    <i data-lucide="check-circle" class="icon-sm">
+                                                    </i>
+
+                                                    <span>
+                                                        Vehículo y personal asignados.
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="chat-input-wrapper mt-2">
+
+                                                <input type="text" class="form-input"
+                                                    placeholder="Enviar directiva al móvil...">
+
+
+                                                <button type="button" class="btn-primary"
+                                                    style="width: auto; margin-top: 0;">
+
+                                                    <i data-lucide="send"></i>
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
                                     </div>
-                                    <div class="timeline-step pending"><div class="step-marker">3</div><div class="step-content"><h4>3. Trasladar al Hospital Policial</h4></div></div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Traslado 2 -->
-                        <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="header-info">
-                                    <h3>TR-0493 - Móvil 01</h3>
-                                    <span class="badge badge-warning">En Proceso</span>
-                                </div>
-                                <i data-lucide="chevron-down" class="accordion-icon"></i>
-                            </div>
-                            <div class="accordion-content">
-                                <p class="text-muted">Traslado de insumos médicos hacia Sanatorio BPS. Móvil reportó tráfico pesado.</p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- PESTAÑA: PENDIENTES -->
+
+                                    <!-- EN CURSO -->
+
+                                    <div class="timeline-step pending">
+
+                                        <div class="step-marker">
+                                            3
+                                        </div>
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                En curso - Destino: Hospital Maciel
+                                            </h4>
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                              </div>
+
+                        </div>
+                        </div>
+                    <!-- ===================================== -->
+                    <!-- SOLICITUDES PENDIENTES -->
+                    <!-- ===================================== -->
+
                     <div id="sub-pendientes" class="sub-content hidden">
-                        <!-- Pendiente 1 -->
+
+
+                        <!-- SOLICITUD #3 -->
+
                         <div class="card-pendiente">
+
+
                             <div class="item-header">
-                                <h3 class="card-title">Solicitud: Traslado Especializado</h3>
-                                <span class="badge badge-gray">Hace 10 min</span>
+
+                                <h3 class="card-title">
+                                    Solicitud #3
+                                </h3>
+
+                                <span class="badge badge-gray">
+                                    Pendiente
+                                </span>
+
                             </div>
-                            <p class="detail-item"><strong>Paciente:</strong> Ana Rodríguez (C.I: 3.456.789-0)</p>
-                            <p class="detail-item"><strong>Solicitante:</strong> Lic. Carmen Torres (Enfermería)</p>
-                            <p class="detail-item"><strong>Motivo:</strong> Estudio neurológico urgente.</p>
-                            
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Tipo de elemento:
+                                </strong>
+
+                                Paciente
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Origen:
+                                </strong>
+
+                                Hospital de Clínicas
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Destino:
+                                </strong>
+
+                                CHPR
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Canal:
+                                </strong>
+
+                                Gestión Salud
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Solicitante:
+                                </strong>
+
+                                admin_dti
+
+                            </p>
+
+
+
                             <div class="acciones-pendientes">
-                                <button class="btn-action btn-success" onclick="abrirModal('modalAprobar')"><i data-lucide="check"></i> Aprobar y Rutear</button>
-                                <button class="btn-action btn-danger" onclick="abrirModal('modalDenegar')"><i data-lucide="x"></i> Denegar</button>
+
+
+                                <button type="button" class="btn-action btn-success"
+                                    onclick="seleccionarSolicitud(this); abrirModal('modalAprobar');">
+
+                                    <i data-lucide="check"></i>
+
+                                    Aprobar y asignar
+
+                                </button>
+
+
+                                <button type="button" class="btn-action btn-danger"
+                                    onclick="seleccionarSolicitud(this); abrirModal('modalDenegar');">
+
+                                    <i data-lucide="x"></i>
+
+                                    Cancelar solicitud
+
+                                </button>
+
                             </div>
+
                         </div>
 
-                        <!-- Pendiente 2 -->
+
+
+                        <!-- SOLICITUD #4 -->
+
                         <div class="card-pendiente">
+
+
                             <div class="item-header">
-                                <h3 class="card-title">Solicitud: Alta Médica</h3>
-                                <span class="badge badge-gray">Hace 25 min</span>
+
+                                <h3 class="card-title">
+                                    Solicitud #4
+                                </h3>
+
+                                <span class="badge badge-gray">
+                                    Pendiente
+                                </span>
+
                             </div>
-                            <p class="detail-item"><strong>Paciente:</strong> Luis Pérez</p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Tipo de elemento:
+                                </strong>
+
+                                Insumo médico
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Origen:
+                                </strong>
+
+                                Hospital de Clínicas
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Destino:
+                                </strong>
+
+                                Hospital Maciel
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Canal:
+                                </strong>
+
+                                Correo
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Solicitante:
+                                </strong>
+
+                                registros_medicos
+
+                            </p>
+
+
+
                             <div class="acciones-pendientes">
-                                <button class="btn-action btn-success" onclick="abrirModal('modalAprobar')"><i data-lucide="check"></i> Aprobar y Rutear</button>
-                                <button class="btn-action btn-danger" onclick="abrirModal('modalDenegar')"><i data-lucide="x"></i> Denegar</button>
+
+
+                                <button type="button" class="btn-action btn-success"
+                                    onclick="seleccionarSolicitud(this); abrirModal('modalAprobar');">
+
+                                    <i data-lucide="check"></i>
+
+                                    Aprobar y asignar
+
+                                </button>
+
+
+                                <button type="button" class="btn-action btn-danger"
+                                    onclick="seleccionarSolicitud(this); abrirModal('modalDenegar');">
+
+                                    <i data-lucide="x"></i>
+
+                                    Cancelar solicitud
+
+                                </button>
+
                             </div>
+
                         </div>
 
-                        <!-- Pendiente 3 -->
+
+
+                        <!-- SOLICITUD #5 -->
+
                         <div class="card-pendiente">
+
+
                             <div class="item-header">
-                                <h3 class="card-title">Solicitud: Traslado de Insumos</h3>
-                                <span class="badge badge-gray">Hace 1 hora</span>
+
+                                <h3 class="card-title">
+                                    Solicitud #5
+                                </h3>
+
+                                <span class="badge badge-gray">
+                                    Pendiente
+                                </span>
+
                             </div>
-                            <p class="detail-item"><strong>Material:</strong> Sangre / Hemoterapia</p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Tipo de elemento:
+                                </strong>
+
+                                Equipamiento
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Origen:
+                                </strong>
+
+                                Hospital de Clínicas
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Destino:
+                                </strong>
+
+                                CHPR
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Canal:
+                                </strong>
+
+                                Papel
+
+                            </p>
+
+
+                            <p class="detail-item">
+
+                                <strong>
+                                    Solicitante:
+                                </strong>
+
+                                registros_medicos
+
+                            </p>
+
+
+
                             <div class="acciones-pendientes">
-                                <button class="btn-action btn-success" onclick="abrirModal('modalAprobar')"><i data-lucide="check"></i> Aprobar y Rutear</button>
-                                <button class="btn-action btn-danger" onclick="abrirModal('modalDenegar')"><i data-lucide="x"></i> Denegar</button>
+
+
+                                <button type="button" class="btn-action btn-success"
+                                    onclick="seleccionarSolicitud(this); abrirModal('modalAprobar');">
+
+                                    <i data-lucide="check"></i>
+
+                                    Aprobar y asignar
+
+                                </button>
+
+
+                                <button type="button" class="btn-action btn-danger"
+                                    onclick="seleccionarSolicitud(this); abrirModal('modalDenegar');">
+
+                                    <i data-lucide="x"></i>
+
+                                    Cancelar solicitud
+
+                                </button>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <!-- PESTAÑA: HISTORIAL -->
+
+
+                    <!-- ===================================== -->
+                    <!-- HISTORIAL -->
+                    <!-- ===================================== -->
+
                     <div id="sub-historial" class="sub-content hidden">
+
+
                         <div class="search-container mb-md">
-                            <i data-lucide="search" class="icon-sm text-muted"></i>
-                            <input type="text" class="search-input" placeholder="Buscar por código, paciente o móvil...">
+
+                            <i data-lucide="search" class="icon-sm text-muted">
+                            </i>
+
+
+                            <input type="text" class="search-input" style="width: 320px;"
+                                placeholder="Buscar por traslado, estado o usuario...">
+
                         </div>
-                        
+
+
+
                         <div class="tabla-responsive">
+
+
                             <table class="tabla-historial">
+
+
                                 <thead>
+
                                     <tr>
-                                        <th>Código</th>
-                                        <th>Fecha/Hora</th>
-                                        <th>Móvil</th>
-                                        <th>Acompañante</th>
-                                        <th>Estado</th>
+
+                                        <th>
+                                            Traslado
+                                        </th>
+
+                                        <th>
+                                            Fecha/Hora
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                            Usuario
+                                        </th>
+
+                                        <th>
+                                            Observaciones
+                                        </th>
+
                                     </tr>
+
                                 </thead>
+
+
                                 <tbody>
+
+
                                     <tr>
-                                        <td><strong>TR-0491</strong></td>
-                                        <td>Hoy, 10:30 AM</td>
-                                        <td>Móvil 02</td>
-                                        <td>Lic. Roberto Díaz</td>
-                                        <td><span class="badge badge-success">Completado</span></td>
+
+                                        <td>
+                                            <strong>
+                                                Traslado #1
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            31/08/2026 20:19
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge-gray">
+                                                Solicitado
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            admin_dti
+                                        </td>
+
+                                        <td>
+                                            Traslado solicitado.
+                                        </td>
+
                                     </tr>
+
+
+
                                     <tr>
-                                        <td><strong>TR-0490</strong></td>
-                                        <td>Hoy, 08:30 AM</td>
-                                        <td>Móvil 04</td>
-                                        <td>Lic. Ana Silva</td>
-                                        <td><span class="badge badge-success">Completado</span></td>
+
+                                        <td>
+
+                                            <strong>
+                                                Traslado #1
+                                            </strong>
+
+                                        </td>
+
+                                        <td>
+                                            31/08/2026
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge-warning">
+                                                Asignado
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            admin_transporte
+                                        </td>
+
+                                        <td>
+                                            Vehículo y personal asignados.
+                                        </td>
+
                                     </tr>
-                                    <tr>
-                                        <td><strong>TR-0489</strong></td>
-                                        <td>Hoy, 07:15 AM</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td><span class="badge badge-danger">Denegado</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>TR-0488</strong></td>
-                                        <td>Ayer, 18:45 PM</td>
-                                        <td>Móvil 01</td>
-                                        <td>Lic. Carmen Torres</td>
-                                        <td><span class="badge badge-success">Completado</span></td>
-                                    </tr>
+
+
                                 </tbody>
+
                             </table>
-                        </div>
-                    </div>
-                </div>
 
-                <div id="sec-archivos" class="view-section hidden">
-                    
-                <!-- Sub-Navegación Interna de Documentos -->
-                    <div class="sub-nav">
-                        <button class="sub-btn active" data-sub="doc-directorio">Directorio Médico</button>
-                        <button class="sub-btn" data-sub="doc-metricas">Métricas de Encuestas</button>
+                        </div>
+
                     </div>
 
-                    <div id="doc-directorio" class="sub-content active">
-                        <div class="item-header mb-md">
-                            <div>
-                                <h3 class="section-title">Repositorio Central de Protocolos</h3>
-                                <p class="text-muted">Gestión de documentos vinculados a QR estáticos por área.</p>
-                            </div>
-                            <button class="btn-primary" onclick="abrirModal('modalNuevoDoc')"><i data-lucide="plus"></i> Nuevo Documento</button>
-                        </div>
 
-                        <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="header-info">
-                                    <div class="avatar-placeholder bg-red"><i data-lucide="heart" class="icon-sm"></i></div>
-                                    <h3>Cardiología</h3>
-                                </div>
-                                <i data-lucide="chevron-down" class="accordion-icon" style="transform: rotate(180deg);"></i>
-                            </div>
-                            <div class="accordion-content open">
-                                <ul class="doc-list">
-                                    <li class="doc-item">
-                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Centellograma de perfusión miocárdica</div>
-                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
-                                    </li>
-                                    <li class="doc-item">
-                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Indicaciones ecocardiograma con dobutamina</div>
-                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
-                                    </li>
-                                    <li class="doc-item">
-                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Indicaciones ecocardiograma transesofágico</div>
-                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
-                                    </li>
-                                    <li class="doc-item">
-                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Tratamiento con warfarina (Indicaciones)</div>
-                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="header-info">
-                                    <div class="avatar-placeholder bg-blue"><i data-lucide="activity" class="icon-sm"></i></div>
-                                    <h3>Urología y Nefrología</h3>
-                                </div>
-                                <i data-lucide="chevron-down" class="accordion-icon"></i>
-                            </div>
-                            <div class="accordion-content">
-                                <ul class="doc-list">
-                                    <li class="doc-item">
-                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Prostatectomía radical (Información al paciente)</div>
-                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
-                                    </li>
-                                    <li class="doc-item">
-                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Ingreso a centro de nefrología y trasplante</div>
-                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
-                                    </li>
-                                    <li class="doc-item">
-                                        <div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Plan de alta enfermería (Nefrología)</div>
-                                        <button class="btn-outline-sm"><i data-lucide="eye"></i> Ver</button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="header-info">
-                                    <div class="avatar-placeholder bg-orange"><i data-lucide="microscope" class="icon-sm"></i></div>
-                                    <h3>Generales e Imagenología</h3>
-                                </div>
-                                <i data-lucide="chevron-down" class="accordion-icon"></i>
-                            </div>
-                            <div class="accordion-content">
-                                <ul class="doc-list">
-                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Preparación para estudios imagenológicos</div></li>
-                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Estudios diagnósticos con pertecneciato</div></li>
-                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Prevención de infecciones</div></li>
-                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Pauta para pacientes ostomizados</div></li>
-                                    <li class="doc-item"><div class="doc-info"><i data-lucide="file-text" class="text-muted"></i> Interrupción voluntaria del embarazo (Indicaciones)</div></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
             </section>
+
         </main>
+
     </div>
 
-<!-- MODALES DE GESTIÓN Y DOCUMENTACIÓN -->
 
-    <!-- Modal 1: Aprobar -->
+
+    <!-- ===================================================== -->
+    <!-- MODAL APROBAR -->
+    <!-- ===================================================== -->
+
     <div id="modalAprobar" class="modal-overlay">
+
+
         <div class="modal-content">
+
+
             <div class="modal-header">
-                <h3>Aprobar y Asignar Ruta</h3>
-                <button class="btn-close-modal" onclick="cerrarModal('modalAprobar')"><i data-lucide="x"></i></button>
+
+
+                <h3>
+                    Aprobar y Asignar Traslado
+                </h3>
+
+
+                <button type="button" class="btn-close-modal" onclick="cerrarModal('modalAprobar')">
+
+                    <i data-lucide="x"></i>
+
+                </button>
+
+
             </div>
+
+
+
             <div class="modal-body">
-                <form class="form-simulado">
+
+
+                <form id="formAprobar">
+
+
+                    <!-- VEHÍCULO -->
+
                     <div class="form-group">
-                        <label>Asignar Vehículo</label>
-                        <select class="form-input" required>
-                            <option value="">Seleccione móvil disponible...</option>
-                            <option value="1">Móvil 02 - Libre</option>
-                            <option value="2">Móvil 03 - Libre en 10 min</option>
+
+                        <label>
+                            Vehículo
+                        </label>
+
+
+                        <select id="vehiculoAsignado" class="form-input">
+
+
+                            <option value="">
+                                Seleccione vehículo...
+                            </option>
+
+
+                            <option value="1">
+                                Ambulancia - AMB001
+                            </option>
+
+
+                            <option value="2">
+                                Auto - AUT001
+                            </option>
+
+
+                            <option value="3">
+                                Camión - CAM001
+                            </option>
+
+
                         </select>
+
                     </div>
+
+
+
+                    <!-- RUTA AUTOMÁTICA -->
+
                     <div class="form-group">
-                        <label>Configurar Paradas (Ruta/Destinos)</label>
-                        <textarea class="form-input" rows="3" placeholder="Ej: 1. Buscar en Clínica Sur&#10;2. Trasladar a Hospital Clínicas" required></textarea>
+
+
+                        <label>
+                            Ruta
+                        </label>
+
+
+                        <input type="text" id="rutaSeleccionada" class="form-input" readonly>
+
+
+                        <input type="hidden" id="idRutaSeleccionada">
+
+
                     </div>
-                    <p class="text-muted mb-2" style="font-size: 0.85rem;"><i data-lucide="user-check" class="icon-sm"></i> Aprobado por: <strong class="responsable-nombre"></strong></p>
-                    <button type="submit" class="btn-primary w-100">Confirmar Traslado</button>
+
+
+
+                    <!-- CHOFER -->
+
+                    <div class="form-group">
+
+
+                        <label>
+                            Chofer
+                        </label>
+
+
+                        <select id="choferAsignado" class="form-input">
+
+
+                            <option value="">
+                                Seleccione chofer...
+                            </option>
+
+
+                            <option value="5">
+                                Pedro Miniño
+                            </option>
+
+
+                        </select>
+
+
+                    </div>
+
+
+
+                    <!-- ENFERMERO -->
+
+                    <div class="form-group">
+
+
+                        <label>
+                            Enfermero de Traslado
+                        </label>
+
+
+                        <select id="enfermeroAsignado" class="form-input">
+
+
+                            <option value="">
+                                Seleccione enfermero...
+                            </option>
+
+
+                            <option value="6">
+                                Lucía Pereira
+                            </option>
+
+
+                        </select>
+
+
+                    </div>
+
+
+
+                    <!-- PROVEEDOR -->
+
+                    <div class="form-group">
+
+
+                        <label>
+                            Proveedor Externo
+                        </label>
+
+
+                        <select id="proveedorAsignado" class="form-input">
+
+
+                            <option value="">
+                                Sin proveedor externo
+                            </option>
+
+
+                            <option value="1">
+                                SAME
+                            </option>
+
+
+                        </select>
+
+
+                    </div>
+
+
+
+                    <!-- RESPONSABLE -->
+
+                    <p class="text-muted mb-2" style="font-size: 0.85rem;">
+
+
+                        <i data-lucide="user-check" class="icon-sm">
+                        </i>
+
+
+                        Aprobado por:
+
+
+                        <strong class="responsable-nombre">
+                        </strong>
+
+
+                    </p>
+
+
+
+                    <!-- CONFIRMAR -->
+
+                    <button type="submit" class="btn-primary w-100" style="margin-top: 15px;">
+
+
+                        Confirmar Traslado
+
+
+                    </button>
+
+
                 </form>
+
+
             </div>
+
+
         </div>
+
+
     </div>
 
-    <!-- Modal 2: Denegar -->
+
+
+    <!-- ===================================================== -->
+    <!-- MODAL CANCELAR -->
+    <!-- ===================================================== -->
+
     <div id="modalDenegar" class="modal-overlay">
+
+
         <div class="modal-content">
+
+
             <div class="modal-header">
-                <h3>Denegar Solicitud</h3>
-                <button class="btn-close-modal" onclick="cerrarModal('modalDenegar')"><i data-lucide="x"></i></button>
+
+
+                <h3>
+                    Cancelar Solicitud
+                </h3>
+
+
+                <button type="button" class="btn-close-modal" onclick="cerrarModal('modalDenegar')">
+
+
+                    <i data-lucide="x"></i>
+
+
+                </button>
+
+
             </div>
+
+
+
             <div class="modal-body">
-                <form class="form-simulado">
+
+
+                <form id="formCancelar">
+
+
                     <div class="form-group">
-                        <label>Motivo de la denegación (Obligatorio)</label>
-                        <textarea class="form-input" rows="3" placeholder="Especifique el motivo clínico o logístico del rechazo..." required></textarea>
+
+
+                        <label>
+                            Motivo de la cancelación
+                        </label>
+
+
+                        <textarea id="motivoCancelacion" class="form-input" rows="3"
+                            placeholder="Especifique el motivo..."></textarea>
+
+
                     </div>
-                    <p class="text-muted mb-2" style="font-size: 0.85rem;"><i data-lucide="user-x" class="icon-sm"></i> Rechazado por: <strong class="responsable-nombre"></strong></p>
-                    <button type="submit" class="btn-danger w-100 p-3" style="border:none; border-radius:0.5rem; color:white; cursor:pointer;">Confirmar Denegación</button>
+
+
+
+                    <p class="text-muted mb-2" style="font-size: 0.85rem;">
+
+
+                        <i data-lucide="user-x" class="icon-sm">
+                        </i>
+
+
+                        Cancelado por:
+
+
+                        <strong class="responsable-nombre">
+                        </strong>
+
+
+                    </p>
+
+
+
+                    <button type="submit" class="btn-danger w-100 p-3" style="
+                            border: none;
+                            border-radius: 0.5rem;
+                            color: white;
+                            cursor: pointer;
+                        ">
+
+
+                        Confirmar Cancelación
+
+
+                    </button>
+
+
                 </form>
+
+
             </div>
+
+
         </div>
+
+
     </div>
+
+
+
+    <!-- ===================================================== -->
+    <!-- SCRIPTS -->
+    <!-- ===================================================== -->
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
+
     <script src="assets/js/unidadEnlace.js"></script>
-    <script>lucide.createIcons();</script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+
 </body>
+
 </html>

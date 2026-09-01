@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>S.I.G.S.M. | Encuesta de Satisfacción</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .encuesta-wrapper {
+            max-width: 760px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .encuesta-card {
+            background: white;
+            border: 1px solid #dbe3ee;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .encuesta-header {
+            padding: 28px;
+            border-bottom: 1px solid #e4e9f0;
+        }
+
+        .encuesta-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 26px;
+        }
+
+        .encuesta-header p {
+            margin: 5px 0;
+            color: #5c677a;
+            line-height: 1.5;
+        }
+
+        .demo-badge {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #eef3f8;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .formulario {
+            padding: 28px;
+        }
+
+        .pregunta {
+            margin-bottom: 32px;
+        }
+
+        .pregunta h3 {
+            margin-bottom: 14px;
+            font-size: 17px;
+        }
+
+        .pregunta-numero {
+            color: #667085;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .opciones {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .opcion {
+            border: 1px solid #d8e0ea;
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .opcion:hover {
+            background: #f7f9fc;
+        }
+
+        .opcion input {
+            margin-right: 8px;
+        }
+
+        .escala {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .escala label {
+            width: 48px;
+            height: 48px;
+            border: 1px solid #ccd5e1;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .escala input {
+            display: none;
+        }
+
+        .escala label:has(input:checked) {
+            background: #0d8acb;
+            color: white;
+            border-color: #0d8acb;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+            border: 1px solid #ccd5e1;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        .btn-enviar {
+            width: 100%;
+            border: 0;
+            border-radius: 10px;
+            padding: 14px;
+            background: #0d8acb;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-enviar:hover {
+            opacity: 0.92;
+        }
+
+        .mensaje-exito {
+            display: none;
+            padding: 40px 25px;
+            text-align: center;
+        }
+
+        .mensaje-exito h2 {
+            margin-bottom: 10px;
+        }
+
+        .mensaje-exito p {
+            color: #5c677a;
+        }
+
+        .anonima {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 18px;
+            font-size: 14px;
+            color: #5c677a;
+        }
+
+        @media (max-width: 600px) {
+
+            .encuesta-wrapper {
+                margin: 10px auto;
+                padding: 10px;
+            }
+
+            .encuesta-header,
+            .formulario {
+                padding: 20px;
+            }
+
+            .encuesta-header h1 {
+                font-size: 22px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="encuesta-wrapper">
+
+        <div class="encuesta-card">
+
+
+            <!-- CABECERA -->
+
+            <div class="encuesta-header">
+
+                <h1>
+                    Encuesta de satisfacción del servicio
+                </h1>
+
+                <p>
+                    Su opinión nos ayuda a evaluar la calidad
+                    del servicio recibido y detectar posibles mejoras.
+                </p>
+
+                <div class="anonima">
+                    Esta encuesta es anónima.
+                    No se solicitarán datos personales para responderla.
+                </div>
+
+                <span class="demo-badge">
+                    ENCUESTA DE DEMOSTRACIÓN
+                </span>
+
+            </div>
+
+
+
+            <!-- FORMULARIO -->
+
+            <form
+                id="formEncuesta"
+                class="formulario">
+
+
+                <!-- PREGUNTA 1 -->
+
+                <div class="pregunta">
+
+                    <div class="pregunta-numero">
+                        Pregunta 1 de 5
+                    </div>
+
+                    <h3>
+                        ¿Cómo califica el trato recibido
+                        por parte del personal?
+                    </h3>
+
+                    <div class="escala">
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="trato"
+                                value="1"
+                                required>
+                            1
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="trato"
+                                value="2">
+                            2
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="trato"
+                                value="3">
+                            3
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="trato"
+                                value="4">
+                            4
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="trato"
+                                value="5">
+                            5
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PREGUNTA 2 -->
+
+                <div class="pregunta">
+
+                    <div class="pregunta-numero">
+                        Pregunta 2 de 5
+                    </div>
+
+                    <h3>
+                        ¿Considera adecuado el tiempo
+                        de espera para recibir el servicio?
+                    </h3>
+
+                    <div class="opciones">
+
+                        <label class="opcion">
+
+                            <input
+                                type="radio"
+                                name="tiempo"
+                                value="si"
+                                required>
+
+                            Sí
+
+                        </label>
+
+
+                        <label class="opcion">
+
+                            <input
+                                type="radio"
+                                name="tiempo"
+                                value="parcialmente">
+
+                            Parcialmente
+
+                        </label>
+
+
+                        <label class="opcion">
+
+                            <input
+                                type="radio"
+                                name="tiempo"
+                                value="no">
+
+                            No
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PREGUNTA 3 -->
+
+                <div class="pregunta">
+
+                    <div class="pregunta-numero">
+                        Pregunta 3 de 5
+                    </div>
+
+                    <h3>
+                        ¿Cómo califica las condiciones generales
+                        durante la prestación del servicio?
+                    </h3>
+
+                    <div class="escala">
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="condiciones"
+                                value="1"
+                                required>
+                            1
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="condiciones"
+                                value="2">
+                            2
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="condiciones"
+                                value="3">
+                            3
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="condiciones"
+                                value="4">
+                            4
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="condiciones"
+                                value="5">
+                            5
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PREGUNTA 4 -->
+
+                <div class="pregunta">
+
+                    <div class="pregunta-numero">
+                        Pregunta 4 de 5
+                    </div>
+
+                    <h3>
+                        En términos generales,
+                        ¿qué tan satisfecho/a quedó con el servicio?
+                    </h3>
+
+                    <div class="opciones">
+
+                        <label class="opcion">
+
+                            <input
+                                type="radio"
+                                name="satisfaccion"
+                                value="muy_satisfecho"
+                                required>
+
+                            Muy satisfecho/a
+
+                        </label>
+
+
+                        <label class="opcion">
+
+                            <input
+                                type="radio"
+                                name="satisfaccion"
+                                value="satisfecho">
+
+                            Satisfecho/a
+
+                        </label>
+
+
+                        <label class="opcion">
+
+                            <input
+                                type="radio"
+                                name="satisfaccion"
+                                value="regular">
+
+                            Regular
+
+                        </label>
+
+
+                        <label class="opcion">
+
+                            <input
+                                type="radio"
+                                name="satisfaccion"
+                                value="insatisfecho">
+
+                            Insatisfecho/a
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PREGUNTA 5 -->
+
+                <div class="pregunta">
+
+                    <div class="pregunta-numero">
+                        Pregunta 5 de 5
+                    </div>
+
+                    <h3>
+                        ¿Desea realizar algún comentario
+                        o sugerencia para mejorar el servicio?
+                    </h3>
+
+                    <textarea
+                        id="comentario"
+                        maxlength="500"
+                        placeholder="Comentario opcional...">
+                    </textarea>
+
+                </div>
+
+
+
+                <button
+                    type="submit"
+                    class="btn-enviar">
+
+                    Enviar encuesta
+
+                </button>
+
+
+            </form>
+
+
+
+            <!-- MENSAJE DESPUÉS DEL ENVÍO -->
+
+            <div
+                id="mensajeExito"
+                class="mensaje-exito">
+
+                <h2>
+                    ¡Gracias por su respuesta!
+                </h2>
+
+                <p>
+                    La encuesta fue registrada correctamente.
+                </p>
+
+                <p>
+                    Su respuesta ayuda a mejorar
+                    la calidad del servicio.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        // ====================================================
+        // OBTENER ID DE ENCUESTA DESDE LA URL
+        // ====================================================
+
+        const parametros =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const idEncuesta =
+            parametros.get("id");
+
+
+        // Para esta demostración solamente
+        // permitimos la encuesta con ID 1.
+
+        if (idEncuesta !== "1") {
+
+            document.body.innerHTML = `
+
+                <div style="
+                    max-width: 600px;
+                    margin: 80px auto;
+                    font-family: Arial;
+                    text-align: center;
+                ">
+
+                    <h2>
+                        Encuesta no disponible
+                    </h2>
+
+                    <p>
+                        No existe una encuesta de demostración
+                        con el identificador indicado.
+                    </p>
+
+                </div>
+            `;
+
+        }
+
+
+
+        // ====================================================
+        // ENVÍO DE LA ENCUESTA
+        // ====================================================
+
+        const formulario =
+            document.getElementById(
+                "formEncuesta"
+            );
+
+
+        if (formulario) {
+
+
+            formulario.addEventListener(
+                "submit",
+                function (evento) {
+
+
+                    evento.preventDefault();
+
+
+                    const datos =
+                        new FormData(
+                            formulario
+                        );
+
+
+                    const respuesta = {
+
+                        id_encuesta:
+                            1,
+
+                        fecha_envio:
+                            new Date()
+                                .toISOString(),
+
+                        respuestas: {
+
+                            trato:
+                                datos.get(
+                                    "trato"
+                                ),
+
+                            tiempo:
+                                datos.get(
+                                    "tiempo"
+                                ),
+
+                            condiciones:
+                                datos.get(
+                                    "condiciones"
+                                ),
+
+                            satisfaccion:
+                                datos.get(
+                                    "satisfaccion"
+                                ),
+
+                            comentario:
+                                document
+                                    .getElementById(
+                                        "comentario"
+                                    )
+                                    .value
+                                    .trim()
+
+                        }
+
+                    };
+
+
+
+                    // =========================================
+                    // SIMULACIÓN DE RESPUESTA_ENCUESTA
+                    // =========================================
+
+                    let respuestasGuardadas = [];
+
+
+                    try {
+
+                        respuestasGuardadas =
+                            JSON.parse(
+                                localStorage.getItem(
+                                    "sigsm_respuestas_encuesta"
+                                )
+                            ) || [];
+
+                    } catch (error) {
+
+                        respuestasGuardadas =
+                            [];
+
+                    }
+
+
+
+                    respuestasGuardadas.push(
+                        respuesta
+                    );
+
+
+                    localStorage.setItem(
+
+                        "sigsm_respuestas_encuesta",
+
+                        JSON.stringify(
+                            respuestasGuardadas
+                        )
+
+                    );
+
+
+
+                    // Ocultar formulario
+
+                    formulario.style.display =
+                        "none";
+
+
+                    // Mostrar confirmación
+
+                    const mensaje =
+                        document.getElementById(
+                            "mensajeExito"
+                        );
+
+
+                    mensaje.style.display =
+                        "block";
+
+
+                }
+            );
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

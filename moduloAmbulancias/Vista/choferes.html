@@ -1,236 +1,738 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>S.I.G.S.M. | Portal Choferes</title>
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
-    <link rel="stylesheet" href="assets/css/choferes.css">
+
+    <link rel="stylesheet"
+        href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
+
+    <link rel="stylesheet"
+        href="assets/css/choferes.css">
+
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
+
     <div class="app-layout">
+
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
         <aside class="sidebar" id="sidebar">
+
             <div class="sidebar-header">
-                <button class="btn-close-menu" id="closeMenuBtn"><i data-lucide="x"></i></button>
-                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo" class="sidebar-logo">
+
+                <button class="btn-close-menu" id="closeMenuBtn">
+                    <i data-lucide="x"></i>
+                </button>
+
+                <img
+                    src="../../serviciosComunes/autenticacion/assets/image.png"
+                    alt="Logo"
+                    class="sidebar-logo">
+
                 <span>S.I.G.S.M.</span>
+
             </div>
+
 
             <nav class="sidebar-nav">
-                <button class="nav-btn active" data-target="seccion-traslados">
-                    <i data-lucide="map-pin" class="icon-sm"></i> Mis Traslados
+
+                <button
+                    class="nav-btn active"
+                    data-target="seccion-traslados">
+
+                    <i data-lucide="map-pin" class="icon-sm"></i>
+                    Mis Traslados
+
                 </button>
-                <button class="nav-btn" data-target="seccion-planilla">
-                    <i data-lucide="clipboard-list" class="icon-sm"></i> Planilla Diaria
+
+                <button
+                    class="nav-btn"
+                    data-target="seccion-planilla">
+
+                    <i data-lucide="clipboard-list" class="icon-sm"></i>
+                    Planilla Diaria
+
                 </button>
+
             </nav>
 
+
             <div class="sidebar-profile">
-              <i data-lucide="ambulance"></i>
+
+                <i data-lucide="ambulance"></i>
+
                 <div class="profile-info">
-                    <span class="profile-name" id="user-name">Juan Pérez</span>
-                    <span class="profile-role">Chofer</span>
+
+                    <span
+                        class="profile-name"
+                        id="user-name">
+                        Pedro Miniño
+                    </span>
+
+                    <span class="profile-role">
+                        Chofer
+                    </span>
+
                 </div>
-                <a href="../../serviciosComunes/vistaGeneral/bifurcacion.html" class="btn-logout" title="Volver">
+
+                <a
+                    href="../../serviciosComunes/vistaGeneral/bifurcacion.html"
+                    class="btn-logout"
+                    title="Volver">
+
                     <i data-lucide="log-out"></i>
+
                 </a>
+
             </div>
+
         </aside>
 
+
         <main class="main-content">
+
+
             <header class="topbar">
+
                 <div class="topbar-left">
-                    <button class="btn-menu" id="openMenuBtn"><i data-lucide="menu"></i></button>
-                    <h2 class="section-title mb-0">Portal de Choferes</h2>
+
+                    <button
+                        class="btn-menu"
+                        id="openMenuBtn">
+
+                        <i data-lucide="menu"></i>
+
+                    </button>
+
+                    <h2 class="section-title mb-0">
+                        Portal de Choferes
+                    </h2>
+
                 </div>
+
             </header>
+
 
             <section class="content-wrapper">
 
-                                <!-- SECCIÓN 1: TRASLADOS -->
-                <div id="seccion-traslados" class="view-section active">
+
+                <!-- MIS TRASLADOS -->
+                <div
+                    id="seccion-traslados"
+                    class="view-section active">
+
+
                     <div class="tabs-container">
-                        <button class="tab-btn active" data-tab="tab-proceso">Traslado en Proceso</button>
-                        <button class="tab-btn" data-tab="tab-historial">Historial de Traslados</button>
+
+                        <button
+                            class="tab-btn active"
+                            data-tab="tab-proceso">
+
+                            Traslado activo
+
+                        </button>
+
+                        <button
+                            class="tab-btn"
+                            data-tab="tab-historial">
+
+                            Historial de Traslados
+
+                        </button>
+
                     </div>
 
-                    <!-- Traslado en Proceso (Hoja de Ruta Compleja) -->
-                    <div id="tab-proceso" class="tab-content active">
+
+                    <!-- TRASLADO ACTIVO -->
+                    <div
+                        id="tab-proceso"
+                        class="tab-content active">
+
+
                         <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
+
+
+                            <div
+                                class="accordion-header"
+                                onclick="toggleAccordion(this)">
+
+
                                 <div class="header-info">
-                                    <h3>Ruta Múltiple: TR-0492</h3>
-                                    <span class="badge urgencia-media">Ruta Asignada</span>
+
+                                    <h3>
+                                        Traslado #1 - AMB001
+                                    </h3>
+
+                                    <span class="badge urgencia-media">
+                                        Asignado
+                                    </span>
+
                                 </div>
-                                <i data-lucide="chevron-down" class="accordion-icon" style="transform: rotate(180deg);"></i>
+
+
+                                <i
+                                    data-lucide="chevron-down"
+                                    class="accordion-icon"
+                                    style="transform: rotate(180deg);">
+                                </i>
+
                             </div>
-                            
+
+
                             <div class="accordion-content open">
+
+
+                                <!-- INFORMACIÓN -->
+                                <div class="card-formulario mb-3">
+
+                                    <h4 class="mb-2">
+                                        Información del traslado
+                                    </h4>
+
+                                    <p>
+                                        <strong>Solicitud:</strong>
+                                        #2
+                                    </p>
+
+                                    <p>
+                                        <strong>Tipo de elemento:</strong>
+                                        Paciente
+                                    </p>
+
+                                    <p>
+                                        <strong>Origen:</strong>
+                                        Hospital de Clínicas
+                                    </p>
+
+                                    <p>
+                                        <strong>Destino:</strong>
+                                        Hospital Maciel
+                                    </p>
+
+                                    <p>
+                                        <strong>Vehículo:</strong>
+                                        Ambulancia - AMB001
+                                    </p>
+
+                                    <p>
+                                        <strong>Chofer:</strong>
+                                        Pedro Miniño
+                                    </p>
+
+                                    <p>
+                                        <strong>Enfermero de traslado:</strong>
+                                        enfermero_traslado
+                                    </p>
+
+                                    <p>
+                                        <strong>Proveedor externo:</strong>
+                                        Sin proveedor externo
+                                    </p>
+
+                                </div>
+
+
+                                <!-- SEGUIMIENTO -->
                                 <div class="timeline">
-                                    
-                                    <!-- HITO 1: Completado -->
+
+
+                                    <!-- 1 -->
                                     <div class="timeline-step completed">
-                                        <div class="step-marker"><i data-lucide="check"></i></div>
-                                        <div class="step-content">
-                                            <h4>1. Buscar Paciente 1: Norma</h4>
-                                            <p class="text-muted"><i data-lucide="map-pin" class="icon-sm"></i> 18 de Julio y Ejido</p>
-                                            
-                                            <div class="chat-container">
-                                                <div class="chat-message system">
-                                                    <i data-lucide="play-circle" class="icon-sm"></i> <span>Registro: Chofer marcó <strong>Saliendo</strong> (10:05)</span>
-                                                </div>
-                                                <div class="chat-message system">
-                                                    <i data-lucide="check-circle" class="icon-sm"></i> <span>Registro: Chofer marcó <strong>En Puerta</strong> (10:15)</span>
-                                                </div>
-                                                <div class="chat-message sent">
-                                                    <span class="chat-author">Tú:</span> Paciente a bordo, vamos por el siguiente.
-                                                </div>
-                                            </div>
+
+                                        <div class="step-marker">
+
+                                            <i data-lucide="check"></i>
+
                                         </div>
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                Solicitado
+                                            </h4>
+
+                                            <div class="chat-message system mb-1">
+
+                                                <i
+                                                    data-lucide="check-circle"
+                                                    class="icon-sm">
+                                                </i>
+
+                                                <span>
+                                                    Traslado solicitado.
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
                                     </div>
 
-                                    <!-- HITO 2: ACTIVO (Acá están los botones) -->
+
+                                    <!-- 2 -->
                                     <div class="timeline-step active">
-                                        <div class="step-marker"><i data-lucide="car"></i></div>
+
+                                        <div class="step-marker">
+
+                                            <i data-lucide="car"></i>
+
+                                        </div>
+
                                         <div class="step-content">
-                                            <h4>2. Buscar Paciente 2: Carlos</h4>
-                                            <p class="text-muted"><i data-lucide="map-pin" class="icon-sm"></i> Av. Italia y Propios</p>
-                                            
-                                            <div class="chat-container">
-                                                <div class="chat-message system">
-                                                    <i data-lucide="play-circle" class="icon-sm"></i> <span>Registro: Chofer marcó <strong>Saliendo</strong> (10:20)</span>
-                                                </div>
-                                                <div class="chat-message received">
-                                                    <span class="chat-author">Enlace:</span> Carlos baja en silla de ruedas, esperen en la rampa de acceso sur.
-                                                </div>
+
+                                            <h4>
+                                                Asignado
+                                            </h4>
+
+                                            <div class="chat-message system mb-1">
+
+                                                <i
+                                                    data-lucide="check-circle"
+                                                    class="icon-sm">
+                                                </i>
+
+                                                <span>
+                                                    Vehículo y personal asignados.
+                                                </span>
+
                                             </div>
 
-                                            <!-- Botones Gigantes de Acción Rápida para el Hito Actual -->
+
+                                            <!-- ACCIÓN DEL CHOFER -->
                                             <div class="acciones-conduccion">
-                                                <button class="btn-gigante btn-llegando"><i data-lucide="navigation"></i> Llegando</button>
-                                                <button class="btn-gigante btn-puerta"><i data-lucide="check-circle"></i> En Puerta</button>
+
+                                                <button
+                                                    type="button"
+                                                    class="btn-gigante btn-llegando"
+                                                    id="btn-iniciar-traslado">
+
+                                                    <i data-lucide="play-circle"></i>
+
+                                                    Iniciar traslado
+
+                                                </button>
+
                                             </div>
-                                            
-                                            <!-- Input de chat manual -->
+
+
+                                            <!-- COMUNICACIÓN CON UNIDAD DE ENLACE -->
                                             <div class="chat-input-wrapper mt-2">
-                                                <input type="text" class="form-input" placeholder="Escribir mensaje a enlace...">
-                                                <button class="btn-primary" style="width: auto; margin-top: 0;"><i data-lucide="send"></i></button>
+
+                                                <input
+                                                    type="text"
+                                                    class="form-input"
+                                                    placeholder="Escribir mensaje a Unidad de Enlace...">
+
+                                                <button
+                                                    type="button"
+                                                    class="btn-primary"
+                                                    style="width: auto; margin-top: 0;">
+
+                                                    <i data-lucide="send"></i>
+
+                                                </button>
+
                                             </div>
+
                                         </div>
+
                                     </div>
 
-                                    <!-- HITO 3: Pendiente -->
+
+                                    <!-- 3 -->
                                     <div class="timeline-step pending">
-                                        <div class="step-marker">3</div>
-                                        <div class="step-content">
-                                            <h4>3. Trasladar al Hospital Policial</h4>
-                                            <p class="text-muted"><i data-lucide="map-pin" class="icon-sm"></i> Bv. Batlle y Ordóñez</p>
+
+                                        <div class="step-marker">
+                                            3
                                         </div>
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                En curso
+                                            </h4>
+
+                                            <p class="text-muted">
+
+                                                <i
+                                                    data-lucide="map-pin"
+                                                    class="icon-sm">
+                                                </i>
+
+                                                Destino: Hospital Maciel
+
+                                            </p>
+
+
+                                            <div class="acciones-conduccion">
+
+                                                <button
+                                                    type="button"
+                                                    class="btn-gigante btn-puerta"
+                                                    disabled>
+
+                                                    <i data-lucide="map-pin"></i>
+
+                                                    Llegué a destino
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
                                     </div>
 
-                                    <!-- HITO 4: Pendiente -->
+
+                                    <!-- 4 -->
                                     <div class="timeline-step pending">
-                                        <div class="step-marker">4</div>
-                                        <div class="step-content">
-                                            <h4>4. Retorno a Base</h4>
-                                            <p class="text-muted"><i data-lucide="map-pin" class="icon-sm"></i> Hospital de Clínicas</p>
+
+                                        <div class="step-marker">
+                                            4
                                         </div>
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                En destino
+                                            </h4>
+
+
+                                            <div class="acciones-conduccion">
+
+                                                <button
+                                                    type="button"
+                                                    class="btn-gigante btn-llegando"
+                                                    disabled>
+
+                                                    <i data-lucide="rotate-ccw"></i>
+
+                                                    Iniciar retorno
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
                                     </div>
+
+
+                                    <!-- 5 -->
+                                    <div class="timeline-step pending">
+
+                                        <div class="step-marker">
+                                            5
+                                        </div>
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                En retorno
+                                            </h4>
+
+                                            <p class="text-muted">
+
+                                                <i
+                                                    data-lucide="map-pin"
+                                                    class="icon-sm">
+                                                </i>
+
+                                                Regreso al Hospital de Clínicas
+
+                                            </p>
+
+
+                                            <div class="acciones-conduccion">
+
+                                                <button
+                                                    type="button"
+                                                    class="btn-gigante btn-puerta"
+                                                    disabled>
+
+                                                    <i data-lucide="check-circle"></i>
+
+                                                    Finalizar traslado
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- 6 -->
+                                    <div class="timeline-step pending">
+
+                                        <div class="step-marker">
+                                            6
+                                        </div>
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                Finalizado
+                                            </h4>
+
+                                        </div>
+
+                                    </div>
+
 
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <!-- Historial de Traslados (Más robusto) -->
-                    <div id="tab-historial" class="tab-content hidden">
-                        
-                        <!-- Historial 1 -->
+
+                    <!-- HISTORIAL -->
+                    <div
+                        id="tab-historial"
+                        class="tab-content hidden">
+
+
                         <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
+
+
+                            <div
+                                class="accordion-header"
+                                onclick="toggleAccordion(this)">
+
+
                                 <div class="header-info">
-                                    <h4>TR-0490 - Alta Complejidad</h4>
-                                    <span class="text-success" style="font-weight: bold; font-size: 0.85rem;">Finalizado (08:30)</span>
+
+                                    <h4>
+                                        Traslado #1 - AMB001
+                                    </h4>
+
+                                    <span class="badge urgencia-media">
+                                        Asignado
+                                    </span>
+
                                 </div>
-                                <i data-lucide="chevron-down" class="accordion-icon"></i>
+
+
+                                <i
+                                    data-lucide="chevron-down"
+                                    class="accordion-icon"
+                                    style="transform: rotate(180deg);">
+                                </i>
+
                             </div>
-                            <div class="accordion-content">
+
+
+                            <div class="accordion-content open">
+
+
                                 <div class="timeline">
-                                    <div class="timeline-step completed">
-                                        <div class="step-marker"><i data-lucide="check"></i></div>
-                                        <div class="step-content">
-                                            <h4>1. Buscar Paciente: Juan</h4>
-                                            <div class="chat-message system mb-1"><i data-lucide="check-circle" class="icon-sm"></i> <span>En Puerta (07:15)</span></div>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-step completed">
-                                        <div class="step-marker"><i data-lucide="check"></i></div>
-                                        <div class="step-content">
-                                            <h4>2. Ingreso a block CTI</h4>
-                                            <div class="chat-message received mb-1"><span class="chat-author">Enlace:</span> Cama liberada, pueden ingresar.</div>
-                                            <div class="chat-message system"><i data-lucide="check-circle" class="icon-sm"></i> <span>En Puerta (07:45)</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Historial 2 -->
-                        <div class="card-traslado">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="header-info">
-                                    <h4>TR-0485 - Estudios Imagenológicos</h4>
-                                    <span class="text-success" style="font-weight: bold; font-size: 0.85rem;">Finalizado (Ayer)</span>
+
+                                    <!-- SOLICITADO -->
+                                    <div class="timeline-step completed">
+
+                                        <div class="step-marker">
+
+                                            <i data-lucide="check"></i>
+
+                                        </div>
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                Solicitado
+                                            </h4>
+
+                                            <p class="text-muted">
+                                                31/08/2026 20:19
+                                            </p>
+
+                                            <div class="chat-message system">
+
+                                                <span>
+                                                    Traslado solicitado.
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- ASIGNADO -->
+                                    <div class="timeline-step active">
+
+                                        <div class="step-marker">
+
+                                            <i data-lucide="car"></i>
+
+                                        </div>
+
+                                        <div class="step-content">
+
+                                            <h4>
+                                                Asignado
+                                            </h4>
+
+                                            <div class="chat-message system">
+
+                                                <span>
+                                                    Vehículo y personal asignados.
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
                                 </div>
-                                <i data-lucide="chevron-down" class="accordion-icon"></i>
+
                             </div>
-                            <div class="accordion-content">
-                                <p class="text-muted mb-2">Ruta de 4 pacientes a Sanatorio Mautone y retorno.</p>
-                                <button class="btn-outline w-100"><i data-lucide="file-text"></i> Ver detalles de ruta</button>
-                            </div>
+
                         </div>
 
                     </div>
+
+
                 </div>
 
-                <div id="seccion-planilla" class="view-section hidden">
+
+                <!-- PLANILLA DIARIA -->
+                <div
+                    id="seccion-planilla"
+                    class="view-section hidden">
+
+
                     <div class="card-formulario">
-                        <h3>Iniciar Turno - Planilla</h3>
-                        <p class="text-muted">Sus datos personales y fecha se registran automáticamente.</p>
-                        
+
+                        <h3>
+                            Iniciar Turno - Planilla
+                        </h3>
+
+                        <p class="text-muted">
+                            Sus datos personales y la fecha se registran automáticamente.
+                        </p>
+
+
                         <form class="planilla-form mt-3">
+
+
                             <div class="form-group">
-                                <label>Vehículo Asignado</label>
-                                <select class="form-input" required>
-                                    <option value="">Seleccione el móvil...</option>
-                                    <option value="Movil_01">Móvil 01 - Mercedes Benz Sprinter</option>
-                                    <option value="Movil_02">Móvil 02 - Hyundai H1</option>
-                                    <option value="Movil_04">Móvil 04 - Fiat Ducato</option>
-                                </select>
+
+                                <label>
+                                    Chofer
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-input"
+                                    value="Pedro Miniño"
+                                    readonly>
+
                             </div>
+
+
                             <div class="form-group">
-                                <label>Enfermero Acompañante</label>
-                                <select class="form-input" required>
-                                    <option value="">Seleccione el enfermero...</option>
-                                    <option value="enf_1">Lic. Ana Silva</option>
-                                    <option value="enf_2">Lic. Roberto Díaz</option>
-                                    <option value="enf_3">Lic. Carmen Torres</option>
+
+                                <label>
+                                    Vehículo Asignado
+                                </label>
+
+                                <select
+                                    class="form-input"
+                                    required>
+
+                                    <option value="">
+                                        Seleccione el vehículo...
+                                    </option>
+
+                                    <option value="1">
+                                        Ambulancia - AMB001
+                                    </option>
+
+                                    <option value="2">
+                                        Auto - AUT001
+                                    </option>
+
+                                    <option value="3">
+                                        Camión - CAM001
+                                    </option>
+
                                 </select>
+
                             </div>
-                            <button type="button" class="btn-primary w-100 mt-2">Guardar Planilla</button>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Enfermero Acompañante
+                                </label>
+
+                                <select
+                                    class="form-input"
+                                    required>
+
+                                    <option value="">
+                                        Seleccione el enfermero...
+                                    </option>
+
+                                    <option value="6">
+                                        enfermero_traslado
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="btn-primary w-100 mt-2">
+
+                                Guardar Planilla
+
+                            </button>
+
                         </form>
+
                     </div>
+
                 </div>
+
 
             </section>
+
         </main>
+
     </div>
 
-    <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
-    <script src="assets/js/choferes.js"></script>
-    <script>lucide.createIcons();</script>
+
+    <script
+        src="../../serviciosComunes/vistaGeneral/assets/js/layout.js">
+    </script>
+
+    <script
+        src="assets/js/choferes.js">
+    </script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
 </body>
+
 </html>
