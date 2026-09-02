@@ -1,27 +1,26 @@
 <?php
 require_once __DIR__ . '/../../../servicios/permisos/verificarSesion.php';
 requiereRol('administrador');
-require_once __DIR__ . '/../modelo/UsuarioModelo.php';
+require_once __DIR__ . '/../modelo/PacienteModelo.php';
 
-$idUsuario = (int) ($_GET['id'] ?? 0);
-$usuario = UsuarioModelo::obtenerPorId($idUsuario);
+$ciPaciente = $_GET['ci'] ?? '';
+$paciente = PacienteModelo::obtenerPorCi($ciPaciente);
 
-if ($usuario === null) {
-    $_SESSION['mensaje'] = 'El usuario solicitado no existe.';
+if ($paciente === null) {
+    $_SESSION['mensaje'] = 'El paciente solicitado no existe.';
     header('Location: listado.php');
     exit;
 }
 
-$tituloPagina = 'Editar usuario';
-$roles = UsuarioModelo::listarRoles();
+$tituloPagina = 'Editar paciente';
 
-$errores = $_SESSION['errores_usuario'] ?? [];
-unset($_SESSION['errores_usuario']);
+$errores = $_SESSION['errores_paciente'] ?? [];
+unset($_SESSION['errores_paciente']);
 
 require __DIR__ . '/../../../servicios/vista_general/encabezado.php';
 ?>
     <div class="cabecera-seccion">
-        <h1>Editar usuario</h1>
+        <h1>Editar paciente</h1>
         <a href="listado.php" class="enlace-volver">← Volver al listado</a>
     </div>
 
@@ -31,73 +30,45 @@ require __DIR__ . '/../../../servicios/vista_general/encabezado.php';
         </div>
     <?php endif; ?>
 
-    <form id="formUsuario" class="tarjeta-formulario" action="../controlador/ControladorUsuarios.php" method="POST" novalidate>
+    <form id="formPaciente" class="tarjeta-formulario" action="../controlador/ControladorPacientes.php" method="POST" novalidate>
         <input type="hidden" name="accion" value="editar">
-        <input type="hidden" name="id_usuario" value="<?= (int) $usuario['id_usuario'] ?>">
+        <input type="hidden" name="ci_original" value="<?= htmlspecialchars($paciente['ci']) ?>">
 
         <div class="fila-formulario">
             <div class="campo">
-                <label for="nombre_usuario">Nombre de usuario</label>
-                <input type="text" id="nombre_usuario" name="nombre_usuario" maxlength="50"
-                       value="<?= htmlspecialchars($usuario['nombre_usuario']) ?>">
-                <span class="error" id="errorNombreUsuario"></span>
-            </div>
-            <div class="campo">
-                <label for="contrasenha">Nueva contraseña (opcional)</label>
-                <input type="password" id="contrasenha" name="contrasenha" maxlength="64" autocomplete="new-password"
-                       placeholder="Dejar en blanco para no cambiarla">
-                <span class="error" id="errorContrasenha"></span>
+                <label for="ci">Cédula de Identidad</label>
+                <input type="text" id="ci" name="ci" maxlength="20"
+                       value="<?= htmlspecialchars($paciente['ci']) ?>">
+                <span class="error" id="errorCi"></span>
             </div>
         </div>
 
         <div class="fila-formulario">
             <div class="campo">
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" maxlength="50"
-                       value="<?= htmlspecialchars($usuario['nombre']) ?>">
+                <label for="nombre">Nombres</label>
+                <input type="text" id="nombre" name="nombre" maxlength="80"
+                       value="<?= htmlspecialchars($paciente['nombre']) ?>">
                 <span class="error" id="errorNombre"></span>
             </div>
             <div class="campo">
-                <label for="apellido">Apellido</label>
-                <input type="text" id="apellido" name="apellido" maxlength="50"
-                       value="<?= htmlspecialchars($usuario['apellido']) ?>">
+                <label for="apellido">Apellidos</label>
+                <input type="text" id="apellido" name="apellido" maxlength="80"
+                       value="<?= htmlspecialchars($paciente['apellido']) ?>">
                 <span class="error" id="errorApellido"></span>
             </div>
         </div>
 
         <div class="campo">
-            <label for="email">Correo electrónico</label>
-            <input type="email" id="email" name="email" maxlength="120"
-                   value="<?= htmlspecialchars($usuario['email']) ?>">
-            <span class="error" id="errorEmail"></span>
+            <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento"
+                   value="<?= htmlspecialchars($paciente['fecha_nacimiento']) ?>">
+            <span class="error" id="errorFechaNacimiento"></span>
         </div>
-
-        <fieldset class="campo-roles">
-            <legend>Roles</legend>
-            <?php foreach ($roles as $r): ?>
-                <label class="opcion-rol">
-                    <input type="checkbox" name="roles[]" value="<?= (int) $r['id_rol'] ?>"
-                        <?= in_array((int) $r['id_rol'], $usuario['roles'], true) ? 'checked' : '' ?>>
-                    <?= htmlspecialchars($r['nombre_rol']) ?>
-                </label>
-            <?php endforeach; ?>
-            <span class="error" id="errorRoles"></span>
-        </fieldset>
-
-        <label class="opcion-check">
-            <input type="checkbox" name="activo" <?= (int) $usuario['activo'] === 1 ? 'checked' : '' ?>
-                <?= (int) $usuario['id_usuario'] === (int) $_SESSION['id_usuario'] ? 'disabled' : '' ?>>
-            Usuario habilitado para iniciar sesión
-        </label>
-        <?php if ((int) $usuario['id_usuario'] === (int) $_SESSION['id_usuario']): ?>
-            <input type="hidden" name="activo" value="on">
-            <p class="ayuda-campo">No puede inhabilitar su propia cuenta.</p>
-        <?php endif; ?>
 
         <div class="acciones-formulario">
             <button type="submit" class="boton boton-primario">Guardar cambios</button>
             <a href="listado.php" class="boton boton-secundario">Cancelar</a>
         </div>
     </form>
-    <script src="/sigsm/assets/js/validacion-usuario.js"></script>
+    <script src="/sigsm/assets/js/validacion-paciente.js"></script>
 <?php require __DIR__ . '/../../../servicios/vista_general/pie.php'; ?>
