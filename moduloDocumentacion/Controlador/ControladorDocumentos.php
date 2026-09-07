@@ -6,11 +6,7 @@ session_start();
 
 $accion = $_POST['accion'] ?? $_GET['accion'] ?? '';
 
-/*
-    Mientras no esté implementado el login real,
-    usamos un usuario de prueba existente en la base.
-    Cambialo después si corresponde.
-*/
+
 $idUsuarioCarga = 4;
 
 
