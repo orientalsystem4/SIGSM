@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Model/DocumentoModelo.php';
 session_start();
 
 $accion = $_POST['accion'] ?? $_GET['accion'] ?? '';
-*// usamos el usuario 4 para probar la carga de documentos porque el login aun no esta implementado*//
+// usamos el usuario 4 para probar la carga de documentos porque el login aun no esta implementado
 
 
 $idUsuarioCarga = 4;
