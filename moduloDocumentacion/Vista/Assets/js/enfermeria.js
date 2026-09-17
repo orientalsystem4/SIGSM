@@ -594,9 +594,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const categoriaQR =
         document.getElementById('qr-categoria');
 
-    const encuestaQR =
-        document.getElementById('qr-encuesta');
-
     const btnGenerarQR =
         document.getElementById('btn-generar-qr');
 
@@ -666,7 +663,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Tratamos de armar una ruta dinámica basada en donde estamos parados
             let baseUrl = window.location.origin;
-            if (window.location.pathname.includes('/SIGSM/')) {
+            if (window.location.protocol === 'file:' || window.location.port === '5500' || baseUrl === 'null' || !baseUrl.startsWith('http')) {
+                baseUrl = 'http://localhost/SIGSM';
+            } else if (window.location.pathname.includes('/SIGSM/')) {
                 baseUrl += '/SIGSM';
             }
             const urlEncuesta = baseUrl + "/moduloEncuestas/Vista/responder.php?categoria=" + encodeURIComponent(categoriaQR.value);

@@ -1,6 +1,7 @@
 :root {
     --primary: #0284c7;
     --primary-light: #e0f2fe;
+    --primary-hover: #0369a1;
     --bg-color: #f8fafc;
     --card-bg: #ffffff;
     --text-main: #1e293b;
@@ -72,7 +73,7 @@ body { font-family: system-ui, sans-serif; background-color: var(--bg-color); co
     border: none; font-size: 0.875rem; font-weight: 500; cursor: pointer;
 }
 
-.nav-btn:hover { background-color: var(--bg-color); color: var(--text-main); }
+.nav-btn:hover { background-color: #e2e8f0; color: var(--text-main); }
 .nav-btn.active { background-color: var(--primary-light); color: var(--primary); }
 
 /* SECCIÓN DE PERFIL */

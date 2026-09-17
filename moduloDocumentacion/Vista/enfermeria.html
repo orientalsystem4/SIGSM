@@ -7,9 +7,9 @@
 
     <title>S.I.G.S.M. | Portal Enfermería</title>
 
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css?v=2">
 
-    <link rel="stylesheet" href="Assets/css/enfermeria.css">
+    <link rel="stylesheet" href="Assets/css/enfermeria.css?v=2">
 
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -702,32 +702,7 @@
 
 
 
-                                <div class="form-group">
 
-                                    <label>
-                                        Encuesta
-                                    </label>
-
-                                    <select id="qr-encuesta" class="form-input" required>
-
-                                        <option value="">
-                                            Seleccione la encuesta...
-                                        </option>
-
-                                <div class="form-group" style="display: none;">
-                                    <!-- Selector removido: La encuesta ahora es institucional y estándar para todas las áreas -->
-                                    <select id="qr-encuesta" class="form-input">
-                                        <option value="1">Encuesta de Satisfacción Institucional</option>
-                                    </select>
-
-                                    <p class="text-muted">
-                                        Por el momento se utiliza una encuesta de
-                                        demostración. Las encuestas definitivas se
-                                        incorporarán cuando sean proporcionadas por
-                                        el Hospital de Clínicas.
-                                    </p>
-
-                                </div>
 
 
 
@@ -777,21 +752,14 @@
                                         <span id="lbl-categoria">-</span>
                                     </p>
 
-                                    <p>
-                                        <strong>Encuesta:</strong>
-                                        <span id="lbl-encuesta">-</span>
-                                    <p class="text-muted" style="margin-top: 10px;">
-                                        Encuesta de Satisfacción Institucional
-                                    </p>
-
                                     <p class="text-muted">
-                                        La respuesta a la encuesta es anónima.
+                                        Encuesta de Satisfacción Institucional (Anónima)
                                     </p>
 
                                 </div>
 
 
-                                <a id="btn-abrir-encuesta" href="#" target="_blank" class="btn-primary w-100 mt-3" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <a id="btn-abrir-encuesta" href="#" target="_blank" class="btn-primary w-100 mt-3 btn-abrir-directo">
                                     <i data-lucide="external-link"></i>
                                     Abrir Encuesta Directamente
                                 </a>
