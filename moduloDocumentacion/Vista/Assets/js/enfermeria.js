@@ -612,115 +612,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const lblCategoria =
         document.getElementById('lbl-categoria');
 
-    const lblEncuesta =
-        document.getElementById('lbl-encuesta');
-
-
     /*
-        Las encuestas definitivas todavía no fueron entregadas
-        por el Hospital de Clínicas.
-
-        Mientras tanto se utiliza UNA encuesta de demostración
-        para mostrar el funcionamiento:
-
-        Enfermería -> genera QR -> paciente abre encuesta -> responde.
-
-        Cuando estén disponibles las encuestas reales,
-        estos datos se reemplazarán por los datos reales.
+        Dirección local de la nueva encuesta (apuntamos a nuestro propio módulo local)
+        Ajustado para que funcione en XAMPP con PHP embebido o Apache normal.
     */
-
-    const encuestasDemo = [
-
-        {
-            id_encuesta: 1,
-            nombre: "Encuesta de demostración"
-        }
-
-    ];
-
-
-    /*
-        Dirección pública que tendrá la encuesta cuando
-        esta versión sea publicada en GitHub Pages.
-    */
-
-    const URL_ENCUESTA_PUBLICA =
-        "https://orientalsystem4.github.io/SIGSM/moduloDocumentacion/Vista/encuesta.html";
-
-
-
-    // =========================================================
-    // 12. CAMBIO DE CATEGORÍA
-    // =========================================================
-
-    if (categoriaQR && encuestaQR) {
-
-        categoriaQR.addEventListener('change', () => {
-
-
-            // Limpiar selector
-            encuestaQR.innerHTML = `
-                <option value="">
-                    Seleccione la encuesta...
-                </option>
-            `;
-
-
-            /*
-                Por ahora mostramos la encuesta de demostración.
-
-                Cuando estén las encuestas definitivas,
-                acá se mostrarán solamente las correspondientes
-                al área seleccionada.
-            */
-
-            if (categoriaQR.value !== "") {
-
-                encuestasDemo.forEach(encuesta => {
-
-                    const opcion =
-                        document.createElement('option');
-
-
-                    opcion.value =
-                        encuesta.id_encuesta;
-
-
-                    opcion.textContent =
-                        encuesta.nombre;
-
-
-                    encuestaQR.appendChild(
-                        opcion
-                    );
-
-                });
-
-            }
-
-
-            // Si había un QR mostrado, lo ocultamos.
-            if (qrGenerado) {
-
-                qrGenerado.classList.add(
-                    'hidden'
-                );
-
-            }
-
-
-            if (qrVacio) {
-
-                qrVacio.classList.remove(
-                    'hidden'
-                );
-
-            }
-
-        });
-
-    }
-
+    const URL_ENCUESTA_PUBLICA = 
+        window.location.origin + "/SIGSM/moduloEncuestas/Vista/responder.php"; // Si usas Apache local
+        // O si usas `php -S`: window.location.origin + "/moduloEncuestas/Vista/responder.php"
 
 
     // =========================================================
@@ -730,7 +628,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnGenerarQR) {
 
         btnGenerarQR.addEventListener('click', () => {
-
 
             // -------------------------------------------------
             // VALIDAR ÁREA
@@ -749,25 +646,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-
-            // -------------------------------------------------
-            // VALIDAR ENCUESTA
-            // -------------------------------------------------
-
-            if (
-                !encuestaQR ||
-                encuestaQR.value === ""
-            ) {
-
-                alert(
-                    "Seleccione una encuesta."
-                );
-
-                return;
-            }
-
-
-
             // -------------------------------------------------
             // NOMBRES PARA MOSTRAR EN PANTALLA
             // -------------------------------------------------
@@ -777,71 +655,38 @@ document.addEventListener("DOMContentLoaded", () => {
                     categoriaQR.selectedIndex
                 ].text;
 
-
-            const nombreEncuesta =
-                encuestaQR.options[
-                    encuestaQR.selectedIndex
-                ].text;
-
-
-
             if (lblCategoria) {
-
-                lblCategoria.textContent =
-                    nombreCategoria;
-
+                lblCategoria.textContent = nombreCategoria;
             }
-
-
-            if (lblEncuesta) {
-
-                lblEncuesta.textContent =
-                    nombreEncuesta;
-
-            }
-
-
 
             // -------------------------------------------------
             // URL DE LA ENCUESTA
             // -------------------------------------------------
+            // Solo pasamos la categoría, la encuesta es única (institucional)
 
-            /*
-                El QR contiene la dirección de la encuesta.
+            // Tratamos de armar una ruta dinámica basada en donde estamos parados
+            let baseUrl = window.location.origin;
+            if (window.location.pathname.includes('/SIGSM/')) {
+                baseUrl += '/SIGSM';
+            }
+            const urlEncuesta = baseUrl + "/moduloEncuestas/Vista/responder.php?categoria=" + encodeURIComponent(categoriaQR.value);
 
-                También enviamos:
-                - id de encuesta
-                - id de categoría
-
-                No enviamos datos personales del paciente.
-            */
-
-            const urlEncuesta =
-                URL_ENCUESTA_PUBLICA +
-                "?id=" +
-                encodeURIComponent(
-                    encuestaQR.value
-                ) +
-                "&categoria=" +
-                encodeURIComponent(
-                    categoriaQR.value
-                );
-
-
+            const btnAbrir = document.getElementById('btn-abrir-encuesta');
+            if (btnAbrir) {
+                btnAbrir.href = urlEncuesta;
+            }
 
             // -------------------------------------------------
             // GENERAR IMAGEN DEL QR
             // -------------------------------------------------
 
             if (qrImg) {
-
                 qrImg.src =
                     "https://api.qrserver.com/v1/create-qr-code/" +
                     "?size=200x200&data=" +
                     encodeURIComponent(
                         urlEncuesta
                     );
-
             }
 
 
