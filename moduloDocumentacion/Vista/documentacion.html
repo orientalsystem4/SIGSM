@@ -12,7 +12,7 @@
 
     <link rel="stylesheet"
         href="Assets/css/documentacion.css">
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -669,185 +669,48 @@
 
                     <div id="enc-metricas" class="sub-content active">
 
-    <div class="flex-between mb-3">
-
-        <h3>
-            Métricas de Satisfacción de Pacientes
-        </h3>
-
-        <span class="badge badge-gray">
-            Datos de demostración
-        </span>
-
+    <div class="flex-between mb-3" style="flex-wrap: wrap; gap: 15px;">
+        <h3>Métricas de Satisfacción Institucional</h3>
+        <select id="filtro-categoria" class="form-input" style="width: auto; min-width: 200px;">
+            <option value="0">Todas las Áreas (General)</option>
+            <option value="1">Urología</option>
+            <option value="2">Cardiología</option>
+            <option value="3">Traumatología</option>
+            <option value="4">Gastroenterología</option>
+            <option value="5">Ginecobstetricia</option>
+            <option value="6">Imagenología</option>
+            <option value="7">Medicina Nuclear</option>
+        </select>
     </div>
 
-
-    <!-- TARJETAS DE MÉTRICAS -->
-
+    <!-- TARJETAS DE KPIs -->
     <div class="kpi-grid mb-md">
-
-        <!-- ENCUESTAS COMPLETADAS -->
-
         <div class="kpi-card">
-
-            <i
-                data-lucide="file-check"
-                class="kpi-icon text-primary">
-            </i>
-
+            <i data-lucide="users" class="kpi-icon text-primary"></i>
             <div class="kpi-data">
-
-                <h4>
-                    145
-                </h4>
-
-                <p>
-                    Encuestas Completadas
-                </p>
-
+                <h4 id="lbl-total-encuestas">-</h4>
+                <p>Respuestas Totales</p>
             </div>
-
         </div>
-
-
-        <!-- PROMEDIO DE SATISFACCIÓN -->
-
         <div class="kpi-card">
-
-            <i
-                data-lucide="star"
-                class="kpi-icon text-warning">
-            </i>
-
+            <i data-lucide="star" class="kpi-icon text-warning"></i>
             <div class="kpi-data">
-
-                <h4>
-                    4.2 / 5
-                </h4>
-
-                <p>
-                    Promedio de Satisfacción
-                </p>
-
+                <h4 id="lbl-promedio-general">-</h4>
+                <p>Promedio General</p>
             </div>
-
         </div>
-
-
-        <!-- QR GENERADOS -->
-
-        <div class="kpi-card">
-
-            <i
-                data-lucide="qr-code"
-                class="kpi-icon text-success">
-            </i>
-
-            <div class="kpi-data">
-
-                <h4>
-                    210
-                </h4>
-
-                <p>
-                    QR Generados (Mes)
-                </p>
-
-            </div>
-
-        </div>
-
     </div>
 
+    <!-- CONTENEDOR DE GRÁFICOS DINÁMICOS -->
+    <div id="graficos-container" style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- Aquí se renderizan las tarjetas de preguntas (Chart.js) vía JS -->
+        <p class="text-center text-muted">Cargando métricas...</p>
+    </div>
 
-    <!-- DISTRIBUCIÓN DE SATISFACCIÓN -->
-
-    <div class="card-formulario">
-
-        <h4 class="mb-3">
-            Distribución de Satisfacción (General)
-        </h4>
-
-
-        <!-- EXCELENTE -->
-
-        <div class="metric-row">
-
-            <span>
-                Excelente (65%)
-            </span>
-
-            <div class="progress-bar-bg">
-
-                <div
-                    class="progress-bar-fill bg-success"
-                    style="width: 65%;">
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- BUENO -->
-
-        <div class="metric-row">
-
-            <span>
-                Bueno (20%)
-            </span>
-
-            <div class="progress-bar-bg">
-
-                <div
-                    class="progress-bar-fill bg-primary"
-                    style="width: 20%;">
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- REGULAR -->
-
-        <div class="metric-row">
-
-            <span>
-                Regular (10%)
-            </span>
-
-            <div class="progress-bar-bg">
-
-                <div
-                    class="progress-bar-fill bg-warning"
-                    style="width: 10%;">
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- MALO -->
-
-        <div class="metric-row">
-
-            <span>
-                Malo (5%)
-            </span>
-
-            <div class="progress-bar-bg">
-
-                <div
-                    class="progress-bar-fill bg-danger"
-                    style="width: 5%;">
-                </div>
-
-            </div>
-
-        </div>
-
+    <!-- COMENTARIOS LIBRES -->
+    <h3 class="mb-3 mt-4" style="margin-top: 2rem;">Comentarios y Sugerencias</h3>
+    <div id="comentarios-container" style="display: flex; flex-direction: column; gap: 15px;">
+        <!-- Comentarios vía JS -->
     </div>
 
 </div>
@@ -1056,9 +919,8 @@
     </script>
 
 
-    <script
-        src="Assets/js/documentacion.js">
-    </script>
+    <script src="Assets/js/documentacion.js"></script>
+    <script src="Assets/js/metricas.js"></script>
 
 
     <script>
