@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 $usuarioActual = obtenerUsuarioActual();
+require_once __DIR__ . '/../Model/DocumentoModelo.php';
+$documentos = DocumentoModelo::listarTodos();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -46,32 +48,24 @@ $usuarioActual = obtenerUsuarioActual();
 
 
             <nav class="sidebar-nav">
-
                 <button
                     class="nav-btn active"
                     data-target="sec-documentos">
-
-                    <i
-                        data-lucide="folder-open"
-                        class="icon-sm">
-                    </i>
-
+                    <i data-lucide="folder-open" class="icon-sm"></i>
                     Documentos (Categorías)
-
                 </button>
 
+                <a href="listado.php" class="nav-btn" style="text-decoration: none;">
+                    <i data-lucide="files" class="icon-sm"></i>
+                    Gestionar documentos
+                </a>
 
                 <button
                     class="nav-btn"
                     data-target="sec-encuestas">
-
-                    <i
-                        data-lucide="pie-chart"
-                        class="icon-sm">
-                    </i>
-
+                    <i data-lucide="pie-chart" class="icon-sm"></i>
                     Encuestas y Métricas
-
+                </button>
             </nav>
 
             <?php if (tieneRol('admin') || tieneRol(1)): ?>
@@ -157,16 +151,10 @@ $usuarioActual = obtenerUsuarioActual();
                         </h3>
 
 
-                        <button
-                            class="btn-primary"
-                            onclick="abrirModal('modal-subir-doc')">
-
+                        <a href="crear.php" class="btn-primary" style="text-decoration: none;">
                             <i data-lucide="upload"></i>
-
                             Subir Documento
-
-                        </button>
-
+                        </a>
                     </div>
 
 
@@ -676,51 +664,51 @@ $usuarioActual = obtenerUsuarioActual();
 
                     <div id="enc-metricas" class="sub-content active">
 
-    <div class="flex-between mb-3" style="flex-wrap: wrap; gap: 15px;">
-        <h3>Métricas de Satisfacción Institucional</h3>
-        <select id="filtro-categoria" class="form-input" style="width: auto; min-width: 200px;">
-            <option value="0">Todas las Áreas (General)</option>
-            <option value="1">Urología</option>
-            <option value="2">Cardiología</option>
-            <option value="3">Traumatología</option>
-            <option value="4">Gastroenterología</option>
-            <option value="5">Ginecobstetricia</option>
-            <option value="6">Imagenología</option>
-            <option value="7">Medicina Nuclear</option>
-        </select>
-    </div>
+                        <div class="flex-between mb-3" style="flex-wrap: wrap; gap: 15px;">
+                            <h3>Métricas de Satisfacción Institucional</h3>
+                            <select id="filtro-categoria" class="form-input" style="width: auto; min-width: 200px;">
+                                <option value="0">Todas las Áreas (General)</option>
+                                <option value="1">Urología</option>
+                                <option value="2">Cardiología</option>
+                                <option value="3">Traumatología</option>
+                                <option value="4">Gastroenterología</option>
+                                <option value="5">Ginecobstetricia</option>
+                                <option value="6">Imagenología</option>
+                                <option value="7">Medicina Nuclear</option>
+                            </select>
+                        </div>
 
-    <!-- TARJETAS DE KPIs -->
-    <div class="kpi-grid mb-md">
-        <div class="kpi-card">
-            <i data-lucide="users" class="kpi-icon text-primary"></i>
-            <div class="kpi-data">
-                <h4 id="lbl-total-encuestas">-</h4>
-                <p>Respuestas Totales</p>
-            </div>
-        </div>
-        <div class="kpi-card">
-            <i data-lucide="star" class="kpi-icon text-warning"></i>
-            <div class="kpi-data">
-                <h4 id="lbl-promedio-general">-</h4>
-                <p>Promedio General</p>
-            </div>
-        </div>
-    </div>
+                        <!-- TARJETAS DE KPIs -->
+                        <div class="kpi-grid mb-md">
+                            <div class="kpi-card">
+                                <i data-lucide="users" class="kpi-icon text-primary"></i>
+                                <div class="kpi-data">
+                                    <h4 id="lbl-total-encuestas">-</h4>
+                                    <p>Respuestas Totales</p>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <i data-lucide="star" class="kpi-icon text-warning"></i>
+                                <div class="kpi-data">
+                                    <h4 id="lbl-promedio-general">-</h4>
+                                    <p>Promedio General</p>
+                                </div>
+                            </div>
+                        </div>
 
-    <!-- CONTENEDOR DE GRÁFICOS DINÁMICOS -->
-    <div id="graficos-container" style="display: flex; flex-direction: column; gap: 20px;">
-        <!-- Aquí se renderizan las tarjetas de preguntas (Chart.js) vía JS -->
-        <p class="text-center text-muted">Cargando métricas...</p>
-    </div>
+                        <!-- CONTENEDOR DE GRÁFICOS DINÁMICOS -->
+                        <div id="graficos-container" style="display: flex; flex-direction: column; gap: 20px;">
+                            <!-- Aquí se renderizan las tarjetas de preguntas (Chart.js) vía JS -->
+                            <p class="text-center text-muted">Cargando métricas...</p>
+                        </div>
 
-    <!-- COMENTARIOS LIBRES -->
-    <h3 class="mb-3 mt-4" style="margin-top: 2rem;">Comentarios y Sugerencias</h3>
-    <div id="comentarios-container" style="display: flex; flex-direction: column; gap: 15px;">
-        <!-- Comentarios vía JS -->
-    </div>
+                        <!-- COMENTARIOS LIBRES -->
+                        <h3 class="mb-3 mt-4" style="margin-top: 2rem;">Comentarios y Sugerencias</h3>
+                        <div id="comentarios-container" style="display: flex; flex-direction: column; gap: 15px;">
+                            <!-- Comentarios vía JS -->
+                        </div>
 
-</div>
+                    </div>
                     <!-- ================================================= -->
                     <!-- ESTADO DE LAS ENCUESTAS -->
                     <!-- ================================================= -->
@@ -772,7 +760,7 @@ $usuarioActual = obtenerUsuarioActual();
                                     </p>
 
 
-                                 
+
 
                                 </div>
 
@@ -923,6 +911,13 @@ $usuarioActual = obtenerUsuarioActual();
 
     <script
         src="../../serviciosComunes/vistaGeneral/assets/js/layout.js">
+    </script>
+
+    <script>
+        window.documentosBD = <?= json_encode(
+                                    $documentos,
+                                    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+                                ) ?>;
     </script>
 
 

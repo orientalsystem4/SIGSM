@@ -168,7 +168,7 @@ unset(
         <h1>Nuevo documento</h1>
 
         <a
-            href="listado.php"
+            href="documentacion.php"
             class="enlace-volver"
         >
             ← Volver al listado
@@ -278,7 +278,7 @@ unset(
             </button>
 
             <a
-                href="listado.php"
+                href="documentacion.php"
                 class="boton boton-secundario"
             >
                 Cancelar

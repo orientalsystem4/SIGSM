@@ -8,7 +8,7 @@ $documento = DocumentoModelo::obtenerPorId($idDocumento);
 
 if ($documento === null) {
     $_SESSION['mensaje'] = 'El documento solicitado no existe.';
-    header('Location: listado.php');
+    header('Location: documentacion.php');
     exit;
 }
 
@@ -179,7 +179,7 @@ unset($_SESSION['errores_documento']);
         <h1>Editar documento</h1>
 
         <a
-            href="listado.php"
+            href="documentacion.php"
             class="enlace-volver"
         >
             ← Volver al listado
@@ -316,7 +316,7 @@ unset($_SESSION['errores_documento']);
             </button>
 
             <a
-                href="listado.php"
+                href="documentacion.php"
                 class="boton boton-secundario"
             >
                 Cancelar

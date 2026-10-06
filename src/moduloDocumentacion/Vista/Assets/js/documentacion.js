@@ -502,143 +502,74 @@ function obtenerTodosLosDocumentos() {
 // ============================================================
 
 function cargarDocumentos() {
+    const documentos = window.documentosBD || [];
 
-
-    // Limpiar las 7 tablas.
-
-    for (
-        let categoria = 1;
-        categoria <= 7;
-        categoria++
-    ) {
-
-
-        const tbody =
-            document.getElementById(
-                "tabla-documentos-" + categoria
-            );
-
-
-        if (tbody) {
-
-            tbody.innerHTML = "";
-
-        }
-
-    }
-
-
-
-    const documentos =
-        obtenerTodosLosDocumentos();
-
-
-
-    documentos.forEach(function (documento) {
-
-
-        if (!documento.activo) {
-
-            return;
-
-        }
-
-
-
-        const tbody =
-            document.getElementById(
-                "tabla-documentos-" +
-                documento.id_categoria
-            );
-
-
-        if (!tbody) {
-
-            return;
-
-        }
-
-
-
-        const fila =
-            document.createElement("tr");
-
-
-
-        const nombre =
-            obtenerNombreDocumento(
-                documento.archivo_url
-            );
-
-
-
-        const fecha =
-            obtenerFechaDocumento(
-                documento.fecha_carga
-            );
-
-
-
-        fila.innerHTML = `
-
-            <td>
-
-                <strong>
-                    ${nombre}
-                </strong>
-
-            </td>
-
-
-            <td>
-                ${fecha}
-            </td>
-
-
-            <td>
-                ${documento.usuario}
-            </td>
-
-
-            <td>
-
-                <button
-                    class="btn-icon text-danger"
-                    title="Dar de baja"
-                    onclick="darDeBajaDocumento(
-                        ${documento.id_documento},
-                        '${documento.origen}'
-                    )">
-
-                    <i data-lucide="trash-2"></i>
-
-                </button>
-
-            </td>
-
-        `;
-
-
-
-        tbody.appendChild(
-            fila
+    for (let categoria = 1; categoria <= 7; categoria++) {
+        const tabla = document.getElementById(
+            "tabla-documentos-" + categoria
         );
 
-    });
+        const aviso = document.getElementById("vacio-" + categoria);
 
+        if (!tabla) {
+            continue;
+        }
 
+        tabla.replaceChildren();
 
-    actualizarMensajesVacios();
+        const documentosCategoria = documentos.filter(function (documento) {
+            return Number(documento.id_categoria) === categoria
+                && Number(documento.activo) === 1;
+        });
 
+        documentosCategoria.forEach(function (documento) {
+            const fila = document.createElement("tr");
 
+            const nombre = documento.archivo_url.split("/").pop();
 
-    if (typeof lucide !== "undefined") {
+            const valores = [
+                nombre,
+                documento.fecha_carga || "Sin fecha",
+                documento.usuario_carga
+            ];
 
-        lucide.createIcons();
+            valores.forEach(function (valor) {
+                const celda = document.createElement("td");
+                celda.textContent = valor;
+                fila.appendChild(celda);
+            });
 
+            const acciones = document.createElement("td");
+
+            const enlaces = [
+                ["Ver", "ver.php"],
+                ["Editar", "editar.php"]
+            ];
+
+            enlaces.forEach(function ([texto, pagina]) {
+                const enlace = document.createElement("a");
+                enlace.textContent = texto;
+                enlace.href = pagina + "?id="
+                    + encodeURIComponent(documento.id_documento);
+                enlace.style.marginRight = "12px";
+                acciones.appendChild(enlace);
+            });
+
+            fila.appendChild(acciones);
+            tabla.appendChild(fila);
+        });
+
+        if (aviso) {
+            aviso.style.display = documentosCategoria.length === 0
+                ? "block"
+                : "none";
+        }
     }
-
 }
+
+
+
+
 
 
 

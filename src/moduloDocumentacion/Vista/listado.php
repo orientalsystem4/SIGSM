@@ -165,9 +165,15 @@ unset($_SESSION['mensaje']);
 
 <div class="contenedor">
 
+<p>
+    <a href="documentacion.php" class="boton boton-primario">
+        &larr; Volver al portal
+    </a>
+</p>
+
     <div class="cabecera-seccion">
 
-        <h1>Gestión de documentos</h1>
+        <h1>Gestion de documentos</h1>
 
         <a
             href="crear.php"
