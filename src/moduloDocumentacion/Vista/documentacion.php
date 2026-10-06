@@ -1,0 +1,939 @@
+<?php
+require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
+$usuarioActual = obtenerUsuarioActual();
+?>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>S.I.G.S.M. | Portal de Documentación y Encuestas</title>
+
+    <link rel="stylesheet"
+        href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
+
+    <link rel="stylesheet"
+        href="Assets/css/documentacion.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+    <div class="app-layout">
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="sidebar-header">
+
+                <button class="btn-close-menu" id="closeMenuBtn">
+                    <i data-lucide="x"></i>
+                </button>
+
+                <img
+                    src="../../serviciosComunes/autenticacion/assets/image.png"
+                    alt="Logo"
+                    class="sidebar-logo">
+
+                <span>S.I.G.S.M.</span>
+
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <button
+                    class="nav-btn active"
+                    data-target="sec-documentos">
+
+                    <i
+                        data-lucide="folder-open"
+                        class="icon-sm">
+                    </i>
+
+                    Documentos (Categorías)
+
+                </button>
+
+
+                <button
+                    class="nav-btn"
+                    data-target="sec-encuestas">
+
+                    <i
+                        data-lucide="pie-chart"
+                        class="icon-sm">
+                    </i>
+
+                    Encuestas y Métricas
+
+            </nav>
+
+            <?php if (tieneRol('admin') || tieneRol(1)): ?>
+                <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="btn-volver-hub">
+                    <i data-lucide="grid"></i> Cambiar Módulo
+                </a>
+            <?php endif; ?>
+
+            <div class="sidebar-profile">
+
+                <div class="avatar-placeholder bg-primary">
+                    <i data-lucide="shield"></i>
+                </div>
+
+                <div class="profile-info">
+
+                    <span class="profile-name">
+                        <?= htmlspecialchars($usuarioActual['nombre_usuario'] ?? 'Documentación') ?>
+                    </span>
+
+                    <span class="profile-role">
+                        <?= htmlspecialchars($usuarioActual['nombre_rol'] ?? 'Documentación') ?>
+                    </span>
+
+                </div>
+
+
+                <a
+                    href="../../serviciosComunes/autenticacion/logout.php"
+                    class="btn-logout"
+                    title="Cerrar Sesión">
+
+                    <i data-lucide="log-out"></i>
+
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+                    <button
+                        class="btn-menu"
+                        id="openMenuBtn">
+
+                        <i data-lucide="menu"></i>
+
+                    </button>
+
+
+                    <h2 class="section-title mb-0">
+                        Portal de Documentación y Encuestas
+                    </h2>
+
+                </div>
+
+            </header>
+
+
+            <section class="content-wrapper">
+
+
+                <!-- ================================================= -->
+                <!-- SECCIÓN 1: DOCUMENTOS POR CATEGORÍA -->
+                <!-- ================================================= -->
+
+                <div
+                    id="sec-documentos"
+                    class="view-section active">
+
+
+                    <div class="flex-between mb-3">
+
+                        <h3>
+                            Directorio de Archivos
+                        </h3>
+
+
+                        <button
+                            class="btn-primary"
+                            onclick="abrirModal('modal-subir-doc')">
+
+                            <i data-lucide="upload"></i>
+
+                            Subir Documento
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- SUBNAVEGACIÓN -->
+
+                    <div class="sub-nav">
+
+                        <button
+                            class="sub-btn active"
+                            data-sub="cat-urologia">
+
+                            Urología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-cardiologia">
+
+                            Cardiología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-traumatologia">
+
+                            Traumatología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-gastroenterologia">
+
+                            Gastroenterología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-ginecobstetricia">
+
+                            Ginecobstetricia
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-imagenologia">
+
+                            Imagenología
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="cat-medicina-nuclear">
+
+                            Medicina Nuclear
+
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- UROLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-urologia"
+                        class="sub-content active">
+
+                        <div class="card-formulario tabla-responsive">
+
+                            <table class="tabla-admin">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Documento
+                                        </th>
+
+                                        <th>
+                                            Fecha de Carga
+                                        </th>
+
+                                        <th>
+                                            Responsable
+                                        </th>
+
+                                        <th>
+                                            Acciones
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="tabla-documentos-1">
+                                </tbody>
+
+                            </table>
+
+
+                            <p
+                                id="vacio-1"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- CARDIOLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-cardiologia"
+                        class="sub-content hidden">
+
+                        <div class="card-formulario tabla-responsive">
+
+                            <table class="tabla-admin">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Documento</th>
+
+                                        <th>Fecha de Carga</th>
+
+                                        <th>Responsable</th>
+
+                                        <th>Acciones</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="tabla-documentos-2">
+                                </tbody>
+
+                            </table>
+
+
+                            <p
+                                id="vacio-2"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- TRAUMATOLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-traumatologia"
+                        class="sub-content hidden">
+
+                        <div class="card-formulario tabla-responsive">
+
+                            <table class="tabla-admin">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Documento</th>
+
+                                        <th>Fecha de Carga</th>
+
+                                        <th>Responsable</th>
+
+                                        <th>Acciones</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="tabla-documentos-3">
+                                </tbody>
+
+                            </table>
+
+
+                            <p
+                                id="vacio-3"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- GASTROENTEROLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-gastroenterologia"
+                        class="sub-content hidden">
+
+                        <div class="card-formulario tabla-responsive">
+
+                            <table class="tabla-admin">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Documento</th>
+
+                                        <th>Fecha de Carga</th>
+
+                                        <th>Responsable</th>
+
+                                        <th>Acciones</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="tabla-documentos-4">
+                                </tbody>
+
+                            </table>
+
+
+                            <p
+                                id="vacio-4"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- GINECOBSTETRICIA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-ginecobstetricia"
+                        class="sub-content hidden">
+
+                        <div class="card-formulario tabla-responsive">
+
+                            <table class="tabla-admin">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Documento</th>
+
+                                        <th>Fecha de Carga</th>
+
+                                        <th>Responsable</th>
+
+                                        <th>Acciones</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="tabla-documentos-5">
+                                </tbody>
+
+                            </table>
+
+
+                            <p
+                                id="vacio-5"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- IMAGENOLOGÍA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-imagenologia"
+                        class="sub-content hidden">
+
+                        <div class="card-formulario tabla-responsive">
+
+                            <table class="tabla-admin">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Documento</th>
+
+                                        <th>Fecha de Carga</th>
+
+                                        <th>Responsable</th>
+
+                                        <th>Acciones</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="tabla-documentos-6">
+                                </tbody>
+
+                            </table>
+
+
+                            <p
+                                id="vacio-6"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- MEDICINA NUCLEAR -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="cat-medicina-nuclear"
+                        class="sub-content hidden">
+
+                        <div class="card-formulario tabla-responsive">
+
+                            <table class="tabla-admin">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Documento</th>
+
+                                        <th>Fecha de Carga</th>
+
+                                        <th>Responsable</th>
+
+                                        <th>Acciones</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="tabla-documentos-7">
+                                </tbody>
+
+                            </table>
+
+
+                            <p
+                                id="vacio-7"
+                                class="text-muted"
+                                style="
+                                    text-align: center;
+                                    padding: 20px;
+                                    display: none;
+                                ">
+
+                                No hay documentos activos en esta categoría.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- SECCIÓN 2: ENCUESTAS Y MÉTRICAS -->
+                <!-- ================================================= -->
+
+                <div
+                    id="sec-encuestas"
+                    class="view-section hidden">
+
+
+                    <div class="sub-nav">
+
+                        <button
+                            class="sub-btn active"
+                            data-sub="enc-metricas">
+
+                            <i
+                                data-lucide="bar-chart-2"
+                                class="icon-sm">
+                            </i>
+
+                            Métricas Generales
+
+                        </button>
+
+
+                        <button
+                            class="sub-btn"
+                            data-sub="enc-estado">
+
+                            <i
+                                data-lucide="clipboard-list"
+                                class="icon-sm">
+                            </i>
+
+                            Encuestas
+
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- MÉTRICAS -->
+                    <!-- ================================================= -->
+
+                    <div id="enc-metricas" class="sub-content active">
+
+    <div class="flex-between mb-3" style="flex-wrap: wrap; gap: 15px;">
+        <h3>Métricas de Satisfacción Institucional</h3>
+        <select id="filtro-categoria" class="form-input" style="width: auto; min-width: 200px;">
+            <option value="0">Todas las Áreas (General)</option>
+            <option value="1">Urología</option>
+            <option value="2">Cardiología</option>
+            <option value="3">Traumatología</option>
+            <option value="4">Gastroenterología</option>
+            <option value="5">Ginecobstetricia</option>
+            <option value="6">Imagenología</option>
+            <option value="7">Medicina Nuclear</option>
+        </select>
+    </div>
+
+    <!-- TARJETAS DE KPIs -->
+    <div class="kpi-grid mb-md">
+        <div class="kpi-card">
+            <i data-lucide="users" class="kpi-icon text-primary"></i>
+            <div class="kpi-data">
+                <h4 id="lbl-total-encuestas">-</h4>
+                <p>Respuestas Totales</p>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <i data-lucide="star" class="kpi-icon text-warning"></i>
+            <div class="kpi-data">
+                <h4 id="lbl-promedio-general">-</h4>
+                <p>Promedio General</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR DE GRÁFICOS DINÁMICOS -->
+    <div id="graficos-container" style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- Aquí se renderizan las tarjetas de preguntas (Chart.js) vía JS -->
+        <p class="text-center text-muted">Cargando métricas...</p>
+    </div>
+
+    <!-- COMENTARIOS LIBRES -->
+    <h3 class="mb-3 mt-4" style="margin-top: 2rem;">Comentarios y Sugerencias</h3>
+    <div id="comentarios-container" style="display: flex; flex-direction: column; gap: 15px;">
+        <!-- Comentarios vía JS -->
+    </div>
+
+</div>
+                    <!-- ================================================= -->
+                    <!-- ESTADO DE LAS ENCUESTAS -->
+                    <!-- ================================================= -->
+
+                    <div
+                        id="enc-estado"
+                        class="sub-content hidden">
+
+
+                        <h3 class="mb-3">
+                            Encuestas
+                        </h3>
+
+
+                        <div class="card-formulario">
+
+
+                            <div
+                                style="
+                                    display: flex;
+                                    gap: 15px;
+                                    align-items: flex-start;
+                                ">
+
+
+                                <i
+                                    data-lucide="info"
+                                    class="text-primary">
+                                </i>
+
+
+                                <div>
+
+                                    <h4>
+                                        Encuestas pendientes de definición
+                                    </h4>
+
+
+                                    <p
+                                        class="text-muted"
+                                        style="
+                                            margin-top: 8px;
+                                            margin-bottom: 0;
+                                        ">
+
+                                        El Hospital de Clínicas proporcionará
+                                        cuatro modelos de encuesta.
+
+                                    </p>
+
+
+                                 
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- MODAL SUBIR DOCUMENTO -->
+    <!-- ================================================= -->
+
+    <div
+        class="modal-overlay"
+        id="modal-subir-doc">
+
+
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+
+                <h3>
+                    Subir Documento
+                </h3>
+
+
+                <button
+                    type="button"
+                    class="btn-close-modal"
+                    onclick="cerrarModal('modal-subir-doc')">
+
+                    <i data-lucide="x"></i>
+
+                </button>
+
+            </div>
+
+
+
+            <form
+                id="form-subir-documento"
+                class="form-simulado">
+
+
+                <div class="form-group">
+
+                    <label for="categoriaDocumento">
+                        Categoría
+                    </label>
+
+
+                    <select
+                        id="categoriaDocumento"
+                        class="form-input"
+                        required>
+
+
+                        <option value="">
+                            Seleccione una categoría...
+                        </option>
+
+
+                        <option value="1">
+                            Urología
+                        </option>
+
+
+                        <option value="2">
+                            Cardiología
+                        </option>
+
+
+                        <option value="3">
+                            Traumatología
+                        </option>
+
+
+                        <option value="4">
+                            Gastroenterología
+                        </option>
+
+
+                        <option value="5">
+                            Ginecobstetricia
+                        </option>
+
+
+                        <option value="6">
+                            Imagenología
+                        </option>
+
+
+                        <option value="7">
+                            Medicina Nuclear
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label for="archivoDocumento">
+                        Archivo (PDF)
+                    </label>
+
+
+                    <input
+                        type="file"
+                        id="archivoDocumento"
+                        class="form-input"
+                        accept=".pdf,application/pdf"
+                        required>
+
+                </div>
+
+
+
+                <button
+                    type="submit"
+                    class="btn-primary w-100 mt-2">
+
+                    Guardar Documento
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <script
+        src="../../serviciosComunes/vistaGeneral/assets/js/layout.js">
+    </script>
+
+
+    <script src="Assets/js/documentacion.js"></script>
+    <script src="Assets/js/metricas.js"></script>
+
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+</body>
+
+</html>

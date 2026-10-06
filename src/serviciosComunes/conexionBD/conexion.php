@@ -17,16 +17,24 @@ class Conexion
                     if (!getenv($name)) {
                         putenv(sprintf('%s=%s', $name, $value));
                     }
+                    $_ENV[$name] = $value;
+                    $_SERVER[$name] = $value;
                 }
             }
 
             $host = getenv('DB_HOST') ?: 'db';
+            // Si se ejecuta en CLI desde el host fuera del contenedor y 'db' no resuelve, usar 127.0.0.1
+            if ($host === 'db' && php_sapi_name() === 'cli' && gethostbyname('db') === 'db') {
+                $host = '127.0.0.1';
+            }
+
             $dbname = getenv('DB_NAME') ?: 'sigsm';
             $user = getenv('DB_USER') ?: 'root';
             $password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'root_password';
+            $port = getenv('DB_PORT') ?: '3306';
 
             $conexion = new PDO(
-                "mysql:host={$host};dbname={$dbname};charset=utf8mb4",
+                "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4",
                 $user,
                 $password
             );

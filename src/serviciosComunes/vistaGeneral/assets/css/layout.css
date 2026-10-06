@@ -76,6 +76,27 @@ body { font-family: system-ui, sans-serif; background-color: var(--bg-color); co
 .nav-btn:hover { background-color: #e2e8f0; color: var(--text-main); }
 .nav-btn.active { background-color: var(--primary-light); color: var(--primary); }
 
+.btn-volver-hub {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 1rem 1rem 1rem;
+    border-radius: 0.5rem;
+    color: var(--primary);
+    background-color: var(--primary-light);
+    border: 1px solid #bae6fd;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-volver-hub:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
 /* SECCIÓN DE PERFIL */
 .sidebar-profile {
     padding: 1rem;
