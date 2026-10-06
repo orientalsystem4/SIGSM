@@ -14,8 +14,32 @@ if (!$usuario) {
     exit;
 }
 
+$esAdminDTI = (int)($_SESSION['id_rol'] ?? 0) === 1;
+$rolesUsuario = UsuarioModelo::obtenerRolesUsuario($idUsuario);
+
+if (!$esAdminDTI) {
+    $puedeEditar = count($rolesUsuario) === 1
+        && (int)$rolesUsuario[0]['id_rol'] === 6;
+
+    if (!$puedeEditar) {
+        $_SESSION['error'] =
+            'No tiene permisos para editar esta cuenta.';
+
+        header('Location: listado.php');
+        exit;
+    }
+}
+
 $roles = UsuarioModelo::listarRoles();
 
+if (!$esAdminDTI) {
+    $roles = array_values(array_filter(
+        $roles,
+        function ($rol) {
+            return (int)$rol['id_rol'] === 6;
+        }
+    ));
+}
 $errores = $_SESSION['errores_usuario'] ?? [];
 unset($_SESSION['errores_usuario']);
 ?>
@@ -161,17 +185,37 @@ unset($_SESSION['errores_usuario']);
                    value="<?= htmlspecialchars($usuario['nombre_usuario']) ?>" required>
         </div>
 
-        <div class="campo">
-            <label for="id_rol">Rol del Empleado *</label>
-            <select id="id_rol" name="id_rol" required>
-                <option value="">-- Seleccionar Rol --</option>
-                <?php foreach ($roles as $r): ?>
-                    <option value="<?= (int)$r['id_rol'] ?>" <?= ((int)$usuario['id_rol'] === (int)$r['id_rol']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($r['nombre_rol']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+                <fieldset class="campo">
+            <legend>Roles del usuario *</legend>
+
+            <p class="campo-ayuda">
+                Seleccione uno o varios roles.
+            </p>
+
+            <?php foreach ($roles as $r): ?>
+                <label
+                    style="display: flex; align-items: center; gap: 8px;"
+                >
+                    <input
+                        type="checkbox"
+                        name="ids_roles[]"
+                        value="<?= (int) $r['id_rol'] ?>"
+                        style="width: auto;"
+                        <?= in_array(
+                            (int) $r['id_rol'],
+                            $usuario['ids_roles'],
+                            true
+                        ) ? 'checked' : '' ?>
+                    >
+
+                    <?= htmlspecialchars(
+                        $r['nombre_rol'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>
+                </label>
+            <?php endforeach; ?>
+        </fieldset>
 
         <div class="campo">
             <label for="password">Nueva Contraseña (Opcional)</label>

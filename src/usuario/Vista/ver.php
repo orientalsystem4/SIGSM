@@ -13,6 +13,20 @@ if (!$usuario) {
     header('Location: listado.php');
     exit;
 }
+$esAdminDTI = (int) ($_SESSION['id_rol'] ?? 0) === 1;
+
+if (!$esAdminDTI) {
+    $rolesUsuario = UsuarioModelo::obtenerRolesUsuario($idUsuario);
+
+    $puedeVer = count($rolesUsuario) === 1
+        && (int) $rolesUsuario[0]['id_rol'] === 6;
+
+    if (!$puedeVer) {
+        $_SESSION['error'] = 'No tiene permisos para consultar esta cuenta.';
+        header('Location: listado.php');
+        exit;
+    }
+}
 
 $tituloPagina = 'Detalle de Usuario';
 ?>
