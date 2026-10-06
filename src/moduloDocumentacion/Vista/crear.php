@@ -21,7 +21,7 @@ unset(
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
+<head> 
 
     <meta charset="UTF-8">
 
@@ -30,7 +30,7 @@ unset(
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>S.I.G.S.M. | Nuevo documento</title>
+    <title>S.I.G.S.M. | Nuevo documentoooo</title>
 
     <style>
 

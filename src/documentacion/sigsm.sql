@@ -455,12 +455,12 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `contrasenha_hash`, `activo`) VALUES
-(1, 'admin_dti', 'contra1', 1),
-(2, 'itanu_miniño', 'contra2', 1),
-(3, 'admin_transporte', 'contra3', 1),
-(4, 'registros_medicos', 'contra4', 1),
-(5, 'pedro_minino', 'contra5', 1),
-(6, 'lucia_pereira', 'contra6', 1);
+(1, 'admin_dti', '$2b$12$lHiLScfukco77AFPy/0lUuLzDB69IOpD72FbxeoIVcfBzr816q2Eq', 1),
+(2, 'itanu_miniño', '$2b$12$YIZAmcyHxZjsEhgcYuzuueMEEr6ZawLK7SrvitW92ehn9PLhsrduy', 1),
+(3, 'admin_transporte', '$2b$12$SRdrGS674H1ClH1l.S3Nq.OPWKZetQMujaFsIkubBJqEOsvk3HgfG', 1),
+(4, 'registros_medicos', '$2b$12$nQOA3S5xSLlqXm1CuzMFUezGBcdGTd3ZV2RcQwbtVbtq4YJhbSaUe', 1),
+(5, 'pedro_minino', '$2b$12$WqB4VoEDeNozEZdv8Po0EuvVcxU19tZWzqBB7/guTLvWi9wnLEeve', 1),
+(6, 'lucia_pereira', '$2b$12$8.fWPUn/.GXsjZDKg18Vie9490Ew3aTrrYFn6//KReE2FLOwPE4wi', 1);
 
 -- --------------------------------------------------------
 
