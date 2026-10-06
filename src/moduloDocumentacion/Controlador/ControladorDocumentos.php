@@ -136,7 +136,7 @@ if ($accion === 'crear') {
 
 
     header(
-        'Location: ../Vista/listado.php'
+        'Location: ../Vista/documentacion.php'
     );
 
     exit;
@@ -165,7 +165,7 @@ if ($accion === 'editar') {
             'Los datos ingresados no son válidos.';
 
         header(
-            'Location: ../Vista/listado.php'
+            'Location: ../Vista/documentacion.php'
         );
 
         exit;
@@ -304,7 +304,7 @@ if ($accion === 'editar') {
 
 
     header(
-        'Location: ../Vista/listado.php'
+        'Location: ../Vista/documentacion.php'
     );
 
     exit;
@@ -327,7 +327,7 @@ if ($accion === 'eliminar') {
             'Documento inválido.';
 
         header(
-            'Location: ../Vista/listado.php'
+            'Location: ../Vista/documentacion.php'
         );
 
         exit;
@@ -344,7 +344,7 @@ if ($accion === 'eliminar') {
 
 
     header(
-        'Location: ../Vista/listado.php'
+        'Location: ../Vista/documentacion.php'
     );
 
     exit;
@@ -356,7 +356,7 @@ if ($accion === 'eliminar') {
 // ============================================================
 
 header(
-    'Location: ../Vista/listado.php'
+    'Location: ../Vista/documentacion.php'
 );
 
 exit;

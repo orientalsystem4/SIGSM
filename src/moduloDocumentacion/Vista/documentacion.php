@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 $usuarioActual = obtenerUsuarioActual();
+require_once __DIR__ . '/../Model/DocumentoModelo.php';
+$documentos = DocumentoModelo::listarTodos();
+$mensaje = $_SESSION['mensaje'] ?? null;
+unset($_SESSION['mensaje']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -46,32 +50,21 @@ $usuarioActual = obtenerUsuarioActual();
 
 
             <nav class="sidebar-nav">
-
                 <button
                     class="nav-btn active"
                     data-target="sec-documentos">
-
-                    <i
-                        data-lucide="folder-open"
-                        class="icon-sm">
-                    </i>
-
+                    <i data-lucide="folder-open" class="icon-sm"></i>
                     Documentos (Categorías)
-
                 </button>
+
 
 
                 <button
                     class="nav-btn"
                     data-target="sec-encuestas">
-
-                    <i
-                        data-lucide="pie-chart"
-                        class="icon-sm">
-                    </i>
-
+                    <i data-lucide="pie-chart" class="icon-sm"></i>
                     Encuestas y Métricas
-
+                </button>
             </nav>
 
             <?php if (tieneRol('admin') || tieneRol(1)): ?>
@@ -139,6 +132,11 @@ $usuarioActual = obtenerUsuarioActual();
 
 
             <section class="content-wrapper">
+                <?php if ($mensaje !== null): ?>
+                    <div role="status" style="padding: 12px; margin-bottom: 16px; background: #e8f0fe; border-radius: 6px;">
+                        <?= htmlspecialchars($mensaje, ENT_QUOTES, 'UTF-8') ?>
+                    </div>
+                <?php endif; ?>
 
 
                 <!-- ================================================= -->
@@ -157,16 +155,19 @@ $usuarioActual = obtenerUsuarioActual();
                         </h3>
 
 
-                        <button
-                            class="btn-primary"
-                            onclick="abrirModal('modal-subir-doc')">
-
+                        <a href="crear.php" class="btn-primary" style="text-decoration: none;">
                             <i data-lucide="upload"></i>
-
                             Subir Documento
+                        </a>
+                    </div>
 
-                        </button>
+                    <div style="margin-bottom: 15px;">
+                        <label for="filtro-estado-documentos">Mostrar:</label>
 
+                        <select id="filtro-estado-documentos">
+                            <option value="1">Activos</option>
+                            <option value="0">Inactivos</option>
+                        </select>
                     </div>
 
 
@@ -292,7 +293,7 @@ $usuarioActual = obtenerUsuarioActual();
                                     display: none;
                                 ">
 
-                                No hay documentos activos en esta categoría.
+                                No hay documentos con el estado seleccionado en esta categoría.
 
                             </p>
 
@@ -346,7 +347,7 @@ $usuarioActual = obtenerUsuarioActual();
                                     display: none;
                                 ">
 
-                                No hay documentos activos en esta categoría.
+                                No hay documentos con el estado seleccionado en esta categoría.
 
                             </p>
 
@@ -400,7 +401,7 @@ $usuarioActual = obtenerUsuarioActual();
                                     display: none;
                                 ">
 
-                                No hay documentos activos en esta categoría.
+                                No hay documentos con el estado seleccionado en esta categoría.
 
                             </p>
 
@@ -454,7 +455,7 @@ $usuarioActual = obtenerUsuarioActual();
                                     display: none;
                                 ">
 
-                                No hay documentos activos en esta categoría.
+                                No hay documentos con el estado seleccionado en esta categoría.
 
                             </p>
 
@@ -508,7 +509,7 @@ $usuarioActual = obtenerUsuarioActual();
                                     display: none;
                                 ">
 
-                                No hay documentos activos en esta categoría.
+                                No hay documentos con el estado seleccionado en esta categoría.
 
                             </p>
 
@@ -562,7 +563,7 @@ $usuarioActual = obtenerUsuarioActual();
                                     display: none;
                                 ">
 
-                                No hay documentos activos en esta categoría.
+                                No hay documentos con el estado seleccionado en esta categoría.
 
                             </p>
 
@@ -616,7 +617,7 @@ $usuarioActual = obtenerUsuarioActual();
                                     display: none;
                                 ">
 
-                                No hay documentos activos en esta categoría.
+                                No hay documentos con el estado seleccionado en esta categoría.
 
                             </p>
 
@@ -676,51 +677,51 @@ $usuarioActual = obtenerUsuarioActual();
 
                     <div id="enc-metricas" class="sub-content active">
 
-    <div class="flex-between mb-3" style="flex-wrap: wrap; gap: 15px;">
-        <h3>Métricas de Satisfacción Institucional</h3>
-        <select id="filtro-categoria" class="form-input" style="width: auto; min-width: 200px;">
-            <option value="0">Todas las Áreas (General)</option>
-            <option value="1">Urología</option>
-            <option value="2">Cardiología</option>
-            <option value="3">Traumatología</option>
-            <option value="4">Gastroenterología</option>
-            <option value="5">Ginecobstetricia</option>
-            <option value="6">Imagenología</option>
-            <option value="7">Medicina Nuclear</option>
-        </select>
-    </div>
+                        <div class="flex-between mb-3" style="flex-wrap: wrap; gap: 15px;">
+                            <h3>Métricas de Satisfacción Institucional</h3>
+                            <select id="filtro-categoria" class="form-input" style="width: auto; min-width: 200px;">
+                                <option value="0">Todas las Áreas (General)</option>
+                                <option value="1">Urología</option>
+                                <option value="2">Cardiología</option>
+                                <option value="3">Traumatología</option>
+                                <option value="4">Gastroenterología</option>
+                                <option value="5">Ginecobstetricia</option>
+                                <option value="6">Imagenología</option>
+                                <option value="7">Medicina Nuclear</option>
+                            </select>
+                        </div>
 
-    <!-- TARJETAS DE KPIs -->
-    <div class="kpi-grid mb-md">
-        <div class="kpi-card">
-            <i data-lucide="users" class="kpi-icon text-primary"></i>
-            <div class="kpi-data">
-                <h4 id="lbl-total-encuestas">-</h4>
-                <p>Respuestas Totales</p>
-            </div>
-        </div>
-        <div class="kpi-card">
-            <i data-lucide="star" class="kpi-icon text-warning"></i>
-            <div class="kpi-data">
-                <h4 id="lbl-promedio-general">-</h4>
-                <p>Promedio General</p>
-            </div>
-        </div>
-    </div>
+                        <!-- TARJETAS DE KPIs -->
+                        <div class="kpi-grid mb-md">
+                            <div class="kpi-card">
+                                <i data-lucide="users" class="kpi-icon text-primary"></i>
+                                <div class="kpi-data">
+                                    <h4 id="lbl-total-encuestas">-</h4>
+                                    <p>Respuestas Totales</p>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <i data-lucide="star" class="kpi-icon text-warning"></i>
+                                <div class="kpi-data">
+                                    <h4 id="lbl-promedio-general">-</h4>
+                                    <p>Promedio General</p>
+                                </div>
+                            </div>
+                        </div>
 
-    <!-- CONTENEDOR DE GRÁFICOS DINÁMICOS -->
-    <div id="graficos-container" style="display: flex; flex-direction: column; gap: 20px;">
-        <!-- Aquí se renderizan las tarjetas de preguntas (Chart.js) vía JS -->
-        <p class="text-center text-muted">Cargando métricas...</p>
-    </div>
+                        <!-- CONTENEDOR DE GRÁFICOS DINÁMICOS -->
+                        <div id="graficos-container" style="display: flex; flex-direction: column; gap: 20px;">
+                            <!-- Aquí se renderizan las tarjetas de preguntas (Chart.js) vía JS -->
+                            <p class="text-center text-muted">Cargando métricas...</p>
+                        </div>
 
-    <!-- COMENTARIOS LIBRES -->
-    <h3 class="mb-3 mt-4" style="margin-top: 2rem;">Comentarios y Sugerencias</h3>
-    <div id="comentarios-container" style="display: flex; flex-direction: column; gap: 15px;">
-        <!-- Comentarios vía JS -->
-    </div>
+                        <!-- COMENTARIOS LIBRES -->
+                        <h3 class="mb-3 mt-4" style="margin-top: 2rem;">Comentarios y Sugerencias</h3>
+                        <div id="comentarios-container" style="display: flex; flex-direction: column; gap: 15px;">
+                            <!-- Comentarios vía JS -->
+                        </div>
 
-</div>
+                    </div>
                     <!-- ================================================= -->
                     <!-- ESTADO DE LAS ENCUESTAS -->
                     <!-- ================================================= -->
@@ -772,7 +773,7 @@ $usuarioActual = obtenerUsuarioActual();
                                     </p>
 
 
-                                 
+
 
                                 </div>
 
@@ -792,137 +793,19 @@ $usuarioActual = obtenerUsuarioActual();
 
 
 
-    <!-- ================================================= -->
-    <!-- MODAL SUBIR DOCUMENTO -->
-    <!-- ================================================= -->
-
-    <div
-        class="modal-overlay"
-        id="modal-subir-doc">
-
-
-        <div class="modal-content">
-
-
-            <div class="modal-header">
-
-                <h3>
-                    Subir Documento
-                </h3>
-
-
-                <button
-                    type="button"
-                    class="btn-close-modal"
-                    onclick="cerrarModal('modal-subir-doc')">
-
-                    <i data-lucide="x"></i>
-
-                </button>
-
-            </div>
-
-
-
-            <form
-                id="form-subir-documento"
-                class="form-simulado">
-
-
-                <div class="form-group">
-
-                    <label for="categoriaDocumento">
-                        Categoría
-                    </label>
-
-
-                    <select
-                        id="categoriaDocumento"
-                        class="form-input"
-                        required>
-
-
-                        <option value="">
-                            Seleccione una categoría...
-                        </option>
-
-
-                        <option value="1">
-                            Urología
-                        </option>
-
-
-                        <option value="2">
-                            Cardiología
-                        </option>
-
-
-                        <option value="3">
-                            Traumatología
-                        </option>
-
-
-                        <option value="4">
-                            Gastroenterología
-                        </option>
-
-
-                        <option value="5">
-                            Ginecobstetricia
-                        </option>
-
-
-                        <option value="6">
-                            Imagenología
-                        </option>
-
-
-                        <option value="7">
-                            Medicina Nuclear
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-
-                <div class="form-group">
-
-                    <label for="archivoDocumento">
-                        Archivo (PDF)
-                    </label>
-
-
-                    <input
-                        type="file"
-                        id="archivoDocumento"
-                        class="form-input"
-                        accept=".pdf,application/pdf"
-                        required>
-
-                </div>
-
-
-
-                <button
-                    type="submit"
-                    class="btn-primary w-100 mt-2">
-
-                    Guardar Documento
-
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
+    
 
 
 
     <script
         src="../../serviciosComunes/vistaGeneral/assets/js/layout.js">
+    </script>
+
+    <script>
+        window.documentosBD = <?= json_encode(
+                                    $documentos,
+                                    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+                                ) ?>;
     </script>
 
 

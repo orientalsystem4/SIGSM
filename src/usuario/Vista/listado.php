@@ -8,6 +8,22 @@ require_once __DIR__ . '/../Model/UsuarioModelo.php';
 $tituloPagina = 'Gestión de Usuarios y Roles';
 $usuarios = UsuarioModelo::listarTodos();
 
+$esAdminDTI = (int) ($_SESSION['id_rol'] ?? 0) === 1;
+
+if (!$esAdminDTI) {
+    $usuarios = array_values(array_filter(
+        $usuarios,
+        function ($usuario) {
+            $roles = UsuarioModelo::obtenerRolesUsuario(
+                (int) $usuario['id_usuario']
+            );
+
+            return count($roles) === 1
+                && (int) $roles[0]['id_rol'] === 6;
+        }
+    ));
+}
+
 $mensaje = $_SESSION['mensaje'] ?? null;
 unset($_SESSION['mensaje']);
 

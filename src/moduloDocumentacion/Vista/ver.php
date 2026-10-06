@@ -11,7 +11,7 @@ if ($documento === null) {
     $_SESSION['mensaje'] =
         'El documento solicitado no existe.';
 
-    header('Location: listado.php');
+    header('Location: documentacion.php');
     exit;
 }
 
@@ -161,7 +161,7 @@ if ($documento === null) {
         <h1>Detalle de documento</h1>
 
         <a
-            href="listado.php"
+            href="documentacion.php"
             class="enlace-volver"
         >
             ← Volver al listado
@@ -250,7 +250,7 @@ if ($documento === null) {
             </a>
 
             <a
-                href="listado.php"
+                href="documentacion.php"
                 class="boton boton-secundario"
             >
                 Volver

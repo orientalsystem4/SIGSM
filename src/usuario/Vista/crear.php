@@ -7,6 +7,17 @@ require_once __DIR__ . '/../Model/UsuarioModelo.php';
 
 $roles = UsuarioModelo::listarRoles();
 
+$esAdminDTI = (int) ($_SESSION['id_rol'] ?? 0) === 1;
+
+if (!$esAdminDTI) {
+    $roles = array_values(array_filter(
+        $roles,
+        function ($rol) {
+            return (int) $rol['id_rol'] === 6;
+        }
+    ));
+}
+
 $errores = $_SESSION['errores_usuario'] ?? [];
 $previos = $_SESSION['datos_previos_usuario'] ?? [
     'nombre_usuario' => '',
