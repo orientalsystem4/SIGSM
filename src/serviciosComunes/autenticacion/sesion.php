@@ -1,5 +1,32 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Si ya tiene sesión activa, redirigir según su rol
+if (isset($_SESSION['id_usuario']) && !empty($_SESSION['id_usuario'])) {
+    $idRol = isset($_SESSION['id_rol']) ? (int)$_SESSION['id_rol'] : 0;
+    switch ($idRol) {
+        case 5:
+            header('Location: ../../moduloAmbulancias/Vista/choferes.php');
+            exit;
+        case 2:
+        case 6:
+            header('Location: ../../moduloDocumentacion/Vista/enfermeria.php');
+            exit;
+        case 3:
+            header('Location: ../../moduloAmbulancias/Vista/unidadEnlace.php');
+            exit;
+        case 4:
+            header('Location: ../../moduloDocumentacion/Vista/documentacion.php');
+            exit;
+        case 1:
+        default:
+            header('Location: ../vistaGeneral/bifurcacion.php');
+            exit;
+    }
+}
+
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['error']);
 $mensaje = $_SESSION['mensaje'] ?? null;
@@ -13,10 +40,26 @@ unset($_SESSION['mensaje']);
     <title>S.I.G.S.M. | Iniciar Sesión</title>
     <link rel="stylesheet" href="login.css">
     <style>
-        .error-msg { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; }
-        .success-msg { color: #28a745; background: #d4edda; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; }
-        .register-link { text-align: center; margin-top: 15px; display: block; color: #0056b3; text-decoration: none; }
-        .register-link:hover { text-decoration: underline; }
+        .error-msg { 
+            color: #b91c1c; 
+            background: #fee2e2; 
+            border: 1px solid #f87171;
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-bottom: 18px; 
+            font-size: 0.9rem;
+            text-align: center; 
+        }
+        .success-msg { 
+            color: #15803d; 
+            background: #dcfce7; 
+            border: 1px solid #86efac;
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-bottom: 18px; 
+            font-size: 0.9rem;
+            text-align: center; 
+        }
     </style>
 </head>
 <body>
@@ -38,20 +81,18 @@ unset($_SESSION['mensaje']);
             <form action="login.php" method="POST" class="login-form">
                 <div class="form-group">
                     <label for="usuario" class="form-label">Usuario</label>
-                    <input type="text" id="usuario" name="usuario" class="form-input" placeholder="Ingrese su usuario" required>
+                    <input type="text" id="usuario" name="usuario" class="form-input" placeholder="Ingrese su usuario" autocomplete="username" required autofocus>
                 </div>
                 
                 <div class="form-group">
                     <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" autocomplete="current-password" required>
                 </div>
                 
                 <button type="submit" class="btn-primary">
                     Iniciar Sesión
                 </button>
             </form>
-            
-            <a href="registro_vista.php" class="register-link">¿No tienes cuenta? Regístrate aquí</a>
         </div>
     </main>
 </body>

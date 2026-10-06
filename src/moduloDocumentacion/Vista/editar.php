@@ -1,7 +1,5 @@
 <?php
-
-session_start();
-
+require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 require_once __DIR__ . '/../Model/DocumentoModelo.php';
 
 $idDocumento = (int) ($_GET['id'] ?? 0);
