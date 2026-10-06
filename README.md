@@ -7,6 +7,78 @@ S.I.G.S.M. es una plataforma web orientada a optimizar la logística de traslado
 🔗 **[Ver Prototipo en Vivo (GitHub Pages)](https://orientalsystem4.github.io/SIGSM/)**
 
 ---
+## 🚀 Ejecución del proyecto
+
+La versión pública del frontend puede visualizarse mediante GitHub Pages.
+
+Para ejecutar las funcionalidades desarrolladas en PHP, especialmente el CRUD del módulo de Documentación, es necesario utilizar un servidor local con Apache y MariaDB/MySQL.
+
+### Requisitos
+
+- XAMPP
+- Apache
+- PHP
+- MariaDB / MySQL
+- phpMyAdmin
+- Navegador web
+
+### Instalación
+
+1. Clonar este repositorio:
+
+`git clone https://github.com/orientalsystem4/SIGSM.git`
+
+2. Colocar la carpeta `SIGSM` dentro de:
+
+`C:\xampp\htdocs\`
+
+La ubicación del proyecto debería quedar:
+
+`C:\xampp\htdocs\SIGSM`
+
+3. Abrir XAMPP e iniciar los servicios **Apache** y **MySQL**.
+
+4. Ingresar a phpMyAdmin desde:
+
+`http://localhost/phpmyadmin/`
+
+5. Crear una base de datos llamada `sigsm`.
+
+6. Seleccionar la base de datos `sigsm` e importar el archivo:
+
+`documentacion/sigsm.sql`
+
+Este archivo contiene la estructura de la base de datos, sus relaciones y los datos de prueba utilizados en el proyecto.
+
+7. Verificar la configuración de conexión ubicada en:
+
+`serviciosComunes/conexionBD/conexion.php`
+
+Si la configuración local de MariaDB/MySQL es diferente, se deberán modificar los datos de conexión correspondientes.
+
+### CRUD del módulo de Documentación
+
+El CRUD de Documentación utiliza PHP y MariaDB, por lo que debe ejecutarse mediante Apache.
+
+Con Apache y MySQL iniciados, ingresar desde el navegador a:
+
+`http://localhost/SIGSM/moduloDocumentacion/Vista/listado.php`
+
+Desde esta vista se pueden realizar las siguientes operaciones:
+
+- Registrar un documento PDF.
+- Visualizar los documentos registrados.
+- Consultar la información de un documento.
+- Editar un documento existente.
+- Dar de baja un documento.
+
+Las operaciones realizadas desde este módulo se registran en la base de datos de S.I.G.S.M.
+
+### Estado de la autenticación
+
+El inicio de sesión se encuentra implementado actualmente a nivel de interfaz para permitir la demostración y navegación entre los diferentes módulos.
+
+En esta etapa no se realiza una validación real de credenciales ni se mantiene una sesión mediante backend. La autenticación, gestión de sesiones y control de acceso por roles quedan previstas para una futura implementación.
 
 ## 🏗️ Arquitectura del Sistema
 
