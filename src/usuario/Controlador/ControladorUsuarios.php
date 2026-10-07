@@ -12,9 +12,6 @@ $esAdminDTI = (int)($_SESSION['id_rol'] ?? 0) === 1;
 if (!$esAdminDTI) {
     $permitido = true;
 
-    if ($accion === 'crear') {
-        $permitido = (int)($_POST['id_rol'] ?? 0) === 6;
-    }
 
     if (in_array($accion, ['editar', 'cambiar_estado'], true)) {
         $idObjetivo = (int)(
@@ -42,58 +39,128 @@ if (!$esAdminDTI) {
 // CREAR
 // ============================================================
 if ($accion === 'crear') {
-    $nombreUsuario = trim($_POST['nombre_usuario'] ?? '');
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header('Location: ../Vista/listado.php');
+        exit;
+    }
+
+    $nombreUsuario = $_POST['nombre_usuario'] ?? '';
     $password = $_POST['password'] ?? '';
     $confirmarPassword = $_POST['confirmar_password'] ?? '';
-    $idRol = (int)($_POST['id_rol'] ?? 0);
+    $rolesRecibidos = $_POST['ids_roles'] ?? [];
+
+    $nombreUsuario = is_string($nombreUsuario)
+        ? trim($nombreUsuario)
+        : '';
 
     $errores = [];
+    $idsRoles = [];
 
-    if (empty($nombreUsuario)) {
+    // Validar los datos de la cuenta.
+    if ($nombreUsuario === '') {
         $errores[] = 'El nombre de usuario es obligatorio.';
     } elseif (strlen($nombreUsuario) < 3) {
         $errores[] = 'El nombre de usuario debe tener al menos 3 caracteres.';
     } elseif (!preg_match('/^[a-zA-Z0-9_.-]+$/', $nombreUsuario)) {
-        $errores[] = 'El nombre de usuario solo puede contener letras, números, puntos y guiones.';
+        $errores[] = 'El nombre de usuario solo puede contener letras sin tildes, números, puntos, guiones y guiones bajos.';
     } elseif (UsuarioModelo::existeNombreUsuario($nombreUsuario)) {
-        $errores[] = 'El nombre de usuario ya está registrado en el sistema.';
+        $errores[] = 'El nombre de usuario ya está registrado.';
     }
 
-    if (empty($password)) {
-        $errores[] = 'La contraseña es obligatoria.';
-    } elseif (strlen($password) < 4) {
-        $errores[] = 'La contraseña debe tener al menos 4 caracteres.';
+    if (!is_string($password) || !is_string($confirmarPassword)) {
+        $errores[] = 'Las contraseñas ingresadas no son válidas.';
+    } else {
+        if ($password === '') {
+            $errores[] = 'La contraseña es obligatoria.';
+        } elseif (strlen($password) < 4) {
+            $errores[] = 'La contraseña debe tener al menos 4 caracteres.';
+        }
+
+        if ($password !== $confirmarPassword) {
+            $errores[] = 'Las contraseñas no coinciden.';
+        }
     }
 
-    if ($password !== $confirmarPassword) {
-        $errores[] = 'Las contraseñas no coinciden.';
+    // Validar la lista de roles.
+    if (!is_array($rolesRecibidos)) {
+        $errores[] = 'La selección de roles no es válida.';
+    } else {
+        foreach ($rolesRecibidos as $valor) {
+            if (!is_string($valor)) {
+                $errores[] = 'La selección de roles no es válida.';
+                break;
+            }
+
+            $idRol = filter_var($valor, FILTER_VALIDATE_INT);
+
+            if ($idRol === false || $idRol <= 0) {
+                $errores[] = 'La selección contiene un rol inválido.';
+                break;
+            }
+
+            $idsRoles[] = $idRol;
+        }
     }
 
-    if ($idRol <= 0) {
-        $errores[] = 'Debe seleccionar un rol válido para el usuario.';
+    $idsRoles = array_values(array_unique($idsRoles));
+    sort($idsRoles);
+
+    $rolesDisponibles = UsuarioModelo::listarRoles();
+
+    $idsDisponibles = array_map(
+        function ($rol) {
+            return (int) $rol['id_rol'];
+        },
+        $rolesDisponibles
+    );
+
+    if (empty($idsRoles)) {
+        $errores[] = 'Debe seleccionar al menos un rol.';
+    } elseif (!empty(array_diff($idsRoles, $idsDisponibles))) {
+        $errores[] = 'Uno de los roles seleccionados no existe.';
     }
+
+    // Enfermeria solo puede crear cuentas de enfermeros.
+    if (!$esAdminDTI && $idsRoles !== [6]) {
+        $errores[] = 'Solo puede asignar el rol Enfermero de Traslado.';
+    }
+
+    // Conservar los datos del formulario, sin contraseñas.
+    $_SESSION['datos_previos_usuario'] = [
+        'nombre_usuario' => $nombreUsuario,
+        'ids_roles' => $idsRoles
+    ];
 
     if (!empty($errores)) {
         $_SESSION['errores_usuario'] = $errores;
-        $_SESSION['datos_previos_usuario'] = [
-            'nombre_usuario' => $nombreUsuario,
-            'id_rol'         => $idRol
+        header('Location: ../Vista/crear.php');
+        exit;
+    }
+
+    $ok = UsuarioModelo::crear(
+        $nombreUsuario,
+        $password,
+        $idsRoles
+    );
+
+    if (!$ok) {
+        $_SESSION['errores_usuario'] = [
+            'Ocurrió un error al registrar el usuario.'
         ];
+
         header('Location: ../Vista/crear.php');
         exit;
     }
 
-    $ok = UsuarioModelo::crear($nombreUsuario, $password, $idRol);
+    unset(
+        $_SESSION['datos_previos_usuario'],
+        $_SESSION['errores_usuario']
+    );
 
-    if ($ok) {
-        $_SESSION['mensaje'] = "Usuario '{$nombreUsuario}' creado con éxito y rol asignado.";
-        header('Location: ../Vista/listado.php');
-        exit;
-    } else {
-        $_SESSION['errores_usuario'] = ['Ocurrió un error en el servidor al intentar registrar el usuario.'];
-        header('Location: ../Vista/crear.php');
-        exit;
-    }
+    $_SESSION['mensaje'] = "Usuario '{$nombreUsuario}' creado con sus roles asignados.";
+
+    header('Location: ../Vista/listado.php');
+    exit;
 }
 
 // ============================================================
