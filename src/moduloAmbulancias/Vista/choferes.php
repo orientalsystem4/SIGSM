@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
+requiereRol([1, 3, 5]);
 $usuarioActual = obtenerUsuarioActual();
 ?>
 <!DOCTYPE html>

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
+requiereRol([1, 4]);
 $usuarioActual = obtenerUsuarioActual();
 require_once __DIR__ . '/../Model/DocumentoModelo.php';
 $documentos = DocumentoModelo::listarTodos();

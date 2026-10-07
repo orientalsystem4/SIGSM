@@ -4,15 +4,14 @@
 // Las rutas son relativas a la carpeta autenticacion.
 function destinoPorRol(int $idRol): ?string
 {
-    $destinos = [
+       $destinos = [
         1 => '../vistaGeneral/bifurcacion.php',
-        2 => '../../usuario/Vista/listado.php',
-        3 => '../../moduloAmbulancias/Vista/unidadEnlace.php',
+        2 => '../vistaGeneral/bifurcacion.php',
+        3 => '../vistaGeneral/bifurcacion.php',
         4 => '../../moduloDocumentacion/Vista/documentacion.php',
         5 => '../../moduloAmbulancias/Vista/choferes.php',
         6 => '../../moduloDocumentacion/Vista/enfermeria.php'
     ];
-
     return $destinos[$idRol] ?? null;
 }
 
