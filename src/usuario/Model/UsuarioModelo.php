@@ -172,36 +172,58 @@ class UsuarioModelo
         return (bool) $consulta->fetch();
     }
 
-    public static function crear(string $nombreUsuario, string $password, int $idRol): bool
-    {
+        public static function crear(
+        string $nombreUsuario,
+        string $password,
+        array $idsRoles
+    ): bool {
         $conexion = Conexion::conectar();
 
         try {
+            if (empty($idsRoles)) {
+                throw new InvalidArgumentException(
+                    'Debe asignar al menos un rol.'
+                );
+            }
+
+            foreach ($idsRoles as $idRol) {
+                if (!is_int($idRol) || $idRol <= 0) {
+                    throw new InvalidArgumentException('Rol invalido.');
+                }
+            }
+
+            $idsRoles = array_values(array_unique($idsRoles));
+
             $conexion->beginTransaction();
 
-            $hash = password_hash($password, PASSWORD_DEFAULT);
+            // Crear la cuenta.
+            $consulta = $conexion->prepare(
+                'INSERT INTO usuario
+                    (nombre_usuario, contrasenha_hash, activo)
+                 VALUES (:nombre_usuario, :contrasenha_hash, 1)'
+            );
 
-            $sqlUsuario = "
-                INSERT INTO usuario (nombre_usuario, contrasenha_hash, activo)
-                VALUES (:nombre_usuario, :contrasenha_hash, 1)
-            ";
-            $stmtUsuario = $conexion->prepare($sqlUsuario);
-            $stmtUsuario->execute([
-                ':nombre_usuario'    => $nombreUsuario,
-                ':contrasenha_hash' => $hash
+            $consulta->execute([
+                ':nombre_usuario' => $nombreUsuario,
+                ':contrasenha_hash' => password_hash(
+                    $password,
+                    PASSWORD_DEFAULT
+                )
             ]);
 
             $idUsuario = (int) $conexion->lastInsertId();
 
-            if ($idRol > 0) {
-                $sqlRol = "
-                    INSERT INTO usuario_rol (id_usuario, id_rol, fecha_asignacion)
-                    VALUES (:id_usuario, :id_rol, NOW())
-                ";
-                $stmtRol = $conexion->prepare($sqlRol);
-                $stmtRol->execute([
+            // Asignar cada rol seleccionado.
+            $asignarRol = $conexion->prepare(
+                'INSERT INTO usuario_rol
+                    (id_usuario, id_rol, fecha_asignacion)
+                 VALUES (:id_usuario, :id_rol, NOW())'
+            );
+
+            foreach ($idsRoles as $idRol) {
+                $asignarRol->execute([
                     ':id_usuario' => $idUsuario,
-                    ':id_rol'     => $idRol
+                    ':id_rol' => $idRol
                 ]);
             }
 
@@ -209,8 +231,11 @@ class UsuarioModelo
             return true;
 
         } catch (Exception $e) {
-            $conexion->rollBack();
-            error_log("Error al crear usuario: " . $e->getMessage());
+            if ($conexion->inTransaction()) {
+                $conexion->rollBack();
+            }
+
+            error_log('Error al crear usuario: ' . $e->getMessage());
             return false;
         }
     }

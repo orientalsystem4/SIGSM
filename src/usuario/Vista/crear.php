@@ -21,8 +21,10 @@ if (!$esAdminDTI) {
 $errores = $_SESSION['errores_usuario'] ?? [];
 $previos = $_SESSION['datos_previos_usuario'] ?? [
     'nombre_usuario' => '',
-    'id_rol'         => ''
+    'ids_roles' => []
 ];
+
+$rolesSeleccionados = $previos['ids_roles'] ?? [];
 
 unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
 ?>
@@ -163,17 +165,35 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
                    placeholder="Ej: j_perez" required autofocus>
         </div>
 
-        <div class="campo">
-            <label for="id_rol">Rol del Empleado *</label>
-            <select id="id_rol" name="id_rol" required>
-                <option value="">-- Seleccionar Rol --</option>
-                <?php foreach ($roles as $r): ?>
-                    <option value="<?= (int)$r['id_rol'] ?>" <?= ((int)$previos['id_rol'] === (int)$r['id_rol']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($r['nombre_rol']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+               <fieldset class="campo">
+            <legend>Roles del usuario *</legend>
+
+            <p>Seleccione al menos un rol.</p>
+
+            <?php foreach ($roles as $r): ?>
+                <label
+                    style="display: flex; align-items: center; gap: 8px;"
+                >
+                    <input
+                        type="checkbox"
+                        name="ids_roles[]"
+                        value="<?= (int) $r['id_rol'] ?>"
+                        style="width: auto;"
+                        <?= in_array(
+                            (int) $r['id_rol'],
+                            $rolesSeleccionados,
+                            true
+                        ) ? 'checked' : '' ?>
+                    >
+
+                    <?= htmlspecialchars(
+                        $r['nombre_rol'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>
+                </label>
+            <?php endforeach; ?>
+        </fieldset>
 
         <div class="campo">
             <label for="password">Contraseña *</label>
