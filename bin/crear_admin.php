@@ -11,20 +11,28 @@ if (php_sapi_name() !== 'cli') {
 }
 
 // 1. Cargar archivo .env del proyecto
-$envPath = dirname(__DIR__) . '/.env';
-if (file_exists($envPath)) {
-    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        $line = trim($line);
-        if (empty($line) || strpos($line, '#') === 0) continue;
-        if (strpos($line, '=') !== false) {
-            list($name, $value) = explode('=', $line, 2);
-            $name = trim($name);
-            $value = trim($value);
-            putenv(sprintf('%s=%s', $name, $value));
-            $_ENV[$name] = $value;
-            $_SERVER[$name] = $value;
+$envPaths = [
+    dirname(__DIR__) . '/.env',
+    dirname(__DIR__) . '/../.env',
+    __DIR__ . '/../.env',
+    __DIR__ . '/.env',
+];
+foreach ($envPaths as $path) {
+    if (file_exists($path)) {
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line) || strpos($line, '#') === 0) continue;
+            if (strpos($line, '=') !== false) {
+                list($name, $value) = explode('=', $line, 2);
+                $name = trim($name);
+                $value = trim($value);
+                putenv(sprintf('%s=%s', $name, $value));
+                $_ENV[$name] = $value;
+                $_SERVER[$name] = $value;
+            }
         }
+        break;
     }
 }
 
@@ -38,7 +46,24 @@ if (empty($adminUser) || empty($adminPass)) {
 }
 
 // 3. Conectar a la base de datos
-require_once dirname(__DIR__) . '/src/serviciosComunes/conexionBD/conexion.php';
+$conexionPaths = [
+    dirname(__DIR__) . '/src/serviciosComunes/conexionBD/conexion.php',
+    dirname(__DIR__) . '/serviciosComunes/conexionBD/conexion.php',
+    __DIR__ . '/../src/serviciosComunes/conexionBD/conexion.php',
+    __DIR__ . '/../serviciosComunes/conexionBD/conexion.php',
+];
+$conexionEncontrada = false;
+foreach ($conexionPaths as $ruta) {
+    if (file_exists($ruta)) {
+        require_once $ruta;
+        $conexionEncontrada = true;
+        break;
+    }
+}
+if (!$conexionEncontrada) {
+    fwrite(STDERR, "[ERROR] No se pudo encontrar el archivo conexion.php\n");
+    exit(1);
+}
 
 try {
     $pdo = Conexion::conectar();
@@ -134,8 +159,10 @@ try {
     echo "  Contraseña:  {$adminPass}\n";
     echo "  Rol:         Administrador (ID 1)\n";
     echo "  Estado:      Activo (1)\n";
-    echo "=========================================================\n";
-    exit(0);
+    if (realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'] ?? '')) {
+        exit(0);
+    }
+    return;
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {

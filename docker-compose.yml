@@ -6,6 +6,7 @@ services:
     volumes:
       # Monta el código fuente en la ruta esperada por la aplicación
       - ./src:/var/www/html/SIGSM
+      - ./bin:/var/www/html/SIGSM/bin
     env_file:
       - .env
     depends_on:

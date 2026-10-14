@@ -1,60 +1,35 @@
 <?php
-// Script para inicializar los datos base de la encuesta.
-require_once __DIR__ . '/../../serviciosComunes/conexionBD/conexion.php';
+/**
+ * Inicializador de Base de Datos - Módulo Encuestas (DEPRECADO / PROTEGIDO)
+ *
+ * Por razones de seguridad y buenas prácticas de arquitectura,
+ * los scripts de inicialización no deben ser ejecutados vía HTTP desde el navegador.
+ *
+ * La inicialización y sembrado de datos ha sido centralizada en el CLI Seeder:
+ *   docker compose exec web php bin/seeder.php
+ *   o en local: php bin/seeder.php
+ */
 
-try {
-    $conexion = Conexion::conectar();
-    
-    echo "<h1>Inicializando datos base de Encuestas...</h1>";
-
-    // 1. Crear las encuestas base para cada categoría que existe
-    $categorias = $conexion->query("SELECT id_categoria, nombre FROM categoria")->fetchAll(PDO::FETCH_ASSOC);
-    
-    $insertEncuesta = $conexion->prepare("INSERT IGNORE INTO encuesta (id_encuesta, id_categoria, segmento) VALUES (:id_encuesta, :id_categoria, :segmento)");
-    
-    foreach ($categorias as $cat) {
-        $insertEncuesta->execute([
-            ':id_encuesta' => $cat['id_categoria'], // Usamos el mismo ID de categoría para la encuesta
-            ':id_categoria' => $cat['id_categoria'],
-            ':segmento' => 'Institucional'
-        ]);
-        echo "<p>Encuesta vinculada para categoría: " . $cat['nombre'] . "</p>";
-    }
-
-    // 2. Crear las 8 preguntas institucionales base si no existen
-    $preguntas = [
-        ['id' => 1, 'encuesta' => 1, 'tipo' => 'escala'], // Atención
-        ['id' => 2, 'encuesta' => 1, 'tipo' => 'escala'], // Explicaciones
-        ['id' => 3, 'encuesta' => 1, 'tipo' => 'escala'], // Espera
-        ['id' => 4, 'encuesta' => 1, 'tipo' => 'escala'], // Señalización
-        ['id' => 5, 'encuesta' => 1, 'tipo' => 'escala'], // Limpieza
-        ['id' => 6, 'encuesta' => 1, 'tipo' => 'escala'], // Confort
-        ['id' => 7, 'encuesta' => 1, 'tipo' => 'escala'], // Conformidad
-        ['id' => 8, 'encuesta' => 1, 'tipo' => 'escala'], // Recomendación
-    ];
-
-    $insertPregunta = $conexion->prepare("INSERT IGNORE INTO pregunta (id_pregunta, id_encuesta, tipo_pregunta) VALUES (:id, :enc, :tipo)");
-    
-    foreach ($categorias as $cat) {
-        foreach ($preguntas as $p) {
-            // Creamos las preguntas para cada encuesta
-            // Para simplificar, insertamos las preguntas base 1-8 referenciadas a la encuesta 1 (o genéricas).
-            // Pero dado que la restricción exige un id_encuesta, y las preguntas son genéricas, las asociaremos a la primera encuesta, 
-            // ya que en respuesta_pregunta podemos referenciarlas. 
-            // Para no duplicar 8 preguntas por categoría, podemos insertarlas solo asociadas a la id_encuesta = 1.
-            $insertPregunta->execute([
-                ':id' => $p['id'],
-                ':enc' => 1, // Las preguntas "modelo" se atan a la encuesta 1
-                ':tipo' => $p['tipo']
-            ]);
-        }
-    }
-    
-    echo "<p>Preguntas base creadas con éxito.</p>";
-    echo "<h2 style='color:green;'>¡Base de datos lista para recibir respuestas!</h2>";
-    echo "<p><a href='../Vista/responder.php?categoria=1'>Ir a ver la encuesta de prueba</a></p>";
-
-} catch (Exception $e) {
-    echo "<p style='color:red;'>Error: " . $e->getMessage() . "</p>";
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    header('Content-Type: text/plain; charset=utf-8');
+    die("HTTP 403 Prohibido: Este script de inicialización no puede ejecutarse vía web por motivos de seguridad.\nPor favor, ejecute el seeder unificado desde la consola:\n  docker compose exec web php bin/seeder.php\n  o: php bin/seeder.php\n");
 }
 
+// En caso de invocación directa por CLI, delegar al seeder general
+$posiblesRutas = [
+    __DIR__ . '/../../../bin/seeder.php',
+    __DIR__ . '/../../bin/seeder.php',
+    dirname(__DIR__, 3) . '/bin/seeder.php',
+    dirname(__DIR__, 2) . '/bin/seeder.php',
+];
+
+foreach ($posiblesRutas as $ruta) {
+    if (file_exists($ruta)) {
+        require $ruta;
+        exit(0);
+    }
+}
+
+echo "El script de inicialización ha sido trasladado a bin/seeder.php. Ejecute: php bin/seeder.php\n";
+exit(1);

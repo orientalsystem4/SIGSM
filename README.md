@@ -1,196 +1,205 @@
 # S.I.G.S.M. - Sistema Informático de Gestión de Servicios Médicos 🚑
 
-**Proyecto de Egreso - BT Tecnologías de la Información - 2026** *I.S.B.O. - Polo Educativo Tecnológico Vista Linda - ITS Paysandú - ESC Villa Muñoz*
+**Proyecto de Egreso - BT Tecnologías de la Información - 2026**  
+*I.S.B.O. - Polo Educativo Tecnológico Vista Linda - ITS Paysandú - ESC Villa Muñoz*
 
-S.I.G.S.M. es una plataforma web orientada a optimizar la logística de traslados médicos, la gestión de la documentación mediante códigos QR (estáticos y dinámicos) y la recopilación de métricas de satisfacción de los pacientes. 
+S.I.G.S.M. es una plataforma web integral orientada a optimizar la logística de traslados médicos de emergencia, la gestión centralizada de documentación clínica mediante códigos QR (estáticos y dinámicos), el control de acceso de usuarios y la recolección/análisis estadístico de la satisfacción de los pacientes.
 
-🔗 **[Ver Prototipo en Vivo (GitHub Pages)](https://orientalsystem4.github.io/SIGSM/)**
+🔗 **[Ver Maqueta Estática en Vivo (GitHub Pages)](https://orientalsystem4.github.io/SIGSM/)** *(Demostración exclusivamente de interfaz gráfica frontend)*
 
 ---
-## 🚀 Ejecución del proyecto
 
-La versión pública del frontend puede visualizarse mediante GitHub Pages.
+## 🚀 Requisitos del Sistema
 
-Para ejecutar las funcionalidades desarrolladas en PHP, especialmente el CRUD del módulo de Documentación, es necesario utilizar un servidor local con Apache y MariaDB/MySQL.
+El entorno de desarrollo y despliegue del proyecto está completamente containerizado mediante **Docker**, garantizando paridad de entorno en cualquier sistema operativo.
 
-### Requisitos
+### Requisitos Oficiales (Docker)
+- **Docker Engine** (versión 20.10 o superior)
+- **Docker Compose** (versión 2.0 o superior)
+- **Navegador web moderno** (Chrome, Firefox, Edge, Safari)
 
-- XAMPP
-- Apache
-- PHP
-- MariaDB / MySQL
-- phpMyAdmin
-- Navegador web
+### Alternativa sin Docker (LAMP / XAMPP)
+- **PHP** 8.0 o superior (con extensiones `pdo`, `pdo_mysql`, `mysqli`)
+- **MariaDB** 10.4+ o **MySQL** 8.0+
+- **Servidor Apache** con módulo `mod_rewrite` habilitado
+- **phpMyAdmin** (opcional, para inspección visual de la base de datos)
 
-### Instalación
+---
 
-1. Clonar este repositorio:
+## 🐳 Puesta en Marcha con Docker (Recomendado)
 
-`git clone https://github.com/orientalsystem4/SIGSM.git`
+El repositorio incluye la configuración de Docker Compose con los servicios de **Apache/PHP 8.0 (`web`)**, **MariaDB 10.4 (`db`)** y **phpMyAdmin (`phpmyadmin`)**.
 
-2. Colocar la carpeta `SIGSM` dentro de:
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/orientalsystem4/SIGSM.git
+cd SIGSM
+```
 
-`C:\xampp\htdocs\`
+### 2. Configurar variables de entorno
+El proyecto incluye un archivo `.env` precargado para desarrollo. Si no existe, créelo a partir de `.env.example`:
+```bash
+cp .env.example .env
+```
 
-La ubicación del proyecto debería quedar:
+### 3. Levantar los contenedores
+Inicie los servicios en segundo plano:
+```bash
+docker compose up -d
+```
 
-`C:\xampp\htdocs\SIGSM`
+> **Nota:** La base de datos cargará automáticamente la estructura inicial a partir de `src/documentacion/sigsm.sql` durante el primer inicio.
 
-3. Abrir XAMPP e iniciar los servicios **Apache** y **MySQL**.
+### 4. Inicializar y sembrar la base de datos (CLI Seeder)
+Ejecute el script unificado de inicialización dentro del contenedor web:
+```bash
+docker compose exec web php bin/seeder.php
+```
 
-4. Ingresar a phpMyAdmin desde:
+Este comando idempotente se encarga de:
+1. Crear/actualizar el **Superadministrador** con el Rol 1 (`Administrador de DTI`).
+2. Verificar las **7 categorías médicas institucionales**.
+3. Vincular las **7 encuestas institucionales** a sus respectivas especialidades.
+4. Inicializar las **9 preguntas base** del sistema de satisfacción (8 de escala + 1 abierta para sugerencias).
 
-`http://localhost/phpmyadmin/`
+**Credenciales iniciales generadas:**
+- **Usuario:** `admin`
+- **Contraseña:** `Admin123!`
+- **Rol:** `Administrador de DTI` (Acceso total)
 
-5. Crear una base de datos llamada `sigsm`.
+### 5. Acceso a las aplicaciones
+- **Plataforma S.I.G.S.M:** [http://localhost:8080/SIGSM/](http://localhost:8080/SIGSM/)
+- **Gestor phpMyAdmin:** [http://localhost:8081/](http://localhost:8081/)  
+  *(Servidor: `db`, Usuario: `root`, Contraseña: la configurada en `DB_PASS` o `root_password`)*
+- **Puerto MySQL/MariaDB:** `3306`
 
-6. Seleccionar la base de datos `sigsm` e importar el archivo:
+---
 
-`documentacion/sigsm.sql`
+## 💻 Alternativa: Instalación Local con XAMPP / LAMP
 
-Este archivo contiene la estructura de la base de datos, sus relaciones y los datos de prueba utilizados en el proyecto.
+Si desea ejecutar el sistema directamente en su servidor local sin utilizar Docker:
 
-7. Verificar la configuración de conexión ubicada en:
+1. **Ubicación:** Clone o copie el proyecto dentro del directorio raíz de su servidor web (por ejemplo `C:\xampp\htdocs\SIGSM` o `/var/www/html/SIGSM`).
+2. **Servicios:** Inicie Apache y MySQL desde el panel de control de XAMPP.
+3. **Base de Datos:**
+   - Ingrese a phpMyAdmin (`http://localhost/phpmyadmin/`).
+   - Cree una base de datos denominada `sigsm` con cotejamiento `utf8mb4_unicode_ci`.
+   - Importe el volcado base: `src/documentacion/sigsm.sql`.
+4. **Sembrado de Datos:**
+   Abra una terminal en la raíz del proyecto y ejecute:
+   ```bash
+   php bin/seeder.php
+   ```
+5. **Configuración de Conexión:**
+   Verifique que los valores de conexión en `.env` o en `src/serviciosComunes/conexionBD/conexion.php` coincidan con sus credenciales locales de MySQL.
+6. **Navegación:** Ingrese a [http://localhost/SIGSM/](http://localhost/SIGSM/).
 
-`serviciosComunes/conexionBD/conexion.php`
+---
 
-Si la configuración local de MariaDB/MySQL es diferente, se deberán modificar los datos de conexión correspondientes.
+## ⌨️ Herramientas de Consola (CLI)
 
-### CRUD del módulo de Documentación
+En el directorio [`bin/`](file:///home/nika/Documentos/SIGSM/bin) se disponen herramientas de línea de comandos para tareas administrativas y de mantenimiento:
 
-El CRUD de Documentación utiliza PHP y MariaDB, por lo que debe ejecutarse mediante Apache.
+| Comando | Descripción |
+| :--- | :--- |
+| `php bin/seeder.php` | **Seeder Unificado:** Ejecuta de manera segura y transaccional la carga de roles, superadministrador, categorías, encuestas y preguntas modelo. |
+| `php bin/crear_admin.php [user] [pass]` | **Gestor de Superadmin:** Crea o restablece la contraseña de un usuario con permisos de Administrador de DTI. Permite pasar credenciales personalizadas como argumentos. |
 
-Con Apache y MySQL iniciados, ingresar desde el navegador a:
+*Para ejecutarlos dentro de Docker, anteponga `docker compose exec web` (ejemplo: `docker compose exec web php bin/seeder.php`).*
 
-`http://localhost/SIGSM/moduloDocumentacion/Vista/listado.php`
+---
 
-Desde esta vista se pueden realizar las siguientes operaciones:
+## 🧩 Módulos Funcionales del Sistema
 
-- Registrar un documento PDF.
-- Visualizar los documentos registrados.
-- Consultar la información de un documento.
-- Editar un documento existente.
-- Dar de baja un documento.
+El sistema implementa una arquitectura modular donde cada dominio de negocio gestiona su lógica y persistencia:
 
-Las operaciones realizadas desde este módulo se registran en la base de datos de S.I.G.S.M.
+### 1. Autenticación y Control de Acceso (RBAC)
+- **Inicio de sesión centralizado:** Validación real contra base de datos utilizando contraseñas cifradas mediante `password_hash()` con algoritmo Bcrypt.
+- **Control Perimetral (`guardian.php`):** Middleware que intercepta solicitudes, verifica el estado de sesión activa y valida permisos según el rol asignado.
+- **Cierre de sesión seguro:** Destrucción y limpieza de sesiones en `logout.php`.
 
-### Estado de la autenticación
+### 2. Módulo de Gestión de Usuarios (`src/usuario/`)
+- **CRUD Administrativo:** Listado paginado/filtrable, creación, edición y visualización detallada de usuarios.
+- **Asignación de Roles:** Roles configurables (Administrador de DTI, Chofer, Enfermería, Unidad de Enlace).
+- **Control de Estado:** Activación y desactivación lógica de accesos.
 
-El inicio de sesión se encuentra implementado actualmente a nivel de interfaz para permitir la demostración y navegación entre los diferentes módulos.
+### 3. Módulo de Documentación Clínica (`src/moduloDocumentacion/`)
+- **Directorio de Protocolos:** Clasificación por especialidad médica (Urología, Cardiología, Traumatología, etc.).
+- **CRUD de Documentos:** Carga de archivos PDF, visualización en visor integrado, edición de metadatos y baja lógica.
+- **Acceso por QR Estático:** Códigos QR asignados por servicio médico para consulta rápida de protocolos en salas.
 
-En esta etapa no se realiza una validación real de credenciales ni se mantiene una sesión mediante backend. La autenticación, gestión de sesiones y control de acceso por roles quedan previstas para una futura implementación.
+### 4. Módulo de Encuestas y Métricas (`src/moduloEncuestas/`)
+- **Formulario Dinámico (`responder.php`):** Interfaz para pacientes con 8 preguntas evaluativas en escala (1 a 5 estrellas) y campo para comentarios libres.
+- **Registro Transaccional (`GuardarEncuesta.php`):** Persistencia relacional de cabecera y detalle de respuestas con control de integridad referencial.
+- **Panel de Métricas (`MetricasControlador.php`):** API de analítica para visualización de KPIs, promedios de satisfacción por pregunta y distribución estadística.
+- **Seguridad en Endpoints:** Desactivación de ejecución web de inicializadores con respuesta estricta **HTTP 403 Forbidden**.
 
-## 🏗️ Arquitectura del Sistema
+### 5. Módulo de Ambulancias y Traslados (`src/moduloAmbulancias/`)
+- **Panel de Choferes:** Gestión operativa de rutas asignadas y bitácora de estado del traslado.
+- **Unidad de Enlace:** Coordinación, supervisión y despacho activo de solicitudes de traslado interhospitalario.
 
-El proyecto está estructurado bajo el patrón de diseño **MVC (Modelo - Vista - Controlador)**, organizado por dominios de negocio (Módulos) en lugar de roles de usuario, para garantizar la escalabilidad y la separación de responsabilidades.
+---
 
-* **Módulo Ambulancias y Traslados:** Gestiona las rutas, estados de conducción de los choferes y la coordinación activa por parte de la Unidad de Enlace.
-* **Módulo Documentación y Encuestas:** Gestiona el directorio de protocolos médicos (QR Estáticos) y el generador de encuestas/formularios para pacientes (QR Dinámicos).
-* **Servicios Comunes:** Contiene la lógica transversal del sistema, como la autenticación, seguridad, conexión a bases de datos y la plantilla de diseño base (Layout).
+## 🏗️ Arquitectura y Estructura del Proyecto
 
-### Estructura de Directorios
+El proyecto está diseñado bajo el patrón **MVC (Modelo - Vista - Controlador)**, complementado con una capa de **Servicios Comunes** para la lógica transversal y herramientas CLI:
 
 ```text
 📦 SIGSM/
-├── 📂 moduloAmbulancias/
-│   ├── 📂 Controlador/
-│   ├── 📂 Modelo/
-│   └── 📂 Vista/
-│       ├── 📂 assets/ (css, js, img específicos)
-│       ├── choferes.html
-│       └── unidad_enlace.html
-├── 📂 moduloDocumentacion/
-│   ├── 📂 Controlador/
-│   ├── 📂 Modelo/
-│   └── 📂 Vista/
-│       └── enfermeria.html
-├── 📂 serviciosComunes/
-│   ├── 📂 autenticacion/
-│   └── 📂 vistaGeneral/
-│       ├── 📂 assets/ (Layout global y paleta de colores)
-│       ├── bifurcacion.html
-│       └── layout_base.html
-├── 📂 documento
-│       ├── sigsm.sql
-│   ├── 📂 Controlador
-│   ├── 📂 Modelo
-│   └── 📂 Vista/
-│       ├── 📂 assets/ 
-│            ├── 📂 css
-│                 ├── chofer.css
-│                 ├── unidadEnlace.css
-│            ├── 📂 img 
-│            └── 📂 js
-│                 ├── choferes.html
-│                 └── unidad_enlace.html
-├── 📂 moduloDocumentacion/
-│   ├── 📂 Controlador
-│   ├── 📂 Modelo
-│   └── 📂 Vista/
-│       └── 📂 assets/ 
-│            ├── 📂 css
-│                 ├── documemtacion.css
-│                 ├── enfermeria.css
-│            └── 📂 img
-│       └── documentacion.js
-│       └── enfermeria.js
-│       └── documentacion.html
-│       └── enfermeria.html
-├── 📂 moduloEncuesta/
-│   ├── 📂 Controlador
-│   ├── 📂 Modelo
-│   └── 📂 Vista/
-│       └── 📂 assets (css, img, js)
-├── 📂 serviciosComunes/
-│   ├── 📂 autenticacion
-│       ├── login.css
-│       ├── sesiones.html
-│   ├── 📂 conexionBD
-│   ├── 📂 permisos
-│   ├── 📂 seguridad
-│   ├── 📂 validaciones
-│   └── 📂 vistaGeneral/
-│       ├── 📂 assets/ (css, js, Layout global y paleta de colores)
-│       ├── bifurcacion.html
-│       └── layout_base.html
-├── 📂 usuario/
-│   ├── 📂 Controlador
-│   ├── 📂 Modelo
-│   └── 📂 Vista
-│       ├── crear.php
-│       ├── editar.php
-│       ├── listado.php
-│       └── ver.php
-├── index.html (Redirección para el Deployment)
-└── README.md
+├── 📂 bin/                               # Herramientas de consola y scripts administrativos CLI
+│   ├── crear_admin.php                   # Gestor CLI para Superadministrador
+│   └── seeder.php                        # Seeder general e inicializador del sistema
+├── 📂 src/                               # Código fuente principal de la aplicación
+│   ├── 📂 documentacion/                 # Volcados y esquemas de base de datos
+│   │   └── sigsm.sql                     # Script SQL con estructura relacional y datos base
+│   ├── 📂 moduloAmbulancias/             # Módulo de traslados médicos y choferes
+│   │   ├── 📂 Controlador/
+│   │   ├── 📂 Model/
+│   │   └── 📂 Vista/                     # Vistas operativas (choferes.php, unidadEnlace.php)
+│   ├── 📂 moduloDocumentacion/           # Módulo de repositorio documental médico
+│   │   ├── 📂 Controlador/               # ControladorDocumentos.php
+│   │   ├── 📂 Model/                     # DocumentoModelo.php
+│   │   └── 📂 Vista/                     # CRUD de documentos y portal de enfermería
+│   ├── 📂 moduloEncuestas/               # Módulo de evaluación de satisfacción y métricas
+│   │   ├── 📂 Controlador/               # GuardarEncuesta.php, MetricasControlador.php
+│   │   └── 📂 Vista/                     # Interfaz de respuesta de encuestas (responder.php)
+│   ├── 📂 serviciosComunes/              # Capa transversal y utilidades compartidas
+│   │   ├── 📂 autenticacion/             # Controladores de login, logout y manejo de sesión
+│   │   ├── 📂 conexionBD/                # Conector PDO Singleton con soporte para Docker y CLI
+│   │   ├── 📂 permisos/                  # Verificadores de permisos por rol
+│   │   ├── 📂 seguridad/                 # Guardian perimetral y middleware de sesión
+│   │   └── 📂 vistaGeneral/              # Layout base compartido y bifurcación
+│   ├── 📂 usuario/                       # Módulo de administración de usuarios y roles
+│   │   ├── 📂 Controlador/               # ControladorUsuarios.php
+│   │   ├── 📂 Model/                     # UsuarioModelo.php
+│   │   └── 📂 Vista/                     # Vistas CRUD (listado, crear, editar, ver)
+│   └── index.html                        # Redirección al punto de entrada web
+├── 📂 tests/                             # Suites de pruebas y verificación
+├── .env                                  # Variables de entorno locales
+├── .env.example                          # Plantilla de variables de entorno
+├── docker-compose.yml                    # Orquestación de contenedores (web, db, phpmyadmin)
+├── Dockerfile                            # Imagen personalizada de Apache + PHP 8.0
+└── README.md                             # Documentación técnica general
 ```
 
-### 🛠️ Convenciones y Metodología de Trabajo
+---
 
-Para mantener el orden, la trazabilidad del código y el profesionalismo durante todo el ciclo de vida del proyecto, el equipo adoptó metodologías estándar de la industria para el control de versiones y la gestión del código fuente.
+## 🛠️ Metodología y Convenciones de Desarrollo
 
-### . Control de Versiones (Feature Branch Workflow)
-Todo el control de código fuente se realizó utilizando **Git** y alojado en **GitHub**. Se implementó un flujo de trabajo basado en la creación de ramas por funcionalidad (*Feature Branching*):
-* **`main` (Rama Principal):** Contiene únicamente código funcional, estable y testeado. Refleja la versión de producción o entregables oficiales. Nunca se programa directamente sobre esta rama.
-* **`test` (Rama de Desarrollo/Pruebas):** Se utilizó para desarrollar nuevas vistas, probar la compatibilidad de los estilos CSS compartidos (layout) y validar el código JavaScript antes de integrarlo. Una vez validado el funcionamiento cruzado, se realizaba la fusión (`merge`) hacia `main`.
+Para asegurar la calidad, orden y trazabilidad del código fuente, el equipo sigue estándares consolidados de desarrollo:
 
-### . Lógica de Commits (Conventional Commits)
-Se estableció una convención estricta para los mensajes de guardado (*commits*), utilizando la metodología **Conventional Commits**. Esto permite que el historial del repositorio explique no solo *qué* cambió, sino *por qué* y *qué tipo* de cambio es. 
-Los prefijos utilizados durante el proyecto fueron:
-* `feat:` Implementación de una nueva característica o funcionalidad (Ej: *feat: implementa vista de choferes con layout base*).
-* `fix:` Solución de errores o comportamientos no deseados (Ej: *fix: reutilización de clases CSS en tabs de documentos*).
-* `refactor:` Reestructuración del código para mejorar su legibilidad o eficiencia sin alterar su comportamiento externo (Ej: *refactor: rediseño de bifurcación y limpieza de estilos*).
-* `docs:` Cambios exclusivos en la documentación, como este archivo README.
+### Control de Versiones (Feature Branch Workflow)
+- **`main`:** Código funcional, estable y testeado correspondiente a las versiones de entrega oficial.
+- **Ramas de funcionalidad (`feat/...`, `fix/...`, `test`):** Desarrollo aislado de nuevas capacidades antes de su integración a la rama principal mediante Pull Requests.
 
-### . Versionamiento Semántico (Semantic Versioning - SemVer)
-El avance del proyecto se catalogó utilizando **SemVer** (`MAYOR.MENOR.PARCHE`). Según este estándar, todas las versiones `0.x.x` representan el proceso de desarrollo inicial, iteración y prototipado. La versión `1.0.0` marca el primer lanzamiento estable del prototipo.
+### Convención de Commits (Conventional Commits)
+Los mensajes de confirmación utilizan los prefijos estándar:
+- `feat:` Implementación de una nueva funcionalidad.
+- `fix:` Corrección de errores o inconsistencias.
+- `refactor:` Reestructuración o limpieza de código sin alterar su comportamiento externo.
+- `docs:` Modificaciones exclusivas en la documentación.
+- `test:` Adición o ajuste de pruebas.
 
-A continuación, se detalla el registro de evolución del proyecto mediante etiquetas (*Tags*):
-
-* **`v0.1.0` - Arquitectura Base:** Inicialización del repositorio y creación de la estructura de directorios separada por módulos funcionales bajo el patrón MVC.
-* **`v0.2.0` - Refactorización UI:** Separación del código CSS del HTML, rediseño de la interfaz de inicio de sesión y bifurcación con soporte *Mobile First*.
-* **`v0.3.0` - Layout Global:** Creación del `layout_base.html`, implementando el *sidebar* desplegable responsivo y perfiles de usuario.
-* **`v0.6.0` - Portal Enfermería:** Desarrollo del módulo de documentación, incluyendo el formulario de solicitudes de traslado, directorio estático y generador de códigos QR dinámicos.
-* **`v0.7.0` - Directorio y Métricas:** Implementación de la vista de Unidad de Enlace con el repositorio médico clasificado y paneles de métricas estadísticas (KPIs).
-* **`v0.8.0` - Optimización de Código:** *Refactor* de la lógica JavaScript y CSS de la navegación secundaria (pestañas) para hacerla 100% modular y reutilizable.
-* **`v0.9.0` - Modales Funcionales:** Integración de ventanas emergentes para la aprobación/denegación de traslados y subida de archivos, con inyección dinámica del nombre del responsable.
+### Versionamiento Semántico (SemVer)
+- **`v0.1.0` - `v0.9.0`:** Proceso iterativo de diseño arquitectónico, maquetación de interfaces, módulos clínicos y modales funcionales.
+- **`v1.0.0`:** Consolidación de la arquitectura MVC, implementación de entorno Dockerizado, login real con control de acceso RBAC, gestión integral de usuarios, módulo de métricas analíticas y herramientas de sembrado CLI.
