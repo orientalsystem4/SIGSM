@@ -1,11 +1,11 @@
 <?php
 
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
-requiereRol([1, 2]);
+requiereRol([1]);
 
 require_once __DIR__ . '/../Model/UsuarioModelo.php';
 
-$idUsuario = (int)($_GET['id'] ?? 0);
+$idUsuario = (int) ($_GET['id'] ?? 0);
 $usuario = UsuarioModelo::obtenerPorId($idUsuario);
 
 if (!$usuario) {
@@ -14,34 +14,11 @@ if (!$usuario) {
     exit;
 }
 
-$esAdminDTI = (int)($_SESSION['id_rol'] ?? 0) === 1;
-$rolesUsuario = UsuarioModelo::obtenerRolesUsuario($idUsuario);
-
-if (!$esAdminDTI) {
-    $puedeEditar = count($rolesUsuario) === 1
-        && (int)$rolesUsuario[0]['id_rol'] === 6;
-
-    if (!$puedeEditar) {
-        $_SESSION['error'] =
-            'No tiene permisos para editar esta cuenta.';
-
-        header('Location: listado.php');
-        exit;
-    }
-}
-
 $roles = UsuarioModelo::listarRoles();
 
-if (!$esAdminDTI) {
-    $roles = array_values(array_filter(
-        $roles,
-        function ($rol) {
-            return (int)$rol['id_rol'] === 6;
-        }
-    ));
-}
 $errores = $_SESSION['errores_usuario'] ?? [];
 unset($_SESSION['errores_usuario']);
+
 ?>
 <!DOCTYPE html>
 <html lang="es">

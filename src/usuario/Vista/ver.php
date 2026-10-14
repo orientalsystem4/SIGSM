@@ -1,11 +1,11 @@
 <?php
 
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
-requiereRol([1, 2]);
+requiereRol([1]);
 
 require_once __DIR__ . '/../Model/UsuarioModelo.php';
 
-$idUsuario = (int)($_GET['id'] ?? 0);
+$idUsuario = (int) ($_GET['id'] ?? 0);
 $usuario = UsuarioModelo::obtenerPorId($idUsuario);
 
 if (!$usuario) {
@@ -13,22 +13,9 @@ if (!$usuario) {
     header('Location: listado.php');
     exit;
 }
-$esAdminDTI = (int) ($_SESSION['id_rol'] ?? 0) === 1;
-
-if (!$esAdminDTI) {
-    $rolesUsuario = UsuarioModelo::obtenerRolesUsuario($idUsuario);
-
-    $puedeVer = count($rolesUsuario) === 1
-        && (int) $rolesUsuario[0]['id_rol'] === 6;
-
-    if (!$puedeVer) {
-        $_SESSION['error'] = 'No tiene permisos para consultar esta cuenta.';
-        header('Location: listado.php');
-        exit;
-    }
-}
 
 $tituloPagina = 'Detalle de Usuario';
+
 ?>
 <!DOCTYPE html>
 <html lang="es">

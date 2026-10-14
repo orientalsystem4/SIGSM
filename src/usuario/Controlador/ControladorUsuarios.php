@@ -1,39 +1,11 @@
 <?php
 
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
-requiereRol([1, 2]);
+requiereRol([1]);
 
 require_once __DIR__ . '/../Model/UsuarioModelo.php';
 
 $accion = $_POST['accion'] ?? $_GET['accion'] ?? '';
-// Limitar la administracion de usuarios por rol
-$esAdminDTI = (int)($_SESSION['id_rol'] ?? 0) === 1;
-
-if (!$esAdminDTI) {
-    $permitido = true;
-
-
-    if (in_array($accion, ['editar', 'cambiar_estado'], true)) {
-        $idObjetivo = (int)(
-            $_POST['id_usuario'] ?? $_GET['id_usuario'] ?? 0
-        );
-
-        $rolesObjetivo = UsuarioModelo::obtenerRolesUsuario($idObjetivo);
-
-        $permitido = count($rolesObjetivo) === 1
-            && (int)$rolesObjetivo[0]['id_rol'] === 6;
-
-       
-    }
-
-    if (!$permitido) {
-        $_SESSION['error'] =
-            'Solo puede administrar cuentas con el rol exclusivo de Enfermero de Traslado.';
-
-        header('Location: ../Vista/listado.php');
-        exit;
-    }
-}
 
 // ============================================================
 // CREAR
@@ -119,12 +91,6 @@ if ($accion === 'crear') {
     } elseif (!empty(array_diff($idsRoles, $idsDisponibles))) {
         $errores[] = 'Uno de los roles seleccionados no existe.';
     }
-
-    // Enfermeria solo puede crear cuentas de enfermeros.
-    if (!$esAdminDTI && $idsRoles !== [6]) {
-        $errores[] = 'Solo puede asignar el rol Enfermero de Traslado.';
-    }
-
     // Conservar los datos del formulario, sin contraseñas.
     $_SESSION['datos_previos_usuario'] = [
         'nombre_usuario' => $nombreUsuario,
@@ -162,6 +128,7 @@ if ($accion === 'crear') {
     header('Location: ../Vista/listado.php');
     exit;
 }
+
 
 // ============================================================
 // EDITAR
@@ -268,10 +235,6 @@ if ($accion === 'editar') {
         $errores[] = 'Uno de los roles seleccionados no existe.';
     }
 
-    // Enfermeria solo puede asignar el rol de enfermero.
-    if (!$esAdminDTI && $idsRoles !== [6]) {
-        $errores[] = 'Solo puede asignar el rol Enfermero de Traslado.';
-    }
 
     // Proteger la cuenta y el rol usados en esta sesion.
     if ($idUsuario === (int) ($_SESSION['id_usuario'] ?? 0)) {

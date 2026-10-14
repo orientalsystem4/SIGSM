@@ -1,22 +1,11 @@
 <?php
 
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
-requiereRol([1, 2]);
+requiereRol([1]);
 
 require_once __DIR__ . '/../Model/UsuarioModelo.php';
 
 $roles = UsuarioModelo::listarRoles();
-
-$esAdminDTI = (int) ($_SESSION['id_rol'] ?? 0) === 1;
-
-if (!$esAdminDTI) {
-    $roles = array_values(array_filter(
-        $roles,
-        function ($rol) {
-            return (int) $rol['id_rol'] === 6;
-        }
-    ));
-}
 
 $errores = $_SESSION['errores_usuario'] ?? [];
 $previos = $_SESSION['datos_previos_usuario'] ?? [

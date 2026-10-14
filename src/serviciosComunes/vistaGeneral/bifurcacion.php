@@ -49,84 +49,74 @@ $usuarioActual = obtenerUsuarioActual();
 
             <div class="modules-grid">
 
-                <?php if (tieneRol([1, 2, 3])): ?>
-                    <a
-                        href="../../moduloAmbulancias/Vista/unidadEnlace.php"
-                        class="module-card"
-                    >
-                        <div class="icon-wrapper">
-                            <i data-lucide="layout-dashboard"></i>
-                        </div>
-                        <h3 class="card-title">Portal Unidad de Enlace</h3>
-                        <p class="card-subtitle">
-                            Coordinación y seguimiento de traslados
-                        </p>
-                    </a>
-                <?php endif; ?>
-
-                <?php if (tieneRol([1, 3, 5])): ?>
-                    <a
-                        href="../../moduloAmbulancias/Vista/choferes.php"
-                        class="module-card"
-                    >
-                        <div class="icon-wrapper">
-                            <i data-lucide="ambulance"></i>
-                        </div>
-                        <h3 class="card-title">Portal Choferes</h3>
-                        <p class="card-subtitle">Planilla y rutas activas</p>
-                    </a>
-                <?php endif; ?>
-
-                <?php if (tieneRol([1, 2, 6])): ?>
-                    <a
-                        href="../../moduloDocumentacion/Vista/enfermeria.php"
-                        class="module-card"
-                    >
-                        <div class="icon-wrapper">
-                            <i data-lucide="clipboard-plus"></i>
-                        </div>
-                        <h3 class="card-title">Solicitudes de Traslado</h3>
-                        <p class="card-subtitle">Portal de Enfermería</p>
-                    </a>
-                <?php endif; ?>
-
-                <?php if (tieneRol([1, 4])): ?>
-                    <a
-                        href="../../moduloDocumentacion/Vista/documentacion.php"
-                        class="module-card"
-                    >
-                        <div class="icon-wrapper">
-                            <i data-lucide="folder-open"></i>
-                        </div>
-                        <h3 class="card-title">Portal Documentación</h3>
-                        <p class="card-subtitle">Archivos y encuestas</p>
-                    </a>
-                <?php endif; ?>
-
-                <?php if (tieneRol([1, 2])): ?>
-                    <a
-                        href="../../usuario/Vista/listado.php"
-                        class="module-card"
-                    >
-                        <div class="icon-wrapper">
-                            <i data-lucide="users"></i>
-                        </div>
-
-                        <h3 class="card-title">
-                            <?= tieneRol(1)
-                                ? 'Gestión de Usuarios'
-                                : 'Personal de Enfermería' ?>
-                        </h3>
-
-                        <p class="card-subtitle">
-                            <?= tieneRol(1)
-                                ? 'Administración y roles'
-                                : 'Gestión de cuentas de Enfermería' ?>
-                        </p>
-                    </a>
-                <?php endif; ?>
-
+    <?php if (tieneRol([1, 2, 3])): ?>
+        <a
+            href="../../moduloAmbulancias/Vista/unidadEnlace.php"
+            class="module-card"
+        >
+            <div class="icon-wrapper">
+                <i data-lucide="layout-dashboard"></i>
             </div>
+            <h3 class="card-title">Portal Unidad de Enlace</h3>
+            <p class="card-subtitle">
+                Coordinación y seguimiento de traslados
+            </p>
+        </a>
+    <?php endif; ?>
+
+    <?php if (tieneRol([1, 3, 5])): ?>
+        <a
+            href="../../moduloAmbulancias/Vista/choferes.php"
+            class="module-card"
+        >
+            <div class="icon-wrapper">
+                <i data-lucide="ambulance"></i>
+            </div>
+            <h3 class="card-title">Portal Choferes</h3>
+            <p class="card-subtitle">Planilla y rutas activas</p>
+        </a>
+    <?php endif; ?>
+
+    <?php if (tieneRol([1, 2, 6])): ?>
+        <a
+            href="../../moduloDocumentacion/Vista/enfermeria.php"
+            class="module-card"
+        >
+            <div class="icon-wrapper">
+                <i data-lucide="clipboard-plus"></i>
+            </div>
+            <h3 class="card-title">Solicitudes de Traslado</h3>
+            <p class="card-subtitle">Portal de Enfermería</p>
+        </a>
+    <?php endif; ?>
+
+    <?php if (tieneRol([1, 4])): ?>
+        <a
+            href="../../moduloDocumentacion/Vista/documentacion.php"
+            class="module-card"
+        >
+            <div class="icon-wrapper">
+                <i data-lucide="folder-open"></i>
+            </div>
+            <h3 class="card-title">Portal Documentación</h3>
+            <p class="card-subtitle">Archivos y encuestas</p>
+        </a>
+    <?php endif; ?>
+
+    <?php if (tieneRol([1])): ?>
+        <a
+            href="../../usuario/Vista/listado.php"
+            class="module-card"
+        >
+            <div class="icon-wrapper">
+                <i data-lucide="users"></i>
+            </div>
+            <h3 class="card-title">Gestión de Usuarios</h3>
+            <p class="card-subtitle">Administración y roles</p>
+        </a>
+    <?php endif; ?>
+
+</div>
 
             <div class="logout-section">
                 <a
