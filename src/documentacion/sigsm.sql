@@ -134,6 +134,19 @@ CREATE TABLE `encuesta` (
   `segmento` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `encuesta`
+--
+
+INSERT INTO `encuesta` (`id_encuesta`, `id_categoria`, `segmento`) VALUES
+(1, 1, 'Institucional'),
+(2, 2, 'Institucional'),
+(3, 3, 'Institucional'),
+(4, 4, 'Institucional'),
+(5, 5, 'Institucional'),
+(6, 6, 'Institucional'),
+(7, 7, 'Institucional');
+
 -- --------------------------------------------------------
 
 --
@@ -225,6 +238,21 @@ CREATE TABLE `pregunta` (
   `id_encuesta` int(11) NOT NULL,
   `tipo_pregunta` enum('abierta','opcion_unica','opcion_multiple','escala') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `pregunta`
+--
+
+INSERT INTO `pregunta` (`id_pregunta`, `id_encuesta`, `tipo_pregunta`) VALUES
+(1, 1, 'escala'),
+(2, 1, 'escala'),
+(3, 1, 'escala'),
+(4, 1, 'escala'),
+(5, 1, 'escala'),
+(6, 1, 'escala'),
+(7, 1, 'escala'),
+(8, 1, 'escala'),
+(9, 1, 'abierta');
 
 -- --------------------------------------------------------
 
