@@ -3,6 +3,9 @@ require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 
 requiereRol([1, 2, 6]);
 $usuarioActual = obtenerUsuarioActual();
+if (empty($_SESSION['csrf_traslado'])) {
+    $_SESSION['csrf_traslado'] = bin2hex(random_bytes(32));
+}
 ?>
 <!DOCTYPE html>s
 <html lang="es">
@@ -154,6 +157,14 @@ $usuarioActual = obtenerUsuarioActual();
 
 
                         <form id="form-traslado" class="mt-3">
+                            <input
+                                type="hidden"
+                                id="csrf-traslado"
+                                value="<?= htmlspecialchars(
+                                            $_SESSION['csrf_traslado'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>">
 
 
                             <!-- TIPO DE ELEMENTO -->
@@ -801,9 +812,7 @@ $usuarioActual = obtenerUsuarioActual();
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
 
-    <script src="Assets/js/enfermeria.js"></script>
-
-    <script>
+    <script src="Assets/js/enfermeria.js?v=20261016-3"></script>
         lucide.createIcons();
     </script>
 

@@ -115,23 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. PACIENTES DE PRUEBA
     // =========================================================
 
-    /*
-        Esto simula la tabla PACIENTE.
-
-        Cuando exista backend, esta lista desaparece
-        y la CI se verificará directamente contra MariaDB.
-    */
-
-    const pacientesRegistrados = [
-
-        {
-            ci: "11111111",
-            nombre: "Paciente",
-            apellido: "de prueba"
-        }
-
-    ];
-
+    let pacienteEncontrado = null;
+    let numeroBusqueda = 0;
+    let temporizadorBusqueda = null;
 
 
     // =========================================================
@@ -205,54 +191,80 @@ document.addEventListener("DOMContentLoaded", () => {
     // 5. BUSCAR PACIENTE POR CÉDULA
     // =========================================================
 
+    // 5. BUSCAR PACIENTE POR CEDULA
+
     if (ciPaciente) {
-
         ciPaciente.addEventListener('input', () => {
+            const cedula = ciPaciente.value.replace(/\D/g, '');
+            ciPaciente.value = cedula;
 
+            pacienteEncontrado = null;
+            clearTimeout(temporizadorBusqueda);
 
-            // Sacar puntos, guiones, letras, etc.
-            const ciIngresada =
-                ciPaciente.value.replace(/\D/g, '');
+            const busquedaActual = ++numeroBusqueda;
 
-
-            ciPaciente.value =
-                ciIngresada;
-
-
-
-            if (ciIngresada === "") {
-
+            if (!/^[0-9]{7,8}$/.test(cedula)) {
                 estadoPaciente.textContent =
-                    "Ingrese la cédula para verificar que el paciente esté registrado.";
-
+                    'Ingrese una cedula de 7 u 8 digitos.';
                 return;
             }
 
+            estadoPaciente.textContent = 'Buscando paciente...';
 
+            temporizadorBusqueda = setTimeout(async () => {
+                try {
+                    const respuesta = await fetch(
+                        '../../moduloAmbulancias/Controlador/BuscarPaciente.php?ci='
+                        + encodeURIComponent(cedula),
+                        {
+                            cache: 'no-store',
+                            headers: { Accept: 'application/json' }
+                        }
+                    );
 
-            const paciente =
-                pacientesRegistrados.find(
-                    p => p.ci === ciIngresada
-                );
+                    if (respuesta.redirected) {
+                        throw new Error('Sesion finalizada');
+                    }
 
+                    const datos = await respuesta.json();
 
+                    // Ignorar respuestas de una cedula anterior.
+                    if (
+                        busquedaActual !== numeroBusqueda
+                        || ciPaciente.value !== cedula
+                    ) {
+                        return;
+                    }
 
-            if (paciente) {
+                    if (!respuesta.ok || !datos.exito) {
+                        estadoPaciente.textContent =
+                            datos.mensaje || 'No se pudo consultar el paciente.';
+                        return;
+                    }
 
-                estadoPaciente.textContent =
-                    `Paciente encontrado: ${paciente.nombre} ${paciente.apellido}`;
+                    if (!datos.encontrado) {
+                        estadoPaciente.textContent =
+                            'No se encontro un paciente con esa cedula.';
+                        return;
+                    }
 
-            } else {
+                    pacienteEncontrado = datos.paciente;
 
-                estadoPaciente.textContent =
-                    "Paciente no encontrado.";
+                    estadoPaciente.textContent =
+                        `Paciente encontrado: ${datos.paciente.nombre} ${datos.paciente.apellido}`;
 
-            }
+                } catch (error) {
+                    if (busquedaActual !== numeroBusqueda) {
+                        return;
+                    }
 
+                    pacienteEncontrado = null;
+                    estadoPaciente.textContent =
+                        'No se pudo consultar. Revise la conexion y su sesion.';
+                }
+            }, 350);
         });
-
     }
-
 
 
     // =========================================================
@@ -261,8 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (formTraslado) {
 
-        formTraslado.addEventListener('submit', (e) => {
-
+        formTraslado.addEventListener('submit', async (e) => {
             e.preventDefault();
 
 
@@ -303,9 +314,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 const pacienteExiste =
-                    pacientesRegistrados.some(
-                        p => p.ci === ciIngresada
-                    );
+                    pacienteEncontrado !== null
+                    && pacienteEncontrado.ci === ciIngresada;
 
 
                 if (!pacienteExiste) {
@@ -390,140 +400,94 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // =================================================
-            // 7. CREAR LA SOLICITUD
-            // =================================================
+            // 7. ENVIAR LA SOLICITUD AL SERVIDOR
 
-            const solicitud = {
-
-                id_solicitud: null,
-
-                ci_paciente:
-                    tipoElemento.value === "1"
-                        ? ciPaciente.value
-                        : null,
-
-                id_tipo_elemento:
-                    Number(tipoElemento.value),
-
-                id_origen:
-                    Number(origen.value),
-
-                id_destino:
-                    Number(destino.value),
-
-                id_canal:
-                    Number(canal.value),
-
-                // Usuario de prueba: Administrador de Enfermería
-                id_usuario_solicit:
-                    2,
-
-                fecha_solicitud:
-                    new Date().toISOString(),
-
-                estado_solicitud:
-                    "Pendiente",
-
-                prioridad:
-                    tipoElemento.value === "2"
-                        ? "maxima"
-                        : prioridad.value,
-
-                fecha_hora_limite:
-                    fechaHoraLimite.value !== ""
-                        ? fechaHoraLimite.value
-                        : null,
-
-                observaciones:
-                    observaciones.value.trim() !== ""
-                        ? observaciones.value.trim()
-                        : null
-
-            };
-
-
-
-            // =================================================
-            // 8. GUARDAR EN LOCALSTORAGE
-            // =================================================
-
-            /*
-                Esto es solamente para la demostración.
-
-                Permite que después Unidad de Enlace pueda
-                leer las solicitudes creadas desde Enfermería.
-
-                NO modifica MariaDB.
-            */
-
-            let solicitudesGuardadas = [];
-
-
-            try {
-
-                solicitudesGuardadas =
-                    JSON.parse(
-                        localStorage.getItem(
-                            'sigsm_solicitudes'
-                        )
-                    ) || [];
-
-            } catch (error) {
-
-                solicitudesGuardadas = [];
-
+            if (formTraslado.dataset.enviando === '1') {
+                return;
             }
 
+            const token = document.getElementById('csrf-traslado');
 
+            if (!token || !token.value) {
+                alert('Recargue la pagina antes de enviar la solicitud.');
+                return;
+            }
 
-            /*
-                Las solicitudes de prueba de nuestra BD
-                llegan hasta el ID 5.
+            const datos = new FormData();
 
-                Por eso, si todavía no existe ninguna solicitud
-                creada en el navegador, la primera será la #6.
-            */
+            datos.append('token', token.value);
+            datos.append('id_tipo_elemento', tipoElemento.value);
+            datos.append(
+                'ci_paciente',
+                tipoElemento.value === '1' ? ciPaciente.value : ''
+            );
+            datos.append('id_origen', origen.value);
+            datos.append('id_destino', destino.value);
+            datos.append('id_canal', canal.value);
+            datos.append(
+                'prioridad',
+                tipoElemento.value === '2' ? 'maxima' : prioridad.value
+            );
+            datos.append('fecha_hora_limite', fechaHoraLimite.value);
+            datos.append('observaciones', observaciones.value.trim());
 
-            let ultimoId = 5;
+            const botonEnviar = formTraslado.querySelector(
+                'button[type="submit"], input[type="submit"]'
+            );
 
+            formTraslado.dataset.enviando = '1';
 
-            solicitudesGuardadas.forEach(item => {
+            if (botonEnviar) {
+                botonEnviar.disabled = true;
+            }
 
-                const id =
-                    Number(item.id_solicitud);
+            if (mensajeExito) {
+                mensajeExito.classList.add('hidden');
+            }
 
-                if (id > ultimoId) {
-                    ultimoId = id;
+            try {
+                const respuesta = await fetch(
+                    '../../moduloAmbulancias/Controlador/GuardarSolicitud.php',
+                    {
+                        method: 'POST',
+                        body: datos,
+                        headers: { Accept: 'application/json' }
+                    }
+                );
+
+                if (respuesta.redirected) {
+                    alert('La sesion finalizo. Vuelva a iniciar sesion.');
+                    return;
                 }
 
-            });
+                const resultado = await respuesta.json();
 
+                if (!respuesta.ok || !resultado.exito) {
+                    alert(
+                        resultado.mensaje
+                        || 'No se pudo guardar la solicitud.'
+                    );
+                    return;
+                }
 
-            solicitud.id_solicitud =
-                ultimoId + 1;
+                if (mensajeExito) {
+                    mensajeExito.textContent = resultado.mensaje;
+                }
 
+            } catch (error) {
+                alert(
+                    'No se pudo confirmar el guardado. '
+                    + 'Revise si la solicitud se registro antes de reenviarla.'
+                );
+                return;
 
+            } finally {
+                formTraslado.dataset.enviando = '0';
 
-            solicitudesGuardadas.push(
-                solicitud
-            );
-
-
-            localStorage.setItem(
-                'sigsm_solicitudes',
-                JSON.stringify(
-                    solicitudesGuardadas
-                )
-            );
-
-
-
-            console.log(
-                "Solicitud creada:",
-                solicitud
-            );
-
+                if (botonEnviar) {
+                    botonEnviar.disabled = false;
+                }
+            }
 
 
             // =================================================
@@ -545,6 +509,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // =================================================
 
             formTraslado.reset();
+            pacienteEncontrado = null;
+            numeroBusqueda++;
+            clearTimeout(temporizadorBusqueda);
 
 
             datosPaciente.classList.add(
@@ -613,9 +580,9 @@ document.addEventListener("DOMContentLoaded", () => {
         Dirección local de la nueva encuesta (apuntamos a nuestro propio módulo local)
         Ajustado para que funcione en XAMPP con PHP embebido o Apache normal.
     */
-    const URL_ENCUESTA_PUBLICA = 
+    const URL_ENCUESTA_PUBLICA =
         window.location.origin + "/SIGSM/moduloEncuestas/Vista/responder.php"; // Si usas Apache local
-        // O si usas `php -S`: window.location.origin + "/moduloEncuestas/Vista/responder.php"
+    // O si usas `php -S`: window.location.origin + "/moduloEncuestas/Vista/responder.php"
 
 
     // =========================================================

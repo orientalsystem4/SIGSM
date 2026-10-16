@@ -2,6 +2,9 @@
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 requiereRol([1, 2, 3]);
 $usuarioActual = obtenerUsuarioActual();
+require_once __DIR__ . '/../Model/SolicitudModelo.php';
+
+$solicitudesPendientes = SolicitudModelo::listarPendientes();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -65,7 +68,7 @@ $usuarioActual = obtenerUsuarioActual();
                     </i>
 
                     Control de Traslados
-
+                </button>
             </nav>
 
             <?php if (tieneRol('admin') || tieneRol(1)): ?>
@@ -368,324 +371,79 @@ $usuarioActual = obtenerUsuarioActual();
 
 
                                 </div>
-                              </div>
+                            </div>
 
                         </div>
-                        </div>
+                    </div>
                     <!-- ===================================== -->
                     <!-- SOLICITUDES PENDIENTES -->
                     <!-- ===================================== -->
 
                     <div id="sub-pendientes" class="sub-content hidden">
 
+                        <?php if (empty($solicitudesPendientes)): ?>
+                            <p>No hay solicitudes pendientes.</p>
+                        <?php endif; ?>
 
-                        <!-- SOLICITUD #3 -->
+                        <?php foreach ($solicitudesPendientes as $solicitud): ?>
+                            <div class="card-pendiente">
 
-                        <div class="card-pendiente">
+                                <div class="item-header">
+                                    <h3 class="card-title">
+                                        Solicitud #<?= (int) $solicitud['id_solicitud'] ?>
+                                    </h3>
 
+                                    <span class="badge badge-gray">Pendiente</span>
+                                </div>
 
-                            <div class="item-header">
+                                <?php
+                                $detalles = [
+                                    'Tipo de elemento' => $solicitud['tipo_elemento'],
+                                    'Origen' => $solicitud['origen'],
+                                    'Destino' => $solicitud['destino'],
+                                    'Canal' => $solicitud['canal'],
+                                    'Solicitante' => $solicitud['solicitante'],
+                                    'Fecha de solicitud' => $solicitud['fecha_solicitud'],
+                                    'Prioridad' => $solicitud['prioridad'],
+                                    'Debe llegar antes de' =>
+                                    $solicitud['fecha_hora_limite'] ?? 'Sin horario limite',
+                                    'Observaciones' =>
+                                    $solicitud['observaciones'] ?? 'Sin observaciones'
+                                ];
 
-                                <h3 class="card-title">
-                                    Solicitud #3
-                                </h3>
+                                if ($solicitud['ci_paciente'] !== null) {
+                                    $detalles['Cedula del paciente'] =
+                                        $solicitud['ci_paciente'];
 
-                                <span class="badge badge-gray">
-                                    Pendiente
-                                </span>
+                                    $detalles['Paciente'] = trim(
+                                        ($solicitud['nombre_paciente'] ?? '') . ' ' .
+                                            ($solicitud['apellido_paciente'] ?? '')
+                                    );
+                                }
+                                ?>
 
-                            </div>
+                                <?php foreach ($detalles as $etiqueta => $valor): ?>
+                                    <p class="detail-item">
+                                        <strong>
+                                            <?= htmlspecialchars(
+                                                $etiqueta,
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>:
+                                        </strong>
 
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Tipo de elemento:
-                                </strong>
-
-                                Paciente
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Origen:
-                                </strong>
-
-                                Hospital de Clínicas
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Destino:
-                                </strong>
-
-                                CHPR
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Canal:
-                                </strong>
-
-                                Gestión Salud
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Solicitante:
-                                </strong>
-
-                                admin_dti
-
-                            </p>
-
-
-
-                            <div class="acciones-pendientes">
-
-
-                                <button type="button" class="btn-action btn-success"
-                                    onclick="seleccionarSolicitud(this); abrirModal('modalAprobar');">
-
-                                    <i data-lucide="check"></i>
-
-                                    Aprobar y asignar
-
-                                </button>
-
-
-                                <button type="button" class="btn-action btn-danger"
-                                    onclick="seleccionarSolicitud(this); abrirModal('modalDenegar');">
-
-                                    <i data-lucide="x"></i>
-
-                                    Cancelar solicitud
-
-                                </button>
+                                        <?= htmlspecialchars(
+                                            (string) $valor,
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+                                    </p>
+                                <?php endforeach; ?>
 
                             </div>
-
-                        </div>
-
-
-
-                        <!-- SOLICITUD #4 -->
-
-                        <div class="card-pendiente">
-
-
-                            <div class="item-header">
-
-                                <h3 class="card-title">
-                                    Solicitud #4
-                                </h3>
-
-                                <span class="badge badge-gray">
-                                    Pendiente
-                                </span>
-
-                            </div>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Tipo de elemento:
-                                </strong>
-
-                                Insumo médico
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Origen:
-                                </strong>
-
-                                Hospital de Clínicas
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Destino:
-                                </strong>
-
-                                Hospital Maciel
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Canal:
-                                </strong>
-
-                                Correo
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Solicitante:
-                                </strong>
-
-                                registros_medicos
-
-                            </p>
-
-
-
-                            <div class="acciones-pendientes">
-
-
-                                <button type="button" class="btn-action btn-success"
-                                    onclick="seleccionarSolicitud(this); abrirModal('modalAprobar');">
-
-                                    <i data-lucide="check"></i>
-
-                                    Aprobar y asignar
-
-                                </button>
-
-
-                                <button type="button" class="btn-action btn-danger"
-                                    onclick="seleccionarSolicitud(this); abrirModal('modalDenegar');">
-
-                                    <i data-lucide="x"></i>
-
-                                    Cancelar solicitud
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- SOLICITUD #5 -->
-
-                        <div class="card-pendiente">
-
-
-                            <div class="item-header">
-
-                                <h3 class="card-title">
-                                    Solicitud #5
-                                </h3>
-
-                                <span class="badge badge-gray">
-                                    Pendiente
-                                </span>
-
-                            </div>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Tipo de elemento:
-                                </strong>
-
-                                Equipamiento
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Origen:
-                                </strong>
-
-                                Hospital de Clínicas
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Destino:
-                                </strong>
-
-                                CHPR
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Canal:
-                                </strong>
-
-                                Papel
-
-                            </p>
-
-
-                            <p class="detail-item">
-
-                                <strong>
-                                    Solicitante:
-                                </strong>
-
-                                registros_medicos
-
-                            </p>
-
-
-
-                            <div class="acciones-pendientes">
-
-
-                                <button type="button" class="btn-action btn-success"
-                                    onclick="seleccionarSolicitud(this); abrirModal('modalAprobar');">
-
-                                    <i data-lucide="check"></i>
-
-                                    Aprobar y asignar
-
-                                </button>
-
-
-                                <button type="button" class="btn-action btn-danger"
-                                    onclick="seleccionarSolicitud(this); abrirModal('modalDenegar');">
-
-                                    <i data-lucide="x"></i>
-
-                                    Cancelar solicitud
-
-                                </button>
-
-                            </div>
-
-                        </div>
+                        <?php endforeach; ?>
 
                     </div>
-
-
 
                     <!-- ===================================== -->
                     <!-- HISTORIAL -->
@@ -1160,8 +918,7 @@ $usuarioActual = obtenerUsuarioActual();
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
 
-    <script src="assets/js/unidadEnlace.js"></script>
-
+    <script src="assets/js/unidadEnlace.js?v=20261016-1"></script>
     <script>
         lucide.createIcons();
     </script>

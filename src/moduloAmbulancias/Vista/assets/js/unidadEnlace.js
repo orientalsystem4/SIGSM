@@ -210,7 +210,6 @@ document.addEventListener(
             );
 
 
-        cargarSolicitudesEnfermeria();
         cargarHistorialCompartido();
 
 
