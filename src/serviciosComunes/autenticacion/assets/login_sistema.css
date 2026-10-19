@@ -1,0 +1,221 @@
+.pagina-login {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #1f2937;
+    background: #eef2f6;
+}
+
+.pagina-login *,
+.pagina-login *::before,
+.pagina-login *::after {
+    box-sizing: border-box;
+}
+
+.pagina-login .login-wrapper {
+    display: flex;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+/* Sector institucional */
+.pagina-login .login-left {
+    display: flex;
+    width: 58%;
+    background-color: #0f766e;
+    background-image: linear-gradient(135deg, #115e59, #0f766e, #2dd4bf);
+    background-size: cover;
+    background-position: center;
+}
+
+.pagina-login .login-overlay {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    padding: 60px;
+    background: linear-gradient(
+        90deg,
+        rgba(15, 23, 42, 0.82),
+        rgba(15, 23, 42, 0.50),
+        rgba(15, 23, 42, 0.15)
+    );
+}
+
+.pagina-login .login-brand {
+    max-width: 560px;
+    color: #ffffff;
+}
+
+.pagina-login .login-brand h1 {
+    margin: 0 0 16px;
+    font-size: clamp(2.2rem, 4vw, 4rem);
+    letter-spacing: 0.04em;
+}
+
+.pagina-login .login-brand h2 {
+    margin: 0 0 18px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.pagina-login .login-brand p {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+/* Sector de acceso */
+.pagina-login .login-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42%;
+    padding: 35px;
+    background: #f8fafc;
+}
+
+.pagina-login .login-box {
+    width: 100%;
+    max-width: 430px;
+    padding: 38px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+}
+
+.pagina-login .login-header {
+    margin-bottom: 28px;
+    text-align: center;
+}
+
+.pagina-login .login-logo {
+    display: block;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    object-fit: contain;
+}
+
+.pagina-login .login-header h2 {
+    margin: 0 0 10px;
+    font-size: 1.65rem;
+}
+
+.pagina-login .login-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.pagina-login .login-field {
+    margin-bottom: 20px;
+}
+
+.pagina-login .login-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
+.pagina-login .login-field input {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1f2937;
+    font-family: inherit;
+    font-size: 16px;
+}
+
+.pagina-login .login-field input:focus {
+    border-color: #0f766e;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+    outline: none;
+}
+
+.pagina-login .login-form button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #0f766e;
+    color: #ffffff;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.pagina-login .login-form button:hover {
+    background: #115e59;
+}
+
+.pagina-login .login-form button:focus-visible {
+    outline: 3px solid #0f766e;
+    outline-offset: 3px;
+}
+
+.pagina-login .login-help {
+    margin: 24px 0 0;
+    color: #64748b;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.pagina-login .login-alert {
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.pagina-login .login-error {
+    color: #991b1b;
+    background: #fee2e2;
+    border-color: #ef4444;
+}
+
+.pagina-login .login-success {
+    color: #166534;
+    background: #dcfce7;
+    border-color: #86efac;
+}
+
+/* Celulares y tablets */
+@media (max-width: 900px) {
+    .pagina-login .login-wrapper {
+        flex-direction: column;
+    }
+
+    .pagina-login .login-left {
+        width: 100%;
+        min-height: 260px;
+    }
+
+    .pagina-login .login-overlay {
+        padding: 32px 24px;
+    }
+
+    .pagina-login .login-right {
+        width: 100%;
+        padding: 24px;
+        flex: 1;
+    }
+}
+
+@media (max-width: 420px) {
+    .pagina-login .login-right {
+        padding: 20px 16px;
+    }
+
+    .pagina-login .login-box {
+        padding: 28px 22px;
+    }
+}

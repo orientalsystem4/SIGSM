@@ -37,63 +37,89 @@ unset($_SESSION['mensaje']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.I.G.S.M. | Iniciar Sesión</title>
-    <link rel="stylesheet" href="login.css">
-    <style>
-        .error-msg { 
-            color: #b91c1c; 
-            background: #fee2e2; 
-            border: 1px solid #f87171;
-            padding: 12px; 
-            border-radius: 8px; 
-            margin-bottom: 18px; 
-            font-size: 0.9rem;
-            text-align: center; 
-        }
-        .success-msg { 
-            color: #15803d; 
-            background: #dcfce7; 
-            border: 1px solid #86efac;
-            padding: 12px; 
-            border-radius: 8px; 
-            margin-bottom: 18px; 
-            font-size: 0.9rem;
-            text-align: center; 
-        }
-    </style>
-</head>
-<body>
-    <main class="login-container">
-        <div class="card">
-            <div class="header-logo">
-                <img src="assets/image.png" alt="Logo S.I.G.S.M." class="logo-img">
-                <h1 class="title">S.I.G.S.M.</h1>
+    <title>S.I.G.S.M. | Iniciar sesión</title>
+<link rel="stylesheet" href="assets/login_sistema.css?v=4">
+</head><body class="pagina-login">
+    <main class="login-wrapper">
+        <section class="login-left" aria-labelledby="titulo-sistema">
+            <div class="login-overlay">
+                <div class="login-brand">
+                    <h1 id="titulo-sistema">S.I.G.S.M.</h1>
+                    <h2>Hospital de Clínicas</h2>
+                    <p>
+                        Gestión de traslados, documentación
+                        y encuestas institucionales.
+                    </p>
+                </div>
             </div>
-            
-            <?php if ($error): ?>
-                <div class="error-msg"><?= htmlspecialchars($error) ?></div>
-            <?php endif; ?>
-            
-            <?php if ($mensaje): ?>
-                <div class="success-msg"><?= htmlspecialchars($mensaje) ?></div>
-            <?php endif; ?>
-            
-            <form action="login.php" method="POST" class="login-form">
-                <div class="form-group">
-                    <label for="usuario" class="form-label">Usuario</label>
-                    <input type="text" id="usuario" name="usuario" class="form-input" placeholder="Ingrese su usuario" autocomplete="username" required autofocus>
+        </section>
+
+        <section class="login-right" aria-labelledby="titulo-acceso">
+            <div class="login-box">
+                <div class="login-header">
+                    <img
+                        src="assets/image.png"
+                        alt="Logo S.I.G.S.M."
+                        class="login-logo"
+                    >
+                    <h2 id="titulo-acceso">Iniciar sesión</h2>
+                    <p>Ingresá tus credenciales para acceder al sistema.</p>
                 </div>
-                
-                <div class="form-group">
-                    <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" autocomplete="current-password" required>
-                </div>
-                
-                <button type="submit" class="btn-primary">
-                    Iniciar Sesión
-                </button>
-            </form>
-        </div>
+
+                <?php if ($error): ?>
+                    <div class="login-alert login-error" role="alert">
+                        <?= htmlspecialchars(
+                            $error,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($mensaje): ?>
+                    <div class="login-alert login-success" role="status">
+                        <?= htmlspecialchars(
+                            $mensaje,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </div>
+                <?php endif; ?>
+
+                <form action="login.php" method="POST" class="login-form">
+                    <div class="login-field">
+                        <label for="usuario">Usuario</label>
+                        <input
+                            type="text"
+                            id="usuario"
+                            name="usuario"
+                            placeholder="Ingrese su usuario"
+                            autocomplete="username"
+                            required
+                            autofocus
+                        >
+                    </div>
+
+                    <div class="login-field">
+                        <label for="password">Contraseña</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Ingrese su contraseña"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit">Iniciar sesión</button>
+                </form>
+
+                <p class="login-help">
+                    Si necesitás ayuda con tu cuenta, contactá a DTI.
+                </p>
+            </div>
+        </section>
     </main>
 </body>
 </html>
