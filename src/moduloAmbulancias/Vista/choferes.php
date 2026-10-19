@@ -55,14 +55,6 @@ href="assets/css/choferes.css?v=20261019-2"
 
                 </button>
 
-                <button
-                    class="nav-btn"
-                    data-target="seccion-planilla">
-
-                    <i data-lucide="clipboard-list" class="icon-sm"></i>
-                    Planilla Diaria
-                </button>
-
             </nav>
 
             <?php if (tieneRol('admin') || tieneRol(1)): ?>
@@ -131,110 +123,6 @@ href="assets/css/choferes.css?v=20261019-2"
 
 
                 <?php require __DIR__ . '/seguimientoChofer.php'; ?>
-
-                <!-- PLANILLA DIARIA -->
-                <div
-                    id="seccion-planilla"
-                    class="view-section hidden">
-
-
-                    <div class="card-formulario">
-
-                        <h3>
-                            Iniciar Turno - Planilla
-                        </h3>
-
-                        <p class="text-muted">
-                            Sus datos personales y la fecha se registran automáticamente.
-                        </p>
-
-
-                        <form class="planilla-form mt-3">
-
-
-                            <div class="form-group">
-
-                                <label>
-                                    Chofer
-                                </label>
-
-                                <input
-                                    type="text"
-                                    class="form-input"
-                                    value="Pedro Miniño"
-                                    readonly>
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label>
-                                    Vehículo Asignado
-                                </label>
-
-                                <select
-                                    class="form-input"
-                                    required>
-
-                                    <option value="">
-                                        Seleccione el vehículo...
-                                    </option>
-
-                                    <option value="1">
-                                        Ambulancia - AMB001
-                                    </option>
-
-                                    <option value="2">
-                                        Auto - AUT001
-                                    </option>
-
-                                    <option value="3">
-                                        Camión - CAM001
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label>
-                                    Enfermero Acompañante
-                                </label>
-
-                                <select
-                                    class="form-input"
-                                    required>
-
-                                    <option value="">
-                                        Seleccione el enfermero...
-                                    </option>
-
-                                    <option value="6">
-                                        enfermero_traslado
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-
-                            <button
-                                type="button"
-                                class="btn-primary w-100 mt-2">
-
-                                Guardar Planilla
-
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </div>
-
 
             </section>
 

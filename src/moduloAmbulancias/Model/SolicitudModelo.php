@@ -51,6 +51,7 @@ class SolicitudModelo
         ]);
 
         return (int) $conexion->lastInsertId();
+
     }
     public static function listarPendientes(): array
     {
@@ -100,4 +101,41 @@ class SolicitudModelo
 
         return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public static function listarPorSolicitante(int $idUsuario): array
+{
+    $conexion = Conexion::conectar();
+
+    $consulta = $conexion->prepare("
+        SELECT
+            s.id_solicitud,
+            s.fecha_solicitud,
+            s.prioridad,
+            te.nombre AS elemento,
+            o.nombre AS origen,
+            d.nombre AS destino,
+            t.id_traslado,
+            COALESCE(e.nombre, s.estado_solicitud) AS estado
+        FROM solicitud_traslado s
+        JOIN tipo_elemento te
+            ON te.id_tipo_elemento = s.id_tipo_elemento
+        JOIN ubicacion o ON o.id_ubicacion = s.id_origen
+        JOIN ubicacion d ON d.id_ubicacion = s.id_destino
+        LEFT JOIN traslado t ON t.id_solicitud = s.id_solicitud
+        LEFT JOIN historial_estado h ON h.id_historial = (
+            SELECT hx.id_historial
+            FROM historial_estado hx
+            WHERE hx.id_traslado = t.id_traslado
+            ORDER BY hx.fecha_hora DESC, hx.id_historial DESC
+            LIMIT 1
+        )
+        LEFT JOIN estado_traslado e ON e.id_estado = h.id_estado
+        WHERE s.id_usuario_solicit = :usuario
+        ORDER BY s.fecha_solicitud DESC, s.id_solicitud DESC
+    ");
+
+    $consulta->execute([':usuario' => $idUsuario]);
+
+    return $consulta->fetchAll(PDO::FETCH_ASSOC);
+}
 }

@@ -3,11 +3,16 @@ require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 
 requiereRol([1, 2, 6]);
 $usuarioActual = obtenerUsuarioActual();
+require_once __DIR__ . '/../../moduloAmbulancias/Model/SolicitudModelo.php';
+
+$misSolicitudes = SolicitudModelo::listarPorSolicitante(
+    (int) $_SESSION['id_usuario']
+);
 if (empty($_SESSION['csrf_traslado'])) {
     $_SESSION['csrf_traslado'] = bin2hex(random_bytes(32));
 }
 ?>
-<!DOCTYPE html>s
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -56,6 +61,10 @@ if (empty($_SESSION['csrf_traslado'])) {
                     <i data-lucide="ambulance" class="icon-sm"></i>
                     Solicitar Traslado
                 </button>
+                <button class="nav-btn" data-target="sec-mis-solicitudes">
+                    <i data-lucide="list-checks" class="icon-sm"></i>
+                    Mis solicitudes
+                </button>
 
 
                 <button class="nav-btn" data-target="sec-doc-estatica">
@@ -67,6 +76,7 @@ if (empty($_SESSION['csrf_traslado'])) {
                 <button class="nav-btn" data-target="sec-formularios">
                     <i data-lucide="qr-code" class="icon-sm"></i>
                     Encuestas
+                </button>
             </nav>
 
             <?php if (tieneRol('admin') || tieneRol(1)): ?>
@@ -129,6 +139,79 @@ if (empty($_SESSION['csrf_traslado'])) {
 
 
             <section class="content-wrapper">
+                <div id="sec-mis-solicitudes" class="view-section hidden">
+                    <div class="card-formulario">
+                        <h3>Mis solicitudes de traslado</h3>
+
+                        <p class="text-muted">
+                            Consultá el estado de las solicitudes que enviaste.
+                            Recargá la página para ver los últimos cambios.
+                        </p>
+
+                        <?php if (!$misSolicitudes): ?>
+                            <p>Todavía no enviaste solicitudes.</p>
+                        <?php else: ?>
+                            <div style="overflow-x: auto; margin-top: 20px;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <?php foreach (
+                                                [
+                                                    'Solicitud',
+                                                    'Fecha',
+                                                    'Elemento',
+                                                    'Origen',
+                                                    'Destino',
+                                                    'Prioridad',
+                                                    'Estado',
+                                                    'Traslado'
+                                                ]
+                                                as $titulo
+                                            ): ?>
+                                                <th style="padding: 12px; text-align: left;
+                                           border-bottom: 2px solid #cbd5e1;">
+                                                    <?= htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8') ?>
+                                                </th>
+                                            <?php endforeach; ?>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <?php foreach ($misSolicitudes as $solicitud): ?>
+                                            <tr>
+                                                <?php
+                                                $celdas = [
+                                                    '#' . $solicitud['id_solicitud'],
+                                                    $solicitud['fecha_solicitud'],
+                                                    $solicitud['elemento'],
+                                                    $solicitud['origen'],
+                                                    $solicitud['destino'],
+                                                    $solicitud['prioridad'],
+                                                    $solicitud['estado'],
+                                                    $solicitud['id_traslado'] !== null
+                                                        ? '#' . $solicitud['id_traslado']
+                                                        : 'Sin asignar'
+                                                ];
+                                                ?>
+
+                                                <?php foreach ($celdas as $celda): ?>
+                                                    <td style="padding: 12px;
+                                               border-bottom: 1px solid #e2e8f0;">
+                                                        <?= htmlspecialchars(
+                                                            (string) $celda,
+                                                            ENT_QUOTES,
+                                                            'UTF-8'
+                                                        ) ?>
+                                                    </td>
+                                                <?php endforeach; ?>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
 
 
                 <!-- =================================================
@@ -411,7 +494,15 @@ if (empty($_SESSION['csrf_traslado'])) {
                                         Solicitante
                                     </label>
 
-                                    <input type="text" id="solicitante" class="form-input" value="itanu_miniño"
+                                    <input
+                                        type="text"
+                                        id="solicitante"
+                                        class="form-input"
+                                        value="<?= htmlspecialchars(
+                                                    $usuarioActual['nombre_usuario'] ?? '',
+                                                    ENT_QUOTES,
+                                                    'UTF-8'
+                                                ) ?>"
                                         readonly>
 
                                 </div>
@@ -811,10 +902,12 @@ if (empty($_SESSION['csrf_traslado'])) {
 ========================================================== -->
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
-
-    <script src="Assets/js/enfermeria.js?v=20261016-3"></script>
+<script src="Assets/js/enfermeria.js?v=20261016-3"></script>
+<script>
+    if (typeof lucide !== 'undefined') {
         lucide.createIcons();
-    </script>
+    }
+</script>
 
 </body>
 
