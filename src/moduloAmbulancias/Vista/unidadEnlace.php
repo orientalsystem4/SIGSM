@@ -5,6 +5,14 @@ $usuarioActual = obtenerUsuarioActual();
 require_once __DIR__ . '/../Model/SolicitudModelo.php';
 
 $solicitudesPendientes = SolicitudModelo::listarPendientes();
+require_once __DIR__ . '/../Model/SeguimientoModelo.php';
+
+$trasladosEnlace = SeguimientoModelo::listar(null);
+
+$activosEnlace = array_filter(
+    $trasladosEnlace,
+    fn($viaje) => !in_array((int) $viaje['id_estado'], [6, 7], true)
+);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -133,6 +141,16 @@ $solicitudesPendientes = SolicitudModelo::listarPendientes();
 
 
             <section class="content-wrapper">
+                <?php if (isset($_SESSION['mensaje_traslado'])): ?>
+    <p role="status">
+        <?= htmlspecialchars(
+            $_SESSION['mensaje_traslado'],
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>
+    </p>
+    <?php unset($_SESSION['mensaje_traslado']); ?>
+<?php endif; ?>
 
 
                 <!-- ========================================= -->
@@ -176,205 +194,62 @@ $solicitudesPendientes = SolicitudModelo::listarPendientes();
 
                     <div id="sub-curso" class="sub-content active">
 
-
-                        <!-- TRASLADO #1 -->
-
-                        <div class="card-traslado">
-
-
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-
-
-                                <div class="header-info">
-
-                                    <h3>
-                                        Traslado #1 - AMB001
-                                    </h3>
-
-                                    <span class="badge badge-warning">
-                                        Asignado
-                                    </span>
-
-                                </div>
-
-
-                                <i data-lucide="chevron-down" class="accordion-icon" style="transform: rotate(180deg);">
-                                </i>
-
-                            </div>
-
-
-
-                            <div class="accordion-content open">
-                                <div style="padding: 15px;">
-
-                                    <p class="detail-item">
-                                        <strong>Tipo de elemento:</strong>
-                                        Paciente
-                                    </p>
-
-                                    <p class="detail-item">
-                                        <strong>Origen:</strong>
-                                        Hospital de Clínicas
-                                    </p>
-
-                                    <p class="detail-item">
-                                        <strong>Destino:</strong>
-                                        Hospital Maciel
-                                    </p>
-
-                                    <p class="detail-item">
-                                        <strong>Ruta:</strong>
-                                        Hospital de Clínicas → Hospital Maciel
-                                    </p>
-
-                                    <p class="detail-item">
-                                        <strong>Vehículo:</strong>
-                                        Ambulancia - AMB001
-                                    </p>
-
-                                    <p class="detail-item">
-                                        <strong>Chofer:</strong>
-                                        Pedro Miniño
-                                    </p>
-
-                                    <p class="detail-item">
-                                        <strong>Enfermero:</strong>
-                                        Lucía Pereira
-                                    </p>
-
-                                    <p class="detail-item">
-                                        <strong>Proveedor externo:</strong>
-                                        Sin proveedor externo
-                                    </p>
-
-                                    <p class="detail-item">
-                                        <strong>Canal:</strong>
-                                        Gestión Salud
-                                    </p>
-
-                                    <p class="detail-item">
-                                        <strong>Solicitante:</strong>
-                                        admin_dti
-                                    </p>
-
-                                </div>
-
-
-                                <div class="timeline">
-
-
-                                    <!-- SOLICITADO -->
-
-                                    <div class="timeline-step completed">
-
-
-                                        <div class="step-marker">
-
-                                            <i data-lucide="check"></i>
-
-                                        </div>
-
-
-                                        <div class="step-content">
-
-                                            <h4>
-                                                Solicitado
-                                            </h4>
-
-
-                                            <div class="chat-message received mb-1">
-
-                                                Traslado solicitado.
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-
-
-                                    <!-- ASIGNADO -->
-
-                                    <div class="timeline-step active">
-
-
-                                        <div class="step-marker">
-
-                                            <i data-lucide="car"></i>
-
-                                        </div>
-
-
-                                        <div class="step-content">
-
-                                            <h4>
-                                                Asignado
-                                            </h4>
-
-
-                                            <div class="chat-container">
-
-                                                <div class="chat-message system">
-
-                                                    <i data-lucide="check-circle" class="icon-sm">
-                                                    </i>
-
-                                                    <span>
-                                                        Vehículo y personal asignados.
-                                                    </span>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="chat-input-wrapper mt-2">
-
-                                                <input type="text" class="form-input"
-                                                    placeholder="Enviar directiva al móvil...">
-
-
-                                                <button type="button" class="btn-primary"
-                                                    style="width: auto; margin-top: 0;">
-
-                                                    <i data-lucide="send"></i>
-
-                                                </button>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-
-
-                                    <!-- EN CURSO -->
-
-                                    <div class="timeline-step pending">
-
-                                        <div class="step-marker">
-                                            3
-                                        </div>
-
-                                        <div class="step-content">
-
-                                            <h4>
-                                                En curso - Destino: Hospital Maciel
-                                            </h4>
-
-                                        </div>
-
-                                    </div>
-
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+    <?php if (!$activosEnlace): ?>
+        <p>No hay traslados activos.</p>
+    <?php endif; ?>
+
+    <?php foreach ($activosEnlace as $viaje): ?>
+        <div class="card-traslado">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <div class="header-info">
+                    <h3>
+                        Traslado #<?= (int) $viaje['id_traslado'] ?>
+                        — <?= htmlspecialchars(
+                            $viaje['matricula'] ?? 'Sin vehículo',
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </h3>
+
+                    <span class="badge badge-warning">
+                        <?= htmlspecialchars(
+                            $viaje['estado'] ?? 'Sin estado',
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </span>
+                </div>
+
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+            </div>
+
+            <div class="accordion-content open">
+                <div style="padding: 15px;">
+                    <?php
+                    $datosTraslado = [
+                        'Solicitud' => '#' . $viaje['id_solicitud'],
+                        'Tipo de elemento' => $viaje['elemento'],
+                        'Origen' => $viaje['origen'],
+                        'Destino' => $viaje['destino'],
+                        'Chofer' => $viaje['chofer'] ?? 'Sin asignar',
+                        'Enfermería' => $viaje['enfermeria'] ?? 'Sin asignar'
+                    ];
+                    ?>
+
+                    <?php foreach ($datosTraslado as $etiqueta => $valor): ?>
+                        <p class="detail-item">
+                            <strong>
+                                <?= htmlspecialchars($etiqueta, ENT_QUOTES, 'UTF-8') ?>:
+                            </strong>
+                            <?= htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8') ?>
+                        </p>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    <?php endforeach; ?>
+
+</div>
                     <!-- ===================================== -->
                     <!-- SOLICITUDES PENDIENTES -->
                     <!-- ===================================== -->
@@ -439,6 +314,14 @@ $solicitudesPendientes = SolicitudModelo::listarPendientes();
                                         ) ?>
                                     </p>
                                 <?php endforeach; ?>
+                                <?php if (tieneRol([1, 3])): ?>
+    <a
+        href="asignar.php?id=<?= (int) $solicitud['id_solicitud'] ?>"
+        class="btn-action btn-success"
+    >
+        Asignar traslado
+    </a>
+<?php endif; ?>
 
                             </div>
                         <?php endforeach; ?>
@@ -501,74 +384,40 @@ $solicitudesPendientes = SolicitudModelo::listarPendientes();
 
 
                                 <tbody>
+    <?php if (!$trasladosEnlace): ?>
+        <tr>
+            <td colspan="5">No hay historial de traslados.</td>
+        </tr>
+    <?php endif; ?>
 
+    <?php foreach ($trasladosEnlace as $viaje): ?>
+        <?php foreach (
+            SeguimientoModelo::historial((int) $viaje['id_traslado'])
+            as $evento
+        ): ?>
+            <tr>
+                <td>
+                    <strong>
+                        Traslado #<?= (int) $viaje['id_traslado'] ?>
+                    </strong>
+                </td>
 
-                                    <tr>
-
-                                        <td>
-                                            <strong>
-                                                Traslado #1
-                                            </strong>
-                                        </td>
-
-                                        <td>
-                                            31/08/2026 20:19
-                                        </td>
-
-                                        <td>
-
-                                            <span class="badge badge-gray">
-                                                Solicitado
-                                            </span>
-
-                                        </td>
-
-                                        <td>
-                                            admin_dti
-                                        </td>
-
-                                        <td>
-                                            Traslado solicitado.
-                                        </td>
-
-                                    </tr>
-
-
-
-                                    <tr>
-
-                                        <td>
-
-                                            <strong>
-                                                Traslado #1
-                                            </strong>
-
-                                        </td>
-
-                                        <td>
-                                            31/08/2026
-                                        </td>
-
-                                        <td>
-
-                                            <span class="badge badge-warning">
-                                                Asignado
-                                            </span>
-
-                                        </td>
-
-                                        <td>
-                                            admin_transporte
-                                        </td>
-
-                                        <td>
-                                            Vehículo y personal asignados.
-                                        </td>
-
-                                    </tr>
-
-
-                                </tbody>
+                <?php foreach (
+                    ['fecha_hora', 'estado', 'usuario', 'observaciones']
+                    as $campo
+                ): ?>
+                    <td>
+                        <?= htmlspecialchars(
+                            (string) ($evento[$campo] ?? ''),
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </td>
+                <?php endforeach; ?>
+            </tr>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+</tbody>
 
                             </table>
 
@@ -716,7 +565,7 @@ $solicitudesPendientes = SolicitudModelo::listarPendientes();
 
 
                         <label>
-                            Enfermero de Traslado
+                            Enfermeria
                         </label>
 
 
@@ -918,8 +767,7 @@ $solicitudesPendientes = SolicitudModelo::listarPendientes();
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
 
-    <script src="assets/js/unidadEnlace.js?v=20261016-1"></script>
-    <script>
+<script src="assets/js/unidadEnlace.js?v=20261019-2"></script>    <script>
         lucide.createIcons();
     </script>
 

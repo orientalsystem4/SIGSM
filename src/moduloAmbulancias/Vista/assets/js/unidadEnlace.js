@@ -202,7 +202,6 @@ document.addEventListener(
                                 ) ===
                                 'sub-historial'
                             ) {
-                                cargarHistorialCompartido();
                             }
                         }
                     );
@@ -210,7 +209,6 @@ document.addEventListener(
             );
 
 
-        cargarHistorialCompartido();
 
 
         const formularioAprobar =
@@ -1640,7 +1638,6 @@ window.addEventListener(
             CLAVE_HISTORIAL_COMPARTIDO
         ) {
 
-            cargarHistorialCompartido();
         }
     }
 );

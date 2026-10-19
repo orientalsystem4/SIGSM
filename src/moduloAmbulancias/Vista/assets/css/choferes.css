@@ -268,3 +268,30 @@
 .urgencia-media { background: #fef08a; color: #854d0e; }
 .btn-outline { background: transparent; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 0.5rem; cursor: pointer; transition: 0.2s; }
 .btn-outline:hover { background: var(--bg-color); }
+#tab-historial .card-traslado {
+    padding: 20px;
+}
+
+#tab-historial .timeline {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+#tab-historial .timeline::before {
+    left: 15px;
+}
+
+#tab-historial .timeline-step {
+    padding-left: 46px;
+    min-height: 32px;
+}
+
+#tab-historial .step-marker {
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+}
+
+#tab-historial .step-content {
+    overflow-wrap: anywhere;
+}
