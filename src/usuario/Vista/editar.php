@@ -132,6 +132,7 @@ unset($_SESSION['errores_usuario']);
             padding: 0;
         }
     </style>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 <body>
 
@@ -158,7 +159,7 @@ unset($_SESSION['errores_usuario']);
 
         <div class="campo">
             <label for="nombre_usuario">Nombre de Usuario *</label>
-            <input type="text" id="nombre_usuario" name="nombre_usuario" 
+            <input type="text" id="nombre_usuario" name="nombre_usuario"
                    value="<?= htmlspecialchars($usuario['nombre_usuario']) ?>" required>
         </div>
 

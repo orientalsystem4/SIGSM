@@ -5,6 +5,7 @@ $usuarioActual = obtenerUsuarioActual();
 require_once __DIR__ . '/../Model/SolicitudModelo.php';
 
 $solicitudesPendientes = SolicitudModelo::listarPendientes();
+$solicitudesCanceladas = SolicitudModelo::listarCanceladas();
 require_once __DIR__ . '/../Model/SeguimientoModelo.php';
 
 $trasladosEnlace = SeguimientoModelo::listar(null);
@@ -27,10 +28,11 @@ $activosEnlace = array_filter(
 
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
 
-    <link rel="stylesheet" href="assets/css/unidadEnlace.css">
+    <link rel="stylesheet" href="assets/css/unidadEnlace.css?v=20261021-1">
 
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 
 
@@ -177,6 +179,8 @@ $activosEnlace = array_filter(
 
                         </button>
 
+
+                        <button class="sub-btn" data-sub="sub-canceladas">Solicitudes canceladas</button>
 
                         <button class="sub-btn" data-sub="sub-historial">
 
@@ -332,6 +336,38 @@ $activosEnlace = array_filter(
                     <!-- HISTORIAL -->
                     <!-- ===================================== -->
 
+                    <div id="sub-canceladas" class="sub-content hidden">
+                        <h3>Solicitudes canceladas</h3>
+                        <p class="text-muted">Registro de solicitudes canceladas antes de asignar un traslado.</p>
+                        <label class="filtro-listado">Buscar cancelación
+                            <input type="search" class="form-input" data-filtrar="tabla-canceladas"
+                                placeholder="Solicitud, origen, destino, usuario o motivo">
+                        </label>
+                        <div class="tabla-responsive">
+                            <table class="tabla-historial" id="tabla-canceladas">
+                                <thead><tr>
+                                    <th>Solicitud</th><th>Elemento</th><th>Origen</th><th>Destino</th>
+                                    <th>Solicitante</th><th>Cancelada por</th><th>Fecha</th><th>Motivo</th>
+                                </tr></thead>
+                                <tbody>
+                                <?php if (!$solicitudesCanceladas): ?>
+                                    <tr><td colspan="8">No hay solicitudes canceladas.</td></tr>
+                                <?php endif; ?>
+                                <?php foreach ($solicitudesCanceladas as $cancelada): ?>
+                                    <tr data-fila-busqueda>
+                                        <td>#<?= (int) $cancelada['id_solicitud'] ?></td>
+                                        <?php foreach (['elemento', 'origen', 'destino', 'solicitante',
+                                            'cancelada_por', 'fecha_cancelacion', 'motivo_cancelacion'] as $campo): ?>
+                                            <td><?= htmlspecialchars((string) ($cancelada[$campo] ?? 'Sin registro'), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <?php endforeach; ?>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="hidden" data-sin-resultados="tabla-canceladas">No hay coincidencias.</p>
+                    </div>
+
                     <div id="sub-historial" class="sub-content hidden">
 
 
@@ -341,7 +377,7 @@ $activosEnlace = array_filter(
                             </i>
 
 
-                            <input type="text" class="search-input" style="width: 320px;"
+                            <input type="search" aria-label="Buscar en el historial" data-filtrar="tabla-estados" class="search-input"
                                 placeholder="Buscar por traslado, estado o usuario...">
 
                         </div>
@@ -351,7 +387,7 @@ $activosEnlace = array_filter(
                         <div class="tabla-responsive">
 
 
-                            <table class="tabla-historial">
+                            <table class="tabla-historial" id="tabla-estados">
 
 
                                 <thead>
@@ -395,7 +431,7 @@ $activosEnlace = array_filter(
             SeguimientoModelo::historial((int) $viaje['id_traslado'])
             as $evento
         ): ?>
-            <tr>
+            <tr data-fila-busqueda>
                 <td>
                     <strong>
                         Traslado #<?= (int) $viaje['id_traslado'] ?>
@@ -437,338 +473,13 @@ $activosEnlace = array_filter(
 
 
     <!-- ===================================================== -->
-    <!-- MODAL APROBAR -->
-    <!-- ===================================================== -->
-
-    <div id="modalAprobar" class="modal-overlay">
-
-
-        <div class="modal-content">
-
-
-            <div class="modal-header">
-
-
-                <h3>
-                    Aprobar y Asignar Traslado
-                </h3>
-
-
-                <button type="button" class="btn-close-modal" onclick="cerrarModal('modalAprobar')">
-
-                    <i data-lucide="x"></i>
-
-                </button>
-
-
-            </div>
-
-
-
-            <div class="modal-body">
-
-
-                <form id="formAprobar">
-
-
-                    <!-- VEHÍCULO -->
-
-                    <div class="form-group">
-
-                        <label>
-                            Vehículo
-                        </label>
-
-
-                        <select id="vehiculoAsignado" class="form-input">
-
-
-                            <option value="">
-                                Seleccione vehículo...
-                            </option>
-
-
-                            <option value="1">
-                                Ambulancia - AMB001
-                            </option>
-
-
-                            <option value="2">
-                                Auto - AUT001
-                            </option>
-
-
-                            <option value="3">
-                                Camión - CAM001
-                            </option>
-
-
-                        </select>
-
-                    </div>
-
-
-
-                    <!-- RUTA AUTOMÁTICA -->
-
-                    <div class="form-group">
-
-
-                        <label>
-                            Ruta
-                        </label>
-
-
-                        <input type="text" id="rutaSeleccionada" class="form-input" readonly>
-
-
-                        <input type="hidden" id="idRutaSeleccionada">
-
-
-                    </div>
-
-
-
-                    <!-- CHOFER -->
-
-                    <div class="form-group">
-
-
-                        <label>
-                            Chofer
-                        </label>
-
-
-                        <select id="choferAsignado" class="form-input">
-
-
-                            <option value="">
-                                Seleccione chofer...
-                            </option>
-
-
-                            <option value="5">
-                                Pedro Miniño
-                            </option>
-
-
-                        </select>
-
-
-                    </div>
-
-
-
-                    <!-- ENFERMERO -->
-
-                    <div class="form-group">
-
-
-                        <label>
-                            Enfermeria
-                        </label>
-
-
-                        <select id="enfermeroAsignado" class="form-input">
-
-
-                            <option value="">
-                                Seleccione enfermero...
-                            </option>
-
-
-                            <option value="6">
-                                Lucía Pereira
-                            </option>
-
-
-                        </select>
-
-
-                    </div>
-
-
-
-                    <!-- PROVEEDOR -->
-
-                    <div class="form-group">
-
-
-                        <label>
-                            Proveedor Externo
-                        </label>
-
-
-                        <select id="proveedorAsignado" class="form-input">
-
-
-                            <option value="">
-                                Sin proveedor externo
-                            </option>
-
-
-                            <option value="1">
-                                SAME
-                            </option>
-
-
-                        </select>
-
-
-                    </div>
-
-
-
-                    <!-- RESPONSABLE -->
-
-                    <p class="text-muted mb-2" style="font-size: 0.85rem;">
-
-
-                        <i data-lucide="user-check" class="icon-sm">
-                        </i>
-
-
-                        Aprobado por:
-
-
-                        <strong class="responsable-nombre">
-                        </strong>
-
-
-                    </p>
-
-
-
-                    <!-- CONFIRMAR -->
-
-                    <button type="submit" class="btn-primary w-100" style="margin-top: 15px;">
-
-
-                        Confirmar Traslado
-
-
-                    </button>
-
-
-                </form>
-
-
-            </div>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- ===================================================== -->
-    <!-- MODAL CANCELAR -->
-    <!-- ===================================================== -->
-
-    <div id="modalDenegar" class="modal-overlay">
-
-
-        <div class="modal-content">
-
-
-            <div class="modal-header">
-
-
-                <h3>
-                    Cancelar Solicitud
-                </h3>
-
-
-                <button type="button" class="btn-close-modal" onclick="cerrarModal('modalDenegar')">
-
-
-                    <i data-lucide="x"></i>
-
-
-                </button>
-
-
-            </div>
-
-
-
-            <div class="modal-body">
-
-
-                <form id="formCancelar">
-
-
-                    <div class="form-group">
-
-
-                        <label>
-                            Motivo de la cancelación
-                        </label>
-
-
-                        <textarea id="motivoCancelacion" class="form-input" rows="3"
-                            placeholder="Especifique el motivo..."></textarea>
-
-
-                    </div>
-
-
-
-                    <p class="text-muted mb-2" style="font-size: 0.85rem;">
-
-
-                        <i data-lucide="user-x" class="icon-sm">
-                        </i>
-
-
-                        Cancelado por:
-
-
-                        <strong class="responsable-nombre">
-                        </strong>
-
-
-                    </p>
-
-
-
-                    <button type="submit" class="btn-danger w-100 p-3" style="
-                            border: none;
-                            border-radius: 0.5rem;
-                            color: white;
-                            cursor: pointer;
-                        ">
-
-
-                        Confirmar Cancelación
-
-
-                    </button>
-
-
-                </form>
-
-
-            </div>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- ===================================================== -->
     <!-- SCRIPTS -->
     <!-- ===================================================== -->
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
 
-<script src="assets/js/unidadEnlace.js?v=20261019-2"></script>    <script>
-        lucide.createIcons();
+<script src="assets/js/unidadEnlace.js?v=20261021-1"></script>    <script>
+        if (typeof lucide !== "undefined") { lucide.createIcons(); }
     </script>
 
 

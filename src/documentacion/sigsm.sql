@@ -334,7 +334,10 @@ CREATE TABLE `solicitud_traslado` (
   `estado_solicitud` varchar(50) NOT NULL,
   `prioridad` enum('normal','alta','maxima') NOT NULL DEFAULT 'normal',
   `fecha_hora_limite` datetime DEFAULT NULL,
-  `observaciones` varchar(500) DEFAULT NULL
+  `observaciones` varchar(500) DEFAULT NULL,
+  `motivo_cancelacion` varchar(500) DEFAULT NULL,
+  `fecha_cancelacion` datetime DEFAULT NULL,
+  `id_usuario_cancelacion` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --

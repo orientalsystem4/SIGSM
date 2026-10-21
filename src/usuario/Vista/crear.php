@@ -124,6 +124,7 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
             padding: 0;
         }
     </style>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 <body>
 
@@ -149,8 +150,8 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
 
         <div class="campo">
             <label for="nombre_usuario">Nombre de Usuario *</label>
-            <input type="text" id="nombre_usuario" name="nombre_usuario" 
-                   value="<?= htmlspecialchars($previos['nombre_usuario']) ?>" 
+            <input type="text" id="nombre_usuario" name="nombre_usuario"
+                   value="<?= htmlspecialchars($previos['nombre_usuario']) ?>"
                    placeholder="Ej: j_perez" required autofocus>
         </div>
 

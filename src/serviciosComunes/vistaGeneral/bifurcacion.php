@@ -13,6 +13,7 @@ $usuarioActual = obtenerUsuarioActual();
     <title>S.I.G.S.M. | Panel de Módulos</title>
     <link rel="stylesheet" href="assets/css/bifurcacion.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="assets/css/tema-institucional.css?v=20261021-1">
 </head>
 <body>
     <main class="bifurcacion-container">

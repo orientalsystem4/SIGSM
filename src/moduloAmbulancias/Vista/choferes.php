@@ -18,6 +18,7 @@ $usuarioActual = obtenerUsuarioActual();
     <link rel="stylesheet"
 href="assets/css/choferes.css?v=20261019-2"
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 
 <body>

@@ -199,6 +199,7 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
             .grupo-botones { width: 100%; }
         }
     </style>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 <body>
 
@@ -265,7 +266,7 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
                                 <div class="celda-acciones">
                                     <a href="ver.php?id=<?= (int)$u['id_usuario'] ?>" class="enlace-accion">Ver</a>
                                     <a href="editar.php?id=<?= (int)$u['id_usuario'] ?>" class="enlace-accion">Editar</a>
-                                    
+
                                     <?php if ((int)$u['id_usuario'] !== (int)$_SESSION['id_usuario']): ?>
                                         <form method="POST" action="../Controlador/ControladorUsuarios.php" class="forma-en-linea"
                                               onsubmit="return confirm('¿Seguro que desea cambiar el estado del usuario <?= htmlspecialchars($u['nombre_usuario']) ?>?');">

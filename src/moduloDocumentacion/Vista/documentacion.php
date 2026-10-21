@@ -23,6 +23,7 @@ unset($_SESSION['mensaje']);
         href="Assets/css/documentacion.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 
 <body>
@@ -794,7 +795,7 @@ unset($_SESSION['mensaje']);
 
 
 
-    
+
 
 
 

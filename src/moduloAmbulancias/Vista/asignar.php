@@ -86,6 +86,7 @@ function escaparAsignacion($valor): string
         .error { color: #991b1b; background: #fee2e2; padding: 12px; }
         a { color: #0284c7; }
     </style>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 <body>
 <main>

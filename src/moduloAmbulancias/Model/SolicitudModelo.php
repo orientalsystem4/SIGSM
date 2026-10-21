@@ -121,7 +121,7 @@ s.fecha_cancelacion,
     SELECT uc.nombre_usuario
     FROM usuario uc
     WHERE uc.id_usuario = s.id_usuario_cancelacion
-) AS cancelada_por      
+) AS cancelada_por
    FROM solicitud_traslado s
         JOIN tipo_elemento te
             ON te.id_tipo_elemento = s.id_tipo_elemento
@@ -142,6 +142,25 @@ s.fecha_cancelacion,
 
         $consulta->execute([':usuario' => $idUsuario]);
 
+        return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public static function listarCanceladas(): array
+    {
+        $conexion = Conexion::conectar();
+        $consulta = $conexion->query("
+            SELECT s.id_solicitud, s.fecha_cancelacion, s.motivo_cancelacion,
+                   o.nombre AS origen, d.nombre AS destino,
+                   te.nombre AS elemento, us.nombre_usuario AS solicitante,
+                   uc.nombre_usuario AS cancelada_por
+            FROM solicitud_traslado s
+            JOIN ubicacion o ON o.id_ubicacion = s.id_origen
+            JOIN ubicacion d ON d.id_ubicacion = s.id_destino
+            JOIN tipo_elemento te ON te.id_tipo_elemento = s.id_tipo_elemento
+            LEFT JOIN usuario us ON us.id_usuario = s.id_usuario_solicit
+            LEFT JOIN usuario uc ON uc.id_usuario = s.id_usuario_cancelacion
+            WHERE s.estado_solicitud = 'Cancelada'
+            ORDER BY s.fecha_cancelacion DESC, s.id_solicitud DESC
+        ");
         return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }
 }

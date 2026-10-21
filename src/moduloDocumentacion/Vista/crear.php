@@ -19,7 +19,7 @@ unset(
 <!DOCTYPE html>
 <html lang="es">
 
-<head> 
+<head>
 
     <meta charset="UTF-8">
 
@@ -157,6 +157,7 @@ unset(
 
     </style>
 
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 
 <body>
