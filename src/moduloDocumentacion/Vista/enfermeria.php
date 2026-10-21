@@ -11,6 +11,9 @@ $misSolicitudes = SolicitudModelo::listarPorSolicitante(
 if (empty($_SESSION['csrf_traslado'])) {
     $_SESSION['csrf_traslado'] = bin2hex(random_bytes(32));
 }
+if (empty($_SESSION['csrf_cancelacion'])) {
+    $_SESSION['csrf_cancelacion'] = bin2hex(random_bytes(32));
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -139,6 +142,16 @@ if (empty($_SESSION['csrf_traslado'])) {
 
 
             <section class="content-wrapper">
+                <?php if (isset($_SESSION['mensaje_cancelacion'])): ?>
+                    <p role="alert">
+                        <?= htmlspecialchars(
+                            $_SESSION['mensaje_cancelacion'],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </p>
+                    <?php unset($_SESSION['mensaje_cancelacion']); ?>
+                <?php endif; ?>
                 <div id="sec-mis-solicitudes" class="view-section hidden">
                     <div class="card-formulario">
                         <h3>Mis solicitudes de traslado</h3>
@@ -164,7 +177,8 @@ if (empty($_SESSION['csrf_traslado'])) {
                                                     'Destino',
                                                     'Prioridad',
                                                     'Estado',
-                                                    'Traslado'
+                                                    'Traslado',
+                                                    'Acciones'
                                                 ]
                                                 as $titulo
                                             ): ?>
@@ -177,36 +191,94 @@ if (empty($_SESSION['csrf_traslado'])) {
                                     </thead>
 
                                     <tbody>
-                                        <?php foreach ($misSolicitudes as $solicitud): ?>
-                                            <tr>
-                                                <?php
-                                                $celdas = [
-                                                    '#' . $solicitud['id_solicitud'],
-                                                    $solicitud['fecha_solicitud'],
-                                                    $solicitud['elemento'],
-                                                    $solicitud['origen'],
-                                                    $solicitud['destino'],
-                                                    $solicitud['prioridad'],
-                                                    $solicitud['estado'],
-                                                    $solicitud['id_traslado'] !== null
-                                                        ? '#' . $solicitud['id_traslado']
-                                                        : 'Sin asignar'
-                                                ];
-                                                ?>
+    <?php foreach ($misSolicitudes as $solicitud): ?>
+        <tr>
+            <?php
+            $celdas = [
+                '#' . $solicitud['id_solicitud'],
+                $solicitud['fecha_solicitud'],
+                $solicitud['elemento'],
+                $solicitud['origen'],
+                $solicitud['destino'],
+                $solicitud['prioridad'],
+                $solicitud['estado'],
+                $solicitud['id_traslado'] !== null
+                    ? '#' . $solicitud['id_traslado']
+                    : 'Sin asignar'
+            ];
+            ?>
 
-                                                <?php foreach ($celdas as $celda): ?>
-                                                    <td style="padding: 12px;
-                                               border-bottom: 1px solid #e2e8f0;">
-                                                        <?= htmlspecialchars(
-                                                            (string) $celda,
-                                                            ENT_QUOTES,
-                                                            'UTF-8'
-                                                        ) ?>
-                                                    </td>
-                                                <?php endforeach; ?>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
+            <?php foreach ($celdas as $celda): ?>
+                <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">
+                    <?= htmlspecialchars((string) $celda, ENT_QUOTES, 'UTF-8') ?>
+                </td>
+            <?php endforeach; ?>
+
+            <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">
+                <?php if (
+                    $solicitud['estado'] === 'Pendiente'
+                    && $solicitud['id_traslado'] === null
+                ): ?>
+                    <form
+                        action="../../moduloAmbulancias/Controlador/CancelarSolicitud.php"
+                        method="POST"
+                    >
+                        <input type="hidden" name="token"
+                            value="<?= htmlspecialchars(
+                                $_SESSION['csrf_cancelacion'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>">
+
+                        <input type="hidden" name="id_solicitud"
+                            value="<?= (int) $solicitud['id_solicitud'] ?>">
+
+                        <label>
+                            Motivo de cancelación
+                            <input type="text" name="motivo"
+                                maxlength="500" required>
+                        </label>
+
+                        <button type="submit">Cancelar solicitud</button>
+                    </form>
+                <?php elseif ($solicitud['estado'] === 'Cancelada'): ?>
+    <details>
+        <summary>Ver cancelación</summary>
+
+        <p>
+            <strong>Motivo:</strong>
+            <?= htmlspecialchars(
+                $solicitud['motivo_cancelacion'] ?? 'Sin registro',
+                ENT_QUOTES,
+                'UTF-8'
+            ) ?>
+        </p>
+
+        <p>
+            <strong>Fecha:</strong>
+            <?= htmlspecialchars(
+                $solicitud['fecha_cancelacion'] ?? 'Sin registro',
+                ENT_QUOTES,
+                'UTF-8'
+            ) ?>
+        </p>
+
+        <p>
+            <strong>Cancelada por:</strong>
+            <?= htmlspecialchars(
+                $solicitud['cancelada_por'] ?? 'Sin registro',
+                ENT_QUOTES,
+                'UTF-8'
+            ) ?>
+        </p>
+    </details>
+<?php else: ?>
+    —
+<?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</tbody>
                                 </table>
                             </div>
                         <?php endif; ?>
@@ -902,12 +974,12 @@ if (empty($_SESSION['csrf_traslado'])) {
 ========================================================== -->
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
-<script src="Assets/js/enfermeria.js?v=20261016-3"></script>
-<script>
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-</script>
+    <script src="Assets/js/enfermeria.js?v=20261016-3"></script>
+    <script>
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
 
 </body>
 
