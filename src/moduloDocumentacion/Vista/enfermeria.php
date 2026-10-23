@@ -143,6 +143,10 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
 
             <section class="content-wrapper">
+                <?php if (isset($_SESSION['mensaje_edicion'])): ?>
+                    <p role="alert"><?= htmlspecialchars($_SESSION['mensaje_edicion'], ENT_QUOTES, 'UTF-8') ?></p>
+                    <?php unset($_SESSION['mensaje_edicion']); ?>
+                <?php endif; ?>
                 <?php if (isset($_SESSION['mensaje_cancelacion'])): ?>
                     <p role="alert">
                         <?= htmlspecialchars(
@@ -220,6 +224,8 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                     $solicitud['estado'] === 'Pendiente'
                     && $solicitud['id_traslado'] === null
                 ): ?>
+                    <a class="btn-primary" style="display: inline-block; margin-bottom: 12px;"
+                       href="../../moduloAmbulancias/Vista/editarSolicitud.php?id=<?= (int) $solicitud['id_solicitud'] ?>">Editar</a>
                     <form
                         action="../../moduloAmbulancias/Controlador/CancelarSolicitud.php"
                         method="POST"
@@ -982,6 +988,15 @@ if (empty($_SESSION['csrf_cancelacion'])) {
         }
     </script>
 
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (new URLSearchParams(window.location.search).get('vista') === 'mis-solicitudes') {
+                const boton = document.querySelector('[data-target="sec-mis-solicitudes"]');
+                if (boton) boton.click();
+            }
+        });
+    </script>
 </body>
 
 </html>
