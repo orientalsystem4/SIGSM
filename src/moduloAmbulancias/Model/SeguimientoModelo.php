@@ -13,6 +13,8 @@ class SeguimientoModelo
                 t.id_traslado,
                 t.id_solicitud,
                 t.id_chofer,
+                t.id_vehiculo,
+                s.ci_paciente,
                 v.matricula,
                 ch.nombre_usuario AS chofer,
                 en.nombre_usuario AS enfermeria,

@@ -377,12 +377,40 @@ $activosEnlace = array_filter(
                             </i>
 
 
-                            <input type="search" aria-label="Buscar en el historial" data-filtrar="tabla-estados" class="search-input"
+                            <input type="search" aria-label="Buscar en el historial" id="buscar-historial" class="search-input"
                                 placeholder="Buscar por traslado, estado o usuario...">
 
                         </div>
 
 
+
+                        <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:end; margin-bottom:20px;">
+                            <label for="historial-cedula">Cédula del paciente
+                                <input id="historial-cedula" class="form-input" type="search"
+                                    inputmode="numeric" placeholder="Ej.: 11111111" maxlength="20">
+                            </label>
+                            <label for="historial-vehiculo">Vehículo
+                                <select id="historial-vehiculo" class="form-input">
+                                    <option value="">Todos los vehículos</option>
+                                    <?php
+                                    $vehiculosHistorial = [];
+                                    foreach ($trasladosEnlace as $viajeHistorial) {
+                                        if ($viajeHistorial['id_vehiculo'] !== null) {
+                                            $vehiculosHistorial[(int) $viajeHistorial['id_vehiculo']] =
+                                                $viajeHistorial['matricula'] ?? ('Vehículo #' . $viajeHistorial['id_vehiculo']);
+                                        }
+                                    }
+                                    asort($vehiculosHistorial);
+                                    ?>
+                                    <?php foreach ($vehiculosHistorial as $idVehiculo => $matricula): ?>
+                                        <option value="<?= (int) $idVehiculo ?>"><?= htmlspecialchars($matricula, ENT_QUOTES, 'UTF-8') ?></option>
+                                    <?php endforeach; ?>
+                                    <option value="sin-vehiculo">Sin vehículo asignado</option>
+                                </select>
+                            </label>
+                            <button id="limpiar-historial" class="btn-primary" type="button">Limpiar filtros</button>
+                        </div>
+                        <p id="historial-resultados" role="status" aria-live="polite"></p>
 
                         <div class="tabla-responsive">
 
@@ -398,6 +426,8 @@ $activosEnlace = array_filter(
                                             Traslado
                                         </th>
 
+                                        <th>Cédula del paciente</th>
+                                        <th>Vehículo</th>
                                         <th>
                                             Fecha/Hora
                                         </th>
@@ -421,8 +451,8 @@ $activosEnlace = array_filter(
 
                                 <tbody>
     <?php if (!$trasladosEnlace): ?>
-        <tr>
-            <td colspan="5">No hay historial de traslados.</td>
+        <tr id="historial-vacio">
+            <td colspan="7">No hay historial de traslados.</td>
         </tr>
     <?php endif; ?>
 
@@ -431,13 +461,18 @@ $activosEnlace = array_filter(
             SeguimientoModelo::historial((int) $viaje['id_traslado'])
             as $evento
         ): ?>
-            <tr data-fila-busqueda>
+            <tr data-fila-busqueda
+                data-ci="<?= htmlspecialchars((string) ($viaje['ci_paciente'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+                data-vehiculo="<?= $viaje['id_vehiculo'] !== null ? (int) $viaje['id_vehiculo'] : 'sin-vehiculo' ?>"
+                data-traslado="<?= (int) $viaje['id_traslado'] ?>">
                 <td>
                     <strong>
                         Traslado #<?= (int) $viaje['id_traslado'] ?>
                     </strong>
                 </td>
 
+                <td><?= htmlspecialchars((string) ($viaje['ci_paciente'] ?? 'No corresponde'), ENT_QUOTES, 'UTF-8') ?></td>
+                <td><?= htmlspecialchars((string) ($viaje['matricula'] ?? 'Sin vehículo'), ENT_QUOTES, 'UTF-8') ?></td>
                 <?php foreach (
                     ['fecha_hora', 'estado', 'usuario', 'observaciones']
                     as $campo
@@ -483,6 +518,7 @@ $activosEnlace = array_filter(
     </script>
 
 
+    <script src="assets/js/filtrosHistorial.js?v=20261025-1"></script>
 </body>
 
 </html>
