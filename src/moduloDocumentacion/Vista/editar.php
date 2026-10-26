@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
+requiereRol([1, 4]);
+if (empty($_SESSION['csrf_documentos'])) {
+    $_SESSION['csrf_documentos'] = bin2hex(random_bytes(32));
+}
+
 require_once __DIR__ . '/../Model/DocumentoModelo.php';
 
 $idDocumento = (int) ($_GET['id'] ?? 0);
@@ -212,6 +217,7 @@ unset($_SESSION['errores_documento']);
         method="POST"
         enctype="multipart/form-data"
     >
+        <input type="hidden" name="token" value="<?= htmlspecialchars($_SESSION['csrf_documentos'], ENT_QUOTES, 'UTF-8') ?>">
 
         <input
             type="hidden"

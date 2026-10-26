@@ -317,10 +317,10 @@ CREATE TABLE `rol` (
 INSERT INTO `rol` (`id_rol`, `nombre_rol`, `descripcion`) VALUES
 (1, 'Administrador de DTI', NULL),
 (2, 'Administrador de Enfermería', NULL),
-(3, 'Administrador de Departamento de Transporte', NULL),
+(3, 'Coordinador de Traslados', NULL),
 (4, 'Funcionario Administrativo de Registros Médicos', NULL),
 (5, 'Chofer', NULL),
-(6, 'Enfermero de Traslado', NULL);
+(6, 'Enfermería', NULL);
 
 -- --------------------------------------------------------
 

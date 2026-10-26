@@ -161,10 +161,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                     <div class="card-formulario">
                         <h3>Mis solicitudes de traslado</h3>
 
-                        <p class="text-muted">
-                            Consultá el estado de las solicitudes que enviaste.
-                            Recargá la página para ver los últimos cambios.
-                        </p>
+                        
 
                         <?php if (!$misSolicitudes): ?>
                             <p>Todavía no enviaste solicitudes.</p>
@@ -309,10 +306,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 Nueva Solicitud de Traslado
                             </h3>
 
-                            <p class="text-muted">
-                                Complete los datos para enviar la solicitud
-                                a la Unidad de Enlace.
-                            </p>
+                            
 
                         </div>
 
@@ -520,10 +514,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
                                     </select>
 
-                                    <p id="mensaje-prioridad" class="text-muted">
-                                        La prioridad se establece según las
-                                        características y tiempos del traslado.
-                                    </p>
+                                    <p id="mensaje-prioridad" class="text-muted" hidden></p>
 
                                 </div>
 
@@ -652,11 +643,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
                                 </h3>
 
-                                <p class="text-muted">
-                                    Genere un código QR para que el paciente
-                                    acceda a la encuesta correspondiente al área
-                                    seleccionada.
-                                </p>
+                                
 
                             </div>
 
@@ -799,7 +786,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 ========================================================== -->
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
-    <script src="Assets/js/enfermeria.js?v=20261016-3"></script>
+    <script src="Assets/js/enfermeria.js?v=20261026-2"></script>
     <script>
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();

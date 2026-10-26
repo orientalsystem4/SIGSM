@@ -167,6 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 prioridad.disabled = true;
 
+                mensajePrioridad.hidden = false;
                 mensajePrioridad.textContent =
                     "Los traslados de órganos tienen prioridad máxima.";
 
@@ -176,8 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 prioridad.value = "normal";
 
-                mensajePrioridad.textContent =
-                    "La prioridad se establece según las características y tiempos del traslado.";
+                mensajePrioridad.hidden = true;
+                mensajePrioridad.textContent = "";
 
             }
 

@@ -14,19 +14,19 @@ if (!function_exists('resolverUrlLogin')) {
      */
     function resolverUrlLogin(): string {
         $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
-        
+
         $pos = stripos($script, '/SIGSM/');
         if ($pos !== false) {
             return substr($script, 0, $pos + strlen('/SIGSM/')) . 'serviciosComunes/autenticacion/sesion.php';
         }
-        
+
         foreach (['/modulo', '/serviciosComunes', '/usuario', '/documentacion'] as $folder) {
             $p = strpos($script, $folder);
             if ($p !== false) {
                 return substr($script, 0, $p) . '/serviciosComunes/autenticacion/sesion.php';
             }
         }
-        
+
         return '/SIGSM/serviciosComunes/autenticacion/sesion.php';
     }
 }
@@ -42,17 +42,17 @@ if (!function_exists('obtenerUsuarioActual')) {
         if (!estaAutenticado()) {
             return null;
         }
-        
+
         $idRol = $_SESSION['id_rol'] ?? null;
         $nombreRolUI = $_SESSION['nombre_rol'] ?? '';
 
         $mapaRoles = [
-            1 => 'Superadministrador (DTI)',
-            2 => 'Gestor de Personal Asistencial',
-            3 => 'Coordinador de Traslados (Unidad de Enlace)',
-            4 => 'Técnico de Registros Médicos (Archivo Clínico)',
-            5 => 'Chofer de Ambulancia',
-            6 => 'Personal Asistencial (Médico / Enfermero)'
+            1 => 'Administrador de DTI',
+            2 => 'Administrador de Enfermería',
+            3 => 'Coordinador de Traslados',
+            4 => 'Funcionario Administrativo de Registros Médicos',
+            5 => 'Chofer',
+            6 => 'Enfermería'
         ];
 
         if ($idRol && isset($mapaRoles[$idRol])) {

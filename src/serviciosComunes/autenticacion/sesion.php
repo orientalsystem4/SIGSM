@@ -6,25 +6,13 @@ if (session_status() === PHP_SESSION_NONE) {
 // Si ya tiene sesión activa, redirigir según su rol
 if (isset($_SESSION['id_usuario']) && !empty($_SESSION['id_usuario'])) {
     $idRol = isset($_SESSION['id_rol']) ? (int)$_SESSION['id_rol'] : 0;
-    switch ($idRol) {
-        case 5:
-            header('Location: ../../moduloAmbulancias/Vista/choferes.php');
-            exit;
-        case 2:
-        case 6:
-            header('Location: ../../moduloDocumentacion/Vista/enfermeria.php');
-            exit;
-        case 3:
-            header('Location: ../../moduloAmbulancias/Vista/unidadEnlace.php');
-            exit;
-        case 4:
-            header('Location: ../../moduloDocumentacion/Vista/documentacion.php');
-            exit;
-        case 1:
-        default:
-            header('Location: ../vistaGeneral/bifurcacion.php');
-            exit;
+    require_once __DIR__ . '/roles.php';
+    $destino = destinoPorRol($idRol);
+    if ($destino !== null) {
+        header('Location: ' . $destino);
+        exit;
     }
+    unset($_SESSION['id_usuario'], $_SESSION['id_rol'], $_SESSION['nombre_usuario'], $_SESSION['nombre_rol']);
 }
 
 $error = $_SESSION['error'] ?? null;

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const comentariosContainer = document.getElementById('comentarios-container');
     const lblTotal = document.getElementById('lbl-total-encuestas');
     const lblPromedio = document.getElementById('lbl-promedio-general');
-    
+
     // Almacenará las instancias de Chart.js para destruirlas al actualizar
     let charts = [];
 
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         comentariosContainer.innerHTML = '';
         lblTotal.textContent = '-';
         lblPromedio.textContent = '-';
-        
+
         // Destruir gráficos anteriores
         charts.forEach(c => c.destroy());
         charts = [];
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 if (!data.exito) {
-                    graficosContainer.innerHTML = `<p style="color:red">Error: ${data.error}</p>`;
+                    graficosContainer.textContent = data.error || "No se pudieron cargar las métricas.";
                     return;
                 }
 
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             canvasContainer.style.position = 'relative';
             canvasContainer.style.height = '200px';
             canvasContainer.style.width = '100%';
-            
+
             const canvas = document.createElement('canvas');
             canvasContainer.appendChild(canvas);
             card.appendChild(canvasContainer);
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cDiv.style.color = '#334155';
                 cDiv.style.fontSize = '14px';
                 cDiv.style.fontStyle = 'italic';
-                cDiv.innerHTML = `"${comentario}"`;
+                cDiv.textContent = `"${comentario}"`;
                 comentariosContainer.appendChild(cDiv);
             });
         }
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cargarMetricas(e.target.value);
         });
     }
-    
+
     // Cargar si la sección está visible al inicio o al cambiar pestaña
     cargarMetricas(filtroCategoria ? filtroCategoria.value : 0);
 });

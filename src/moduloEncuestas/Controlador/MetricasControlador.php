@@ -1,13 +1,16 @@
 <?php
+require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
+requiereRol([1, 4]);
+header('Cache-Control: no-store');
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../../serviciosComunes/conexionBD/conexion.php';
 
 try {
     $conexion = Conexion::conectar();
-    
+
     // Obtener filtro por categoría (0 = Todas)
     $idCategoria = isset($_GET['categoria']) ? (int)$_GET['categoria'] : 0;
-    
+
     // Mapa de textos de las 8 preguntas institucionales
     $mapaPreguntas = [
         1 => '¿Cómo califica la amabilidad y el respeto recibido por el personal de salud?',
@@ -19,7 +22,7 @@ try {
         7 => 'En términos generales, ¿qué tan conforme se encuentra con el servicio recibido?',
         8 => '¿Recomendaría la atención de este centro de salud a un familiar?'
     ];
-    
+
     // Filtro base para la consulta
     $filtroSql = "";
     $params = [];
@@ -27,13 +30,13 @@ try {
         $filtroSql = " WHERE re.id_encuesta = :id_categoria ";
         $params[':id_categoria'] = $idCategoria;
     }
-    
+
     // 1. Total de encuestas
     $sqlTotal = "SELECT COUNT(*) as total FROM respuesta_encuesta re" . $filtroSql;
     $stmtTotal = $conexion->prepare($sqlTotal);
     $stmtTotal->execute($params);
     $totalEncuestas = (int)$stmtTotal->fetchColumn();
-    
+
     // 2. Distribución y promedios por pregunta (del 1 al 8)
     $preguntasData = [];
     for ($i = 1; $i <= 8; $i++) {
@@ -45,35 +48,35 @@ try {
             'total_respuestas' => 0
         ];
     }
-    
+
     // Consulta para agrupar respuestas
     $sqlRespuestas = "
-        SELECT rp.id_pregunta, rp.texto_libre, COUNT(*) as cantidad 
+        SELECT rp.id_pregunta, rp.texto_libre, COUNT(*) as cantidad
         FROM respuesta_pregunta rp
         INNER JOIN respuesta_encuesta re ON rp.id_resp_encuesta = re.id_resp_encuesta
         $filtroSql
         GROUP BY rp.id_pregunta, rp.texto_libre
     ";
-    
+
     $stmtResp = $conexion->prepare($sqlRespuestas);
     $stmtResp->execute($params);
     $resultados = $stmtResp->fetchAll(PDO::FETCH_ASSOC);
-    
+
     $comentarios = [];
-    
+
     foreach ($resultados as $fila) {
         $idPregunta = (int)$fila['id_pregunta'];
-        
+
         if ($idPregunta >= 1 && $idPregunta <= 8) {
             $valorStr = trim($fila['texto_libre']);
             $valor = (int)$valorStr;
-            
+
             if ($valor >= 1 && $valor <= 5) {
                 $cantidad = (int)$fila['cantidad'];
                 $preguntasData[$idPregunta]['distribucion'][$valor] += $cantidad;
                 $preguntasData[$idPregunta]['total_respuestas'] += $cantidad;
             }
-        } 
+        }
         else if ($idPregunta === 9) {
             // Es un comentario libre. Como los agrupamos, desempaquetamos si hay repetidos, aunque el group by junta los iguales
             // Para ver los textos, mejor hacemos una consulta individual para los comentarios, o devolvemos esto.
@@ -86,7 +89,7 @@ try {
             }
         }
     }
-    
+
     // Calcular promedios
     foreach ($preguntasData as $id => $data) {
         $suma = 0;
@@ -97,7 +100,7 @@ try {
             $preguntasData[$id]['promedio'] = round($suma / $data['total_respuestas'], 1);
         }
     }
-    
+
     echo json_encode([
         'exito' => true,
         'total' => $totalEncuestas,
@@ -105,8 +108,9 @@ try {
         'comentarios' => $comentarios
     ]);
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
     http_response_code(500);
-    echo json_encode(['exito' => false, 'error' => $e->getMessage()]);
+    error_log('Error de metricas: ' . $e->getMessage());
+    echo json_encode(['exito' => false, 'error' => 'No se pudieron consultar las metricas.']);
 }
 

@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
+requiereRol([1, 4]);
+if (empty($_SESSION['csrf_documentos'])) {
+    $_SESSION['csrf_documentos'] = bin2hex(random_bytes(32));
+}
+
 require_once __DIR__ . '/../Model/DocumentoModelo.php';
 
 $idDocumento = (int) ($_GET['id'] ?? 0);

@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    
+
 
 
     // ========================================================
@@ -248,7 +248,11 @@ function cargarDocumentos() {
                 }
             });
 
-            formularioBaja.append(campoAccion, campoId, botonBaja);
+            const token = document.createElement("input");
+            token.type = "hidden";
+            token.name = "token";
+            token.value = window.tokenDocumentos || "";
+            formularioBaja.append(campoAccion, campoId, token, botonBaja);
             if (Number(documento.activo) === 1) {
                 acciones.appendChild(formularioBaja);
             }

@@ -39,6 +39,11 @@ try {
     echo "[OK] Columnas de solicitudes verificadas.\n";
 
     $pdo->beginTransaction();
+    // Conserva los IDs y permisos; actualiza los nombres acordados.
+    $nombreRol = $pdo->prepare('UPDATE rol SET nombre_rol = ? WHERE id_rol = ?');
+    foreach ([2 => 'Administrador de Enfermería', 3 => 'Coordinador de Traslados', 6 => 'Enfermería'] as $idRol => $nombre) {
+        $nombreRol->execute([$nombre, $idRol]);
+    }
     $categorias = [
         1 => ['Urología', 'QR-UROLOGIA'],
         2 => ['Cardiología', 'QR-CARDIOLOGIA'],

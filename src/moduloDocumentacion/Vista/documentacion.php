@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 requiereRol([1, 4]);
+if (empty($_SESSION['csrf_documentos'])) {
+    $_SESSION['csrf_documentos'] = bin2hex(random_bytes(32));
+}
+
 $usuarioActual = obtenerUsuarioActual();
 require_once __DIR__ . '/../Model/DocumentoModelo.php';
 $documentos = DocumentoModelo::listarTodos();
@@ -804,6 +808,7 @@ unset($_SESSION['mensaje']);
     </script>
 
     <script>
+        window.tokenDocumentos = <?= json_encode($_SESSION['csrf_documentos']) ?>;
         window.documentosBD = <?= json_encode(
                                     $documentos,
                                     JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
@@ -811,8 +816,8 @@ unset($_SESSION['mensaje']);
     </script>
 
 
-    <script src="Assets/js/documentacion.js"></script>
-    <script src="Assets/js/metricas.js"></script>
+    <script src="Assets/js/documentacion.js?v=20261026"></script>
+    <script src="Assets/js/metricas.js?v=20261026"></script>
 
 
     <script>

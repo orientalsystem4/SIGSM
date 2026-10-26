@@ -105,8 +105,8 @@ try {
         echo "[i] El usuario '{$adminUser}' (ID {$idUsuario}) ya existe. Actualizando credenciales y estado activo...\n";
 
         $stmtUpd = $pdo->prepare("
-            UPDATE usuario 
-            SET contrasenha_hash = :hash, activo = 1 
+            UPDATE usuario
+            SET contrasenha_hash = :hash, activo = 1
             WHERE id_usuario = :id
         ");
         $stmtUpd->execute([
@@ -114,18 +114,10 @@ try {
             ':id'   => $idUsuario
         ]);
 
-        // Verificar o actualizar rol en usuario_rol
-        $stmtCheckRol = $pdo->prepare("SELECT id_usuario, id_rol FROM usuario_rol WHERE id_usuario = :id LIMIT 1");
-        $stmtCheckRol->execute([':id' => $idUsuario]);
-        $rolAsignado = $stmtCheckRol->fetch(PDO::FETCH_ASSOC);
-
-        if ($rolAsignado) {
-            $stmtUpdRol = $pdo->prepare("UPDATE usuario_rol SET id_rol = 1 WHERE id_usuario = :id");
-            $stmtUpdRol->execute([':id' => $idUsuario]);
-        } else {
-            $stmtInsRol = $pdo->prepare("INSERT INTO usuario_rol (id_usuario, id_rol, fecha_asignacion) VALUES (:id, 1, NOW())");
-            $stmtInsRol->execute([':id' => $idUsuario]);
-        }
+        // Agrega DTI sin reemplazar los otros roles de la cuenta.
+        $stmtInsRol = $pdo->prepare("INSERT INTO usuario_rol (id_usuario, id_rol, fecha_asignacion)
+            VALUES (:id, 1, NOW()) ON DUPLICATE KEY UPDATE id_rol = 1");
+        $stmtInsRol->execute([':id' => $idUsuario]);
 
         $pdo->commit();
         echo "[OK] Superadministrador '{$adminUser}' actualizado exitosamente con rol ID 1.\n";
@@ -134,7 +126,7 @@ try {
         echo "[-] Insertando nuevo usuario '{$adminUser}'...\n";
 
         $stmtIns = $pdo->prepare("
-            INSERT INTO usuario (nombre_usuario, contrasenha_hash, activo) 
+            INSERT INTO usuario (nombre_usuario, contrasenha_hash, activo)
             VALUES (:user, :hash, 1)
         ");
         $stmtIns->execute([
@@ -145,7 +137,7 @@ try {
         $idUsuario = (int)$pdo->lastInsertId();
 
         $stmtInsRol = $pdo->prepare("
-            INSERT INTO usuario_rol (id_usuario, id_rol, fecha_asignacion) 
+            INSERT INTO usuario_rol (id_usuario, id_rol, fecha_asignacion)
             VALUES (:id_usuario, 1, NOW())
         ");
         $stmtInsRol->execute([':id_usuario' => $idUsuario]);

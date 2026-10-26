@@ -338,7 +338,7 @@ $activosEnlace = array_filter(
 
                     <div id="sub-canceladas" class="sub-content hidden">
                         <h3>Solicitudes canceladas</h3>
-                        <p class="text-muted">Registro de solicitudes canceladas antes de asignar un traslado.</p>
+                        
                         <label class="filtro-listado">Buscar cancelación
                             <input type="search" class="form-input" data-filtrar="tabla-canceladas"
                                 placeholder="Solicitud, origen, destino, usuario o motivo">

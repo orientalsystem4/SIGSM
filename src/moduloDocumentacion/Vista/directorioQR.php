@@ -6,7 +6,6 @@ $categoriasDocumentales = DocumentacionPublicaModelo::categorias();
 ?>
 <div id="sec-doc-estatica" class="view-section hidden">
     <h3 class="mb-md">Directorio de Documentación Médica</h3>
-    <p class="text-muted mb-3">Cada código abre los documentos activos de su categoría. También podés abrir el listado desde el enlace.</p>
     <div class="qr-grid">
         <?php foreach ($categoriasDocumentales as $categoriaDocumental): ?>
             <div class="qr-card">

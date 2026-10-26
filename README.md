@@ -1,205 +1,114 @@
-# S.I.G.S.M. - Sistema Informático de Gestión de Servicios Médicos 🚑
+# S.I.G.S.M.
 
-**Proyecto de Egreso - BT Tecnologías de la Información - 2026**  
-*I.S.B.O. - Polo Educativo Tecnológico Vista Linda - ITS Paysandú - ESC Villa Muñoz*
+Sistema Informático de Gestión de Servicios Médicos. Proyecto de egreso 2026, Oriental System.
 
-S.I.G.S.M. es una plataforma web integral orientada a optimizar la logística de traslados médicos de emergencia, la gestión centralizada de documentación clínica mediante códigos QR (estáticos y dinámicos), el control de acceso de usuarios y la recolección/análisis estadístico de la satisfacción de los pacientes.
+## Instalación con Docker
 
-🔗 **[Ver Maqueta Estática en Vivo (GitHub Pages)](https://orientalsystem4.github.io/SIGSM/)** *(Demostración exclusivamente de interfaz gráfica frontend)*
+Requiere Git, Docker con Compose y un navegador. En Windows se utiliza Docker Desktop con WSL 2. Visual Studio Code es opcional para editar el proyecto.
 
----
+### 1. Descargar
 
-## 🚀 Requisitos del Sistema
-
-El entorno de desarrollo y despliegue del proyecto está completamente containerizado mediante **Docker**, garantizando paridad de entorno en cualquier sistema operativo.
-
-### Requisitos Oficiales (Docker)
-- **Docker Engine** (versión 20.10 o superior)
-- **Docker Compose** (versión 2.0 o superior)
-- **Navegador web moderno** (Chrome, Firefox, Edge, Safari)
-
-### Alternativa sin Docker (LAMP / XAMPP)
-- **PHP** 8.0 o superior (con extensiones `pdo`, `pdo_mysql`, `mysqli`)
-- **MariaDB** 10.4+ o **MySQL** 8.0+
-- **Servidor Apache** con módulo `mod_rewrite` habilitado
-- **phpMyAdmin** (opcional, para inspección visual de la base de datos)
-
----
-
-## 🐳 Puesta en Marcha con Docker (Recomendado)
-
-El repositorio incluye la configuración de Docker Compose con los servicios de **Apache/PHP 8.0 (`web`)**, **MariaDB 10.4 (`db`)** y **phpMyAdmin (`phpmyadmin`)**.
-
-### 1. Clonar el repositorio
-```bash
+```sh
 git clone https://github.com/orientalsystem4/SIGSM.git
 cd SIGSM
 ```
 
-### 2. Configurar variables de entorno
-El proyecto incluye un archivo `.env` precargado para desarrollo. Si no existe, créelo a partir de `.env.example`:
-```bash
-cp .env.example .env
+### 2. Configurar
+
+Copiar `.env.example` a `.env` (en PowerShell: `Copy-Item .env.example .env`; en Linux: `cp .env.example .env`).
+
+Configurar `DB_HOST=db`, `DB_NAME=sigsm`, `DB_USER=root` y elegir `DB_PASS`. Las variables `SEED_ADMIN_USER` y `SEED_ADMIN_PASS` se utilizan solamente al ejecutar `crear_admin.php` sin argumentos. No subir `.env` a Git.
+
+### 3. Iniciar
+
+```sh
+docker compose up -d --build
+docker compose ps
+docker compose logs --tail=30 db
 ```
 
-### 3. Levantar los contenedores
-Inicie los servicios en segundo plano:
-```bash
-docker compose up -d
-```
+En una instalación nueva, Docker importa `src/documentacion/sigsm.sql` al crear el volumen de datos. Esperar a que finalice la inicialización y MariaDB indique `ready for connections` en el puerto 3306 antes de continuar. Los siguientes reinicios conservan la base y no vuelven a importar el SQL.
 
-> **Nota:** La base de datos cargará automáticamente la estructura inicial a partir de `src/documentacion/sigsm.sql` durante el primer inicio.
+### 4. Preparar datos y estructura
 
-### 4. Inicializar y sembrar la base de datos (CLI Seeder)
-Ejecute el script unificado de inicialización dentro del contenedor web:
-```bash
+```sh
 docker compose exec web php bin/seeder.php
 ```
 
-Este comando idempotente se encarga de:
-1. Crear/actualizar el **Superadministrador** con el Rol 1 (`Administrador de DTI`).
-2. Verificar las **7 categorías médicas institucionales**.
-3. Vincular las **7 encuestas institucionales** a sus respectivas especialidades.
-4. Inicializar las **9 preguntas base** del sistema de satisfacción (8 de escala + 1 abierta para sugerencias).
+Verifica las columnas de solicitudes, las siete categorías y encuestas, las nueve preguntas y las rutas entre las ubicaciones 1, 2 y 3. También actualiza los nombres de los roles 2, 3 y 6, conservando sus IDs y permisos. Se puede repetir sin duplicar esos datos. No crea usuarios ni restablece contraseñas. Necesita las tablas del SQL base.
 
-**Credenciales iniciales generadas:**
-- **Usuario:** `admin`
-- **Contraseña:** `Admin123!`
-- **Rol:** `Administrador de DTI` (Acceso total)
+Las rutas iniciales son combinaciones entre los tres puntos de prueba; no incluyen distancias ni tiempos oficiales. La API de pacientes todavía no está integrada: la búsqueda por cédula consulta la tabla local `paciente`.
 
-### 5. Acceso a las aplicaciones
-- **Plataforma S.I.G.S.M:** [http://localhost:8080/SIGSM/](http://localhost:8080/SIGSM/)
-- **Gestor phpMyAdmin:** [http://localhost:8081/](http://localhost:8081/)  
-  *(Servidor: `db`, Usuario: `root`, Contraseña: la configurada en `DB_PASS` o `root_password`)*
-- **Puerto MySQL/MariaDB:** `3306`
+### 5. Crear el administrador
 
----
+Elegir un usuario y una contraseña, reemplazando los ejemplos:
 
-## 💻 Alternativa: Instalación Local con XAMPP / LAMP
-
-Si desea ejecutar el sistema directamente en su servidor local sin utilizar Docker:
-
-1. **Ubicación:** Clone o copie el proyecto dentro del directorio raíz de su servidor web (por ejemplo `C:\xampp\htdocs\SIGSM` o `/var/www/html/SIGSM`).
-2. **Servicios:** Inicie Apache y MySQL desde el panel de control de XAMPP.
-3. **Base de Datos:**
-   - Ingrese a phpMyAdmin (`http://localhost/phpmyadmin/`).
-   - Cree una base de datos denominada `sigsm` con cotejamiento `utf8mb4_unicode_ci`.
-   - Importe el volcado base: `src/documentacion/sigsm.sql`.
-4. **Sembrado de Datos:**
-   Abra una terminal en la raíz del proyecto y ejecute:
-   ```bash
-   php bin/seeder.php
-   ```
-5. **Configuración de Conexión:**
-   Verifique que los valores de conexión en `.env` o en `src/serviciosComunes/conexionBD/conexion.php` coincidan con sus credenciales locales de MySQL.
-6. **Navegación:** Ingrese a [http://localhost/SIGSM/](http://localhost/SIGSM/).
-
----
-
-## ⌨️ Herramientas de Consola (CLI)
-
-En el directorio [`bin/`](file:///home/nika/Documentos/SIGSM/bin) se disponen herramientas de línea de comandos para tareas administrativas y de mantenimiento:
-
-| Comando | Descripción |
-| :--- | :--- |
-| `php bin/seeder.php` | **Seeder Unificado:** Ejecuta de manera segura y transaccional la carga de roles, superadministrador, categorías, encuestas y preguntas modelo. |
-| `php bin/crear_admin.php [user] [pass]` | **Gestor de Superadmin:** Crea o restablece la contraseña de un usuario con permisos de Administrador de DTI. Permite pasar credenciales personalizadas como argumentos. |
-
-*Para ejecutarlos dentro de Docker, anteponga `docker compose exec web` (ejemplo: `docker compose exec web php bin/seeder.php`).*
-
----
-
-## 🧩 Módulos Funcionales del Sistema
-
-El sistema implementa una arquitectura modular donde cada dominio de negocio gestiona su lógica y persistencia:
-
-### 1. Autenticación y Control de Acceso (RBAC)
-- **Inicio de sesión centralizado:** Validación real contra base de datos utilizando contraseñas cifradas mediante `password_hash()` con algoritmo Bcrypt.
-- **Control Perimetral (`guardian.php`):** Middleware que intercepta solicitudes, verifica el estado de sesión activa y valida permisos según el rol asignado.
-- **Cierre de sesión seguro:** Destrucción y limpieza de sesiones en `logout.php`.
-
-### 2. Módulo de Gestión de Usuarios (`src/usuario/`)
-- **CRUD Administrativo:** Listado paginado/filtrable, creación, edición y visualización detallada de usuarios.
-- **Asignación de Roles:** Roles configurables (Administrador de DTI, Chofer, Enfermería, Unidad de Enlace).
-- **Control de Estado:** Activación y desactivación lógica de accesos.
-
-### 3. Módulo de Documentación Clínica (`src/moduloDocumentacion/`)
-- **Directorio de Protocolos:** Clasificación por especialidad médica (Urología, Cardiología, Traumatología, etc.).
-- **CRUD de Documentos:** Carga de archivos PDF, visualización en visor integrado, edición de metadatos y baja lógica.
-- **Acceso por QR Estático:** Códigos QR asignados por servicio médico para consulta rápida de protocolos en salas.
-
-### 4. Módulo de Encuestas y Métricas (`src/moduloEncuestas/`)
-- **Formulario Dinámico (`responder.php`):** Interfaz para pacientes con 8 preguntas evaluativas en escala (1 a 5 estrellas) y campo para comentarios libres.
-- **Registro Transaccional (`GuardarEncuesta.php`):** Persistencia relacional de cabecera y detalle de respuestas con control de integridad referencial.
-- **Panel de Métricas (`MetricasControlador.php`):** API de analítica para visualización de KPIs, promedios de satisfacción por pregunta y distribución estadística.
-- **Seguridad en Endpoints:** Desactivación de ejecución web de inicializadores con respuesta estricta **HTTP 403 Forbidden**.
-
-### 5. Módulo de Ambulancias y Traslados (`src/moduloAmbulancias/`)
-- **Panel de Choferes:** Gestión operativa de rutas asignadas y bitácora de estado del traslado.
-- **Unidad de Enlace:** Coordinación, supervisión y despacho activo de solicitudes de traslado interhospitalario.
-
----
-
-## 🏗️ Arquitectura y Estructura del Proyecto
-
-El proyecto está diseñado bajo el patrón **MVC (Modelo - Vista - Controlador)**, complementado con una capa de **Servicios Comunes** para la lógica transversal y herramientas CLI:
-
-```text
-📦 SIGSM/
-├── 📂 bin/                               # Herramientas de consola y scripts administrativos CLI
-│   ├── crear_admin.php                   # Gestor CLI para Superadministrador
-│   └── seeder.php                        # Seeder general e inicializador del sistema
-├── 📂 src/                               # Código fuente principal de la aplicación
-│   ├── 📂 documentacion/                 # Volcados y esquemas de base de datos
-│   │   └── sigsm.sql                     # Script SQL con estructura relacional y datos base
-│   ├── 📂 moduloAmbulancias/             # Módulo de traslados médicos y choferes
-│   │   ├── 📂 Controlador/
-│   │   ├── 📂 Model/
-│   │   └── 📂 Vista/                     # Vistas operativas (choferes.php, unidadEnlace.php)
-│   ├── 📂 moduloDocumentacion/           # Módulo de repositorio documental médico
-│   │   ├── 📂 Controlador/               # ControladorDocumentos.php
-│   │   ├── 📂 Model/                     # DocumentoModelo.php
-│   │   └── 📂 Vista/                     # CRUD de documentos y portal de enfermería
-│   ├── 📂 moduloEncuestas/               # Módulo de evaluación de satisfacción y métricas
-│   │   ├── 📂 Controlador/               # GuardarEncuesta.php, MetricasControlador.php
-│   │   └── 📂 Vista/                     # Interfaz de respuesta de encuestas (responder.php)
-│   ├── 📂 serviciosComunes/              # Capa transversal y utilidades compartidas
-│   │   ├── 📂 autenticacion/             # Controladores de login, logout y manejo de sesión
-│   │   ├── 📂 conexionBD/                # Conector PDO Singleton con soporte para Docker y CLI
-│   │   ├── 📂 permisos/                  # Verificadores de permisos por rol
-│   │   ├── 📂 seguridad/                 # Guardian perimetral y middleware de sesión
-│   │   └── 📂 vistaGeneral/              # Layout base compartido y bifurcación
-│   ├── 📂 usuario/                       # Módulo de administración de usuarios y roles
-│   │   ├── 📂 Controlador/               # ControladorUsuarios.php
-│   │   ├── 📂 Model/                     # UsuarioModelo.php
-│   │   └── 📂 Vista/                     # Vistas CRUD (listado, crear, editar, ver)
-│   └── index.html                        # Redirección al punto de entrada web
-├── 📂 tests/                             # Suites de pruebas y verificación
-├── .env                                  # Variables de entorno locales
-├── .env.example                          # Plantilla de variables de entorno
-├── docker-compose.yml                    # Orquestación de contenedores (web, db, phpmyadmin)
-├── Dockerfile                            # Imagen personalizada de Apache + PHP 8.0
-└── README.md                             # Documentación técnica general
+```sh
+docker compose exec web php bin/crear_admin.php admin_local 'REEMPLAZAR_CON_TU_CLAVE'
 ```
 
----
+Si el usuario ya existe, este comando restablece su contraseña, lo activa y agrega el rol DTI. Se ejecuta por separado del seeder y no es parte de una actualización habitual.
 
-## 🛠️ Metodología y Convenciones de Desarrollo
+### 6. Abrir
 
-Para asegurar la calidad, orden y trazabilidad del código fuente, el equipo sigue estándares consolidados de desarrollo:
+- Sistema: http://localhost:8080/SIGSM/serviciosComunes/autenticacion/sesion.php
+- phpMyAdmin: http://localhost:8081/
 
-### Control de Versiones (Feature Branch Workflow)
-- **`main`:** Código funcional, estable y testeado correspondiente a las versiones de entrega oficial.
-- **Ramas de funcionalidad (`feat/...`, `fix/...`, `test`):** Desarrollo aislado de nuevas capacidades antes de su integración a la rama principal mediante Pull Requests.
+Iniciar sesión con el usuario preparado en el paso anterior. Desde Gestión de Usuarios, DTI puede crear las cuentas necesarias para probar cada rol.
 
-### Convención de Commits (Conventional Commits)
-Los mensajes de confirmación utilizan los prefijos estándar:
-- `feat:` Implementación de una nueva funcionalidad.
-- `fix:` Corrección de errores o inconsistencias.
-- `refactor:` Reestructuración o limpieza de código sin alterar su comportamiento externo.
-- `docs:` Modificaciones exclusivas en la documentación.
-- `test:` Adición o ajuste de pruebas.
+## Actualizar una instalación existente
 
-### Versionamiento Semántico (SemVer)
-- **`v0.1.0` - `v0.9.0`:** Proceso iterativo de diseño arquitectónico, maquetación de interfaces, módulos clínicos y modales funcionales.
-- **`v1.0.0`:** Consolidación de la arquitectura MVC, implementación de entorno Dockerizado, login real con control de acceso RBAC, gestión integral de usuarios, módulo de métricas analíticas y herramientas de sembrado CLI.
+Comprobar primero que no haya cambios locales pendientes con `git status --short`. Luego, desde la rama que utiliza la instalación:
+
+```sh
+git pull --ff-only
+docker compose up -d --build
+docker compose exec web php bin/seeder.php
+```
+
+No importar nuevamente el SQL completo sobre una base en uso. No usar `docker compose down -v` para actualizar: elimina el volumen de la base. Antes de actualizar una instalación compartida, respaldar MariaDB y los archivos de `src/moduloDocumentacion/Vista/documentos`.
+
+Los cambios de estructura del seeder no se revierten si luego falla la carga de datos; el script informa el error y puede repetirse después de corregirlo.
+
+## Roles
+
+| ID | Rol | Acceso |
+| --- | --- | --- |
+| 1 | Administrador de DTI | Todos los portales y gestión de usuarios |
+| 2 | Administrador de Enfermería | Enfermería y consulta de Unidad de Enlace |
+| 3 | Coordinador de Traslados | Unidad de Enlace, asignación y consulta de seguimiento |
+| 4 | Funcionario Administrativo de Registros Médicos | Documentos y métricas |
+| 5 | Chofer | Seguimiento de sus traslados |
+| 6 | Enfermería | Solicitudes, documentos por categoría y encuestas |
+
+Si una cuenta tiene varios roles, elige el rol activo al ingresar. La aprobación especial de solicitudes por parte de Administración de Enfermería no tiene un flujo independiente implementado.
+
+## Prueba funcional de instalación
+
+1. Ingresar como DTI y crear cuentas de prueba de Enfermería, Coordinador, Registros y Chofer.
+2. Crear una solicitud con una cédula que exista en la base local; comprobar también el mensaje para una inexistente. Para elementos que no sean pacientes, verificar el formulario correspondiente.
+3. Editar una solicitud propia pendiente. Cancelar otra indicando un motivo y comprobar el registro en Unidad de Enlace.
+4. Asignar vehículo compatible, chofer, enfermería cuando corresponde y ruta. Intentar reutilizar recursos ocupados y comprobar el rechazo.
+5. Con el chofer asignado, registrar inicio, llegada, retorno y finalización. Revisar el historial y sus filtros por cédula y vehículo.
+6. Desde Registros, cargar un PDF, editarlo y darlo de baja. Comprobar el listado público de su categoría antes y después de la baja.
+7. Responder una encuesta completa y comprobar el total y las métricas de esa categoría.
+8. Comprobar que los otros roles no puedan gestionar usuarios ni modificar documentos mediante sus enlaces directos.
+
+## QR y archivos
+
+Los QR de documentación llevan al listado público de documentos activos de una categoría. El enlace usa el dominio desde el cual se abre el sistema. Un QR generado en `localhost` no funciona desde otro dispositivo: para una prueba con teléfono usar el servidor publicado o una dirección de la laptop accesible por la red local.
+
+Los PDF cargados y los datos creados localmente no se sincronizan automáticamente con GitHub ni con el servidor. Los documentos públicos deben contener información destinada a consulta pública. Los QR, gráficos e iconos actuales usan servicios externos y necesitan acceso a Internet.
+
+## Organización
+
+- `bin/crear_admin.php`: creación o restablecimiento del administrador.
+- `bin/seeder.php`: preparación de estructura y datos iniciales.
+- `src/documentacion/sigsm.sql`: estructura y datos de partida.
+- `src/moduloAmbulancias`: solicitudes, asignación y seguimiento.
+- `src/moduloDocumentacion`: documentos, QR y portal de Enfermería.
+- `src/moduloEncuestas`: respuestas y métricas.
+- `src/usuario`: gestión de cuentas, exclusiva de DTI.
+- `src/serviciosComunes`: autenticación, permisos, conexión y estilos compartidos.
+
+La configuración incluida ejecuta PHP 8.0 y MariaDB 10.4. La instalación y las migraciones se realizan con Docker; no requieren PHP ni MariaDB instalados por separado en la computadora.

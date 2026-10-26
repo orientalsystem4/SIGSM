@@ -1,9 +1,22 @@
 <?php
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
+requiereRol([1, 4]);
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    header('Allow: POST');
+    exit('Metodo no permitido.');
+}
+$token = $_POST['token'] ?? '';
+if (!is_string($token) || empty($_SESSION['csrf_documentos'])
+    || !hash_equals($_SESSION['csrf_documentos'], $token)) {
+    http_response_code(403);
+    exit('La solicitud no es valida. Vuelva al portal y recargue la pagina.');
+}
+
 require_once __DIR__ . '/../Model/DocumentoModelo.php';
 
-$accion = $_POST['accion'] ?? $_GET['accion'] ?? '';
-$idUsuarioCarga = (int)($_SESSION['id_usuario'] ?? 4);
+$accion = $_POST['accion'] ?? '';
+$idUsuarioCarga = (int)($_SESSION['id_usuario'] ?? 0);
 
 
 // ============================================================
@@ -76,7 +89,7 @@ if ($accion === 'crear') {
     );
 
     $nombreFinal =
-        time() .
+        time() . random_int(100000000, 999999999) .
         '_' .
         $nombreSeguro .
         '.pdf';
@@ -243,7 +256,7 @@ if ($accion === 'editar') {
 
 
         $nombreFinal =
-            time() .
+            time() . random_int(100000000, 999999999) .
             '_' .
             $nombreSeguro .
             '.pdf';

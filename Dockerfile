@@ -10,4 +10,7 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 RUN echo '<?php header("Location: /SIGSM/"); exit; ?>' > /var/www/html/index.php
 
 # Configurar el directorio de trabajo para que coincida con la ruta local
+# Permite los PDF de hasta 15 MB aceptados por el formulario.
+RUN printf 'upload_max_filesize=15M\npost_max_size=20M\n' > /usr/local/etc/php/conf.d/subidas.ini
+
 WORKDIR /var/www/html/SIGSM

@@ -59,9 +59,6 @@ $usuarioActual = obtenerUsuarioActual();
                 <i data-lucide="layout-dashboard"></i>
             </div>
             <h3 class="card-title">Portal Unidad de Enlace</h3>
-            <p class="card-subtitle">
-                Coordinación y seguimiento de traslados
-            </p>
         </a>
     <?php endif; ?>
 
@@ -74,7 +71,6 @@ $usuarioActual = obtenerUsuarioActual();
                 <i data-lucide="ambulance"></i>
             </div>
             <h3 class="card-title">Portal Choferes</h3>
-            <p class="card-subtitle">Planilla y rutas activas</p>
         </a>
     <?php endif; ?>
 
@@ -86,8 +82,7 @@ $usuarioActual = obtenerUsuarioActual();
             <div class="icon-wrapper">
                 <i data-lucide="clipboard-plus"></i>
             </div>
-            <h3 class="card-title">Solicitudes de Traslado</h3>
-            <p class="card-subtitle">Portal de Enfermería</p>
+            <h3 class="card-title">Portal de Enfermería</h3>
         </a>
     <?php endif; ?>
 
@@ -100,7 +95,6 @@ $usuarioActual = obtenerUsuarioActual();
                 <i data-lucide="folder-open"></i>
             </div>
             <h3 class="card-title">Portal Documentación</h3>
-            <p class="card-subtitle">Archivos y encuestas</p>
         </a>
     <?php endif; ?>
 
@@ -113,7 +107,6 @@ $usuarioActual = obtenerUsuarioActual();
                 <i data-lucide="users"></i>
             </div>
             <h3 class="card-title">Gestión de Usuarios</h3>
-            <p class="card-subtitle">Administración y roles</p>
         </a>
     <?php endif; ?>
 
