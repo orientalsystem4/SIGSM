@@ -139,7 +139,6 @@ unset($_SESSION['errores_usuario']);
 <div class="contenedor">
     <div class="cabecera-seccion">
         <h1>Editar Usuario #<?= (int)$usuario['id_usuario'] ?></h1>
-        <a href="listado.php" class="enlace-volver">← Volver al listado</a>
     </div>
 
     <?php if (!empty($errores)): ?>
@@ -157,6 +156,16 @@ unset($_SESSION['errores_usuario']);
         <input type="hidden" name="accion" value="editar">
         <input type="hidden" name="id_usuario" value="<?= (int)$usuario['id_usuario'] ?>">
 
+        <div class="campo">
+            <label for="cedula">Cédula de identidad (pendiente para cuentas antiguas)</label>
+            <input type="text" id="cedula" name="cedula" maxlength="12"
+                   value="<?= htmlspecialchars($usuario['cedula'] ?? '') ?>">
+        </div>
+        <div class="campo">
+            <label for="nombre_completo">Nombre completo (pendiente para cuentas antiguas)</label>
+            <input type="text" id="nombre_completo" name="nombre_completo" maxlength="150"
+                   value="<?= htmlspecialchars($usuario['nombre_completo'] ?? '') ?>">
+        </div>
         <div class="campo">
             <label for="nombre_usuario">Nombre de Usuario *</label>
             <input type="text" id="nombre_usuario" name="nombre_usuario"
@@ -211,7 +220,7 @@ unset($_SESSION['errores_usuario']);
 
         <div class="acciones-formulario">
             <button type="submit" class="boton boton-primario">Guardar Cambios</button>
-            <a href="listado.php" class="boton boton-secundario">Cancelar</a>
+            <a href="listado.php" class="boton boton-secundario">Volver al listado</a>
         </div>
     </form>
 </div>

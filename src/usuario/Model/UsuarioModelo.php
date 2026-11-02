@@ -13,6 +13,8 @@ class UsuarioModelo
             SELECT
                 u.id_usuario,
                 u.nombre_usuario,
+                u.cedula,
+                u.nombre_completo,
                 u.activo,
                 r.id_rol,
                 r.nombre_rol
@@ -37,6 +39,8 @@ class UsuarioModelo
                 $usuarios[$idUsuario] = [
                     'id_usuario' => $idUsuario,
                     'nombre_usuario' => $fila['nombre_usuario'],
+                    'cedula' => $fila['cedula'],
+                    'nombre_completo' => $fila['nombre_completo'],
                     'activo' => (int) $fila['activo'],
                     'roles' => [],
                     'id_rol' => null,
@@ -75,7 +79,7 @@ class UsuarioModelo
         $conexion = Conexion::conectar();
 
         $sql = "
-            SELECT id_usuario, nombre_usuario, activo
+            SELECT id_usuario, nombre_usuario, cedula, nombre_completo, activo
             FROM usuario
             WHERE id_usuario = :id_usuario
         ";
@@ -172,10 +176,27 @@ class UsuarioModelo
         return (bool) $consulta->fetch();
     }
 
+    public static function existeCedula(string $cedula, ?int $excluirId = null): bool
+    {
+        $conexion = Conexion::conectar();
+        $sql = 'SELECT id_usuario FROM usuario WHERE cedula = :cedula';
+        $parametros = [':cedula' => $cedula];
+        if ($excluirId !== null) {
+            $sql .= ' AND id_usuario != :id_usuario';
+            $parametros[':id_usuario'] = $excluirId;
+        }
+        $sql .= ' LIMIT 1';
+        $consulta = $conexion->prepare($sql);
+        $consulta->execute($parametros);
+        return (bool) $consulta->fetchColumn();
+    }
+
         public static function crear(
         string $nombreUsuario,
         string $password,
-        array $idsRoles
+        array $idsRoles,
+        string $cedula,
+        string $nombreCompleto
     ): bool {
         $conexion = Conexion::conectar();
 
@@ -199,12 +220,14 @@ class UsuarioModelo
             // Crear la cuenta.
             $consulta = $conexion->prepare(
                 'INSERT INTO usuario
-                    (nombre_usuario, contrasenha_hash, activo)
-                 VALUES (:nombre_usuario, :contrasenha_hash, 1)'
+                    (nombre_usuario, contrasenha_hash, activo, cedula, nombre_completo)
+                 VALUES (:nombre_usuario, :contrasenha_hash, 1, :cedula, :nombre_completo)'
             );
 
             $consulta->execute([
                 ':nombre_usuario' => $nombreUsuario,
+                ':cedula' => $cedula,
+                ':nombre_completo' => $nombreCompleto,
                 ':contrasenha_hash' => password_hash(
                     $password,
                     PASSWORD_DEFAULT
@@ -245,7 +268,9 @@ class UsuarioModelo
         string $nombreUsuario,
         ?string $nuevaPassword,
         array $idsRoles,
-        int $activo
+        int $activo,
+        ?string $cedula,
+        ?string $nombreCompleto
     ): bool {
         $conexion = Conexion::conectar();
 
@@ -288,11 +313,15 @@ class UsuarioModelo
             $sql = "
                 UPDATE usuario
                 SET nombre_usuario = :nombre_usuario,
+                    cedula = :cedula,
+                    nombre_completo = :nombre_completo,
                     activo = :activo
             ";
 
             $parametros = [
                 ':nombre_usuario' => $nombreUsuario,
+                ':cedula' => $cedula,
+                ':nombre_completo' => $nombreCompleto,
                 ':activo' => $activo,
                 ':id_usuario' => $idUsuario
             ];

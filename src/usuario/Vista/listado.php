@@ -24,7 +24,7 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            padding: 30px;
+            padding: 0;
             font-family: Arial, sans-serif;
             background: #f4f7fb;
             color: #1e293b;
@@ -191,30 +191,65 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
         .celda-vacia {
             text-align: center;
             color: #64748b;
-            padding: 30px;
+            padding: 0;
         }
         @media (max-width: 768px) {
-            body { padding: 15px; }
+            body { padding: 0; }
             .cabecera-seccion { flex-direction: column; align-items: flex-start; }
             .grupo-botones { width: 100%; }
         }
     </style>
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css?v=2">
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Ajustes exclusivos de Gestión de Usuarios */
+        .contenedor { max-width: 1200px; margin: 0 auto; }
+        .cabecera-seccion { margin-bottom: 18px; }
+        .grupo-botones { margin-left: auto; }
+        .sidebar .nav-btn { text-decoration: none; }
+        .tabla-datos th { background: #f0f7f5; color: #115e59; }
+        .celda-acciones { flex-wrap: wrap; }
+        .main-content { min-width: 0; }
+        .content-wrapper { overflow: auto; }
+    </style>
 </head>
 <body>
-
-<div class="contenedor">
-    <div class="cabecera-seccion">
-        <div>
-            <h1>Gestión de Usuarios</h1>
-            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">Administración de empleados, credenciales y asignación de roles</p>
+<div class="app-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="btn-close-menu" id="closeMenuBtn" type="button" aria-label="Cerrar menú"><i data-lucide="x"></i></button>
+            <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo S.I.G.S.M." class="sidebar-logo">
+            <span>S.I.G.S.M.</span>
         </div>
-        <div class="grupo-botones">
-            <a href="crear.php" class="boton boton-primario">+ Nuevo Usuario</a>
-            <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="boton boton-secundario">← Volver a Módulos</a>
-            <a href="../../serviciosComunes/autenticacion/logout.php" class="boton boton-peligro">Cerrar Sesión</a>
+        <nav class="sidebar-nav" aria-label="Gestión de Usuarios">
+            <a class="nav-btn active" href="listado.php" aria-current="page"><i data-lucide="users"></i> Gestión de Usuarios</a>
+            <a class="nav-btn" href="crear.php"><i data-lucide="user-plus"></i> Nuevo Usuario</a>
+        </nav>
+        <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="btn-volver-hub"><i data-lucide="grid"></i> Cambiar Módulo</a>
+        <div class="sidebar-profile">
+            <div class="profile-info">
+                <span class="profile-name"><?= htmlspecialchars($_SESSION['nombre_usuario'] ?? 'Administrador', ENT_QUOTES, 'UTF-8') ?></span>
+                <span class="profile-role">Administrador de DTI</span>
+            </div>
+            <a href="../../serviciosComunes/autenticacion/logout.php" class="btn-logout" title="Cerrar Sesión" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></a>
         </div>
-    </div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="btn-menu" id="openMenuBtn" type="button" aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+                <h2 class="section-title">Gestión de Usuarios</h2>
+            </div>
+        </header>
+        <section class="content-wrapper">
+            <div class="contenedor">
+                <div class="cabecera-seccion">
+                    <div class="grupo-botones">
+                        <a href="crear.php" class="boton boton-primario">+ Nuevo Usuario</a>
+                    </div>
+                </div>
 
     <?php if ($mensaje): ?>
         <div class="aviso"><?= htmlspecialchars($mensaje) ?></div>
@@ -230,6 +265,8 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
                 <tr>
                     <th style="width: 60px;">ID</th>
                     <th>Nombre de Usuario</th>
+                    <th>Nombre completo</th>
+                    <th>Cédula</th>
                     <th>Rol Asignado</th>
                     <th style="width: 120px;">Estado</th>
                     <th style="width: 260px;">Acciones</th>
@@ -237,7 +274,7 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
             </thead>
             <tbody>
                 <?php if (empty($usuarios)): ?>
-                    <tr><td colspan="5" class="celda-vacia">No hay usuarios registrados en la base de datos.</td></tr>
+                    <tr><td colspan="7" class="celda-vacia">No hay usuarios registrados en la base de datos.</td></tr>
                 <?php else: ?>
                     <?php foreach ($usuarios as $u): ?>
                         <tr>
@@ -248,6 +285,8 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
                                     <span style="font-size: 11px; color: #0284c7; font-weight: normal;">(Tú)</span>
                                 <?php endif; ?>
                             </td>
+                            <td><?= htmlspecialchars($u['nombre_completo'] ?? 'Pendiente') ?></td>
+                            <td><?= htmlspecialchars($u['cedula'] ?? 'Pendiente') ?></td>
                             <td>
                                 <?php if (!empty($u['nombre_rol'])): ?>
                                     <span class="badge badge-rol"><?= htmlspecialchars($u['nombre_rol']) ?></span>
@@ -288,7 +327,11 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
             </tbody>
         </table>
     </div>
+            </div>
+        </section>
+    </main>
 </div>
-
+<script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
+<script>if (typeof lucide !== 'undefined') lucide.createIcons();</script>
 </body>
 </html>

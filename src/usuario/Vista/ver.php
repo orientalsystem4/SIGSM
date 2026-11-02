@@ -115,7 +115,6 @@ $tituloPagina = 'Detalle de Usuario';
 <div class="contenedor">
     <div class="cabecera-seccion">
         <h1>Detalle de Usuario</h1>
-        <a href="listado.php" class="enlace-volver">← Volver al listado</a>
     </div>
 
     <div class="tarjeta-detalle">
@@ -123,6 +122,8 @@ $tituloPagina = 'Detalle de Usuario';
             <span class="etiqueta">Identificador (ID):</span>
             <span class="valor">#<?= (int)$usuario['id_usuario'] ?></span>
         </div>
+        <div class="fila-detalle"><span class="etiqueta">Cédula:</span><span class="valor"><?= htmlspecialchars($usuario['cedula'] ?? 'Pendiente') ?></span></div>
+        <div class="fila-detalle"><span class="etiqueta">Nombre completo:</span><span class="valor"><?= htmlspecialchars($usuario['nombre_completo'] ?? 'Pendiente') ?></span></div>
         <div class="fila-detalle">
             <span class="etiqueta">Nombre de Usuario:</span>
             <span class="valor"><strong><?= htmlspecialchars($usuario['nombre_usuario']) ?></strong></span>

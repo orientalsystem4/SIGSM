@@ -81,7 +81,7 @@ $activosEnlace = array_filter(
                 </button>
             </nav>
 
-            <?php if (tieneRol('admin') || tieneRol(1)): ?>
+            <?php if (tieneRol([1, 3])): ?>
                 <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="btn-volver-hub">
                     <i data-lucide="grid"></i> Cambiar Módulo
                 </a>

@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 requiereRol([1]);
 
 require_once __DIR__ . '/../Model/UsuarioModelo.php';
+require_once __DIR__ . '/../Model/ValidacionIdentidad.php';
 
 $accion = $_POST['accion'] ?? $_GET['accion'] ?? '';
 
@@ -17,6 +18,9 @@ if ($accion === 'crear') {
     }
 
     $nombreUsuario = $_POST['nombre_usuario'] ?? '';
+    $cedulaTexto = is_string($_POST['cedula'] ?? null) ? trim($_POST['cedula']) : '';
+    $nombreCompleto = is_string($_POST['nombre_completo'] ?? null) ? trim($_POST['nombre_completo']) : '';
+    $cedula = normalizarCedula($cedulaTexto);
     $password = $_POST['password'] ?? '';
     $confirmarPassword = $_POST['confirmar_password'] ?? '';
     $rolesRecibidos = $_POST['ids_roles'] ?? [];
@@ -39,13 +43,22 @@ if ($accion === 'crear') {
         $errores[] = 'El nombre de usuario ya está registrado.';
     }
 
+    if ($cedula === null) {
+        $errores[] = 'La cédula no es válida. Verifique su dígito verificador.';
+    } elseif (UsuarioModelo::existeCedula($cedula)) {
+        $errores[] = 'La cédula ya está registrada.';
+    }
+    if (!nombreCompletoValido($nombreCompleto)) {
+        $errores[] = 'Ingrese un nombre completo válido (3 a 150 caracteres).';
+    }
+
     if (!is_string($password) || !is_string($confirmarPassword)) {
         $errores[] = 'Las contraseñas ingresadas no son válidas.';
     } else {
         if ($password === '') {
             $errores[] = 'La contraseña es obligatoria.';
-        } elseif (strlen($password) < 4) {
-            $errores[] = 'La contraseña debe tener al menos 4 caracteres.';
+        } elseif (strlen($password) < 12) {
+            $errores[] = 'La contraseña debe tener al menos 12 caracteres.';
         }
 
         if ($password !== $confirmarPassword) {
@@ -94,6 +107,8 @@ if ($accion === 'crear') {
     // Conservar los datos del formulario, sin contraseñas.
     $_SESSION['datos_previos_usuario'] = [
         'nombre_usuario' => $nombreUsuario,
+        'cedula' => $cedulaTexto,
+        'nombre_completo' => $nombreCompleto,
         'ids_roles' => $idsRoles
     ];
 
@@ -106,7 +121,9 @@ if ($accion === 'crear') {
     $ok = UsuarioModelo::crear(
         $nombreUsuario,
         $password,
-        $idsRoles
+        $idsRoles,
+        $cedula,
+        $nombreCompleto
     );
 
     if (!$ok) {
@@ -146,6 +163,9 @@ if ($accion === 'editar') {
     );
 
     $nombreUsuario = $_POST['nombre_usuario'] ?? '';
+    $cedulaTexto = is_string($_POST['cedula'] ?? null) ? trim($_POST['cedula']) : '';
+    $nombreCompleto = is_string($_POST['nombre_completo'] ?? null) ? trim($_POST['nombre_completo']) : '';
+    $cedula = normalizarCedula($cedulaTexto);
     $password = $_POST['password'] ?? '';
 
     $nombreUsuario = is_string($nombreUsuario)
@@ -209,10 +229,29 @@ if ($accion === 'editar') {
         $errores[] = 'El nombre de usuario ya está en uso.';
     }
 
+    if ($cedulaTexto === '') {
+        if (!empty($usuarioActualizado['cedula'])) {
+            $errores[] = 'No puede quitar una cédula ya registrada.';
+        }
+        $cedula = null; // Cuenta anterior: se completará luego.
+    } elseif ($cedula === null) {
+        $errores[] = 'La cédula no es válida.';
+    } elseif (UsuarioModelo::existeCedula($cedula, $idUsuario)) {
+        $errores[] = 'La cédula ya está registrada.';
+    }
+    if ($nombreCompleto === '') {
+        if (!empty($usuarioActualizado['nombre_completo'])) {
+            $errores[] = 'No puede quitar el nombre completo ya registrado.';
+        }
+        $nombreCompleto = null;
+    } elseif (!nombreCompletoValido($nombreCompleto)) {
+        $errores[] = 'Ingrese un nombre completo válido (3 a 150 caracteres).';
+    }
+
     if (!is_string($password)) {
         $errores[] = 'La contraseña ingresada no es válida.';
-    } elseif ($password !== '' && strlen($password) < 4) {
-        $errores[] = 'La nueva contraseña debe tener al menos 4 caracteres.';
+    } elseif ($password !== '' && strlen($password) < 12) {
+        $errores[] = 'La nueva contraseña debe tener al menos 12 caracteres.';
     }
 
     if (!in_array($activo, [0, 1], true)) {
@@ -260,7 +299,9 @@ if ($accion === 'editar') {
         $nombreUsuario,
         $password !== '' ? $password : null,
         $idsRoles,
-        $activo
+        $activo,
+        $cedula,
+        $nombreCompleto
     );
 
     if ($ok) {
