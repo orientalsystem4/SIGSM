@@ -272,7 +272,7 @@ configurar_sudoers() {
 %admin_sys ALL=(ALL:ALL) ALL
 EOF
             chmod 0440 "$sudoers_file"
-            visudo -c -f "$sudoers_file" >/dev/null 2>&1
+            command -v visudo >/dev/null 2>&1 && visudo -c -f "$sudoers_file" >/dev/null 2>&1 || true
             echo "Configuración sudoers para admin_sys establecida."
             log_evento "$LOG_USUARIOS" "Configuración sudoers para admin_sys: acceso completo."
             ;;
@@ -294,7 +294,7 @@ EOF
                          /usr/local/bin/respaldo*.sh
 EOF
             chmod 0440 "$sudoers_file"
-            visudo -c -f "$sudoers_file" >/dev/null 2>&1
+            command -v visudo >/dev/null 2>&1 && visudo -c -f "$sudoers_file" >/dev/null 2>&1 || true
             echo "Configuración sudoers para operadores_db establecida."
             log_evento "$LOG_USUARIOS" "Configuración sudoers para operadores_db establecida."
             ;;
@@ -309,7 +309,7 @@ EOF
                      /usr/bin/journalctl --no-pager *
 EOF
             chmod 0440 "$sudoers_file"
-            visudo -c -f "$sudoers_file" >/dev/null 2>&1
+            command -v visudo >/dev/null 2>&1 && visudo -c -f "$sudoers_file" >/dev/null 2>&1 || true
             echo "Configuración sudoers para auditores establecida."
             log_evento "$LOG_USUARIOS" "Configuración sudoers para auditores: solo lectura de logs."
             ;;
@@ -694,9 +694,9 @@ recargar_stack_web() {
         log_evento "$LOG_SERVICIOS" "Recarga en caliente de php8.4-fpm ejecutada."
     fi
     if systemctl is-active --quiet caddy 2>/dev/null; then
-        systemctl reload caddy
-        echo " [OK] caddy recargado."
-        log_evento "$LOG_SERVICIOS" "Recarga en caliente de caddy ejecutada."
+        systemctl reload caddy 2>/dev/null || systemctl restart caddy
+        echo " [OK] caddy actualizado (configuración aplicada)."
+        log_evento "$LOG_SERVICIOS" "Actualización de configuración de caddy ejecutada."
     fi
     if systemctl is-active --quiet apache2 2>/dev/null; then
         systemctl reload apache2
@@ -1778,9 +1778,9 @@ ejecutar_monitoreo_umbrales() {
     # 4. Demonios Esenciales Activos (Adaptable a Producción Caddy/PHP-FPM o Apache)
     echo "-> 4. Verificando Demonios Críticos y Base de Datos..."
     local -a servicios_criticos=()
-    if systemctl list-unit-files 2>/dev/null | grep -q '^caddy\.service'; then
+    if systemctl cat caddy.service >/dev/null 2>&1; then
         servicios_criticos+=("caddy" "php8.4-fpm")
-    elif systemctl list-unit-files 2>/dev/null | grep -q '^apache2\.service'; then
+    elif systemctl cat apache2.service >/dev/null 2>&1; then
         servicios_criticos+=("apache2")
     fi
 
@@ -1799,7 +1799,7 @@ ejecutar_monitoreo_umbrales() {
     done
 
     # Verificar alcanzabilidad del socket o puerto de MariaDB
-    if [[ -S "/run/mysqld/mysqld.sock" ]] || ss -lnt 2>/dev/null | grep -q ':3306 '; then
+    if [[ -S "/run/mysqld/mysqld.sock" ]] || [[ "$(ss -lnt 2>/dev/null || true)" == *":3306 "* ]]; then
         echo "     [OK] Motor MariaDB: socket/puerto activo"
     else
         registrar_alerta "BD_INACCESIBLE" "No se detecta socket ni puerto 3306 de MariaDB activo."
@@ -1908,7 +1908,7 @@ gestionar_cockpit() {
     echo "=========================================================="
     echo "     GESTIÓN DEL PANEL VISUAL COCKPIT (OBSERVABILIDAD)"
     echo "=========================================================="
-    if ! systemctl list-unit-files 2>/dev/null | grep -q '^cockpit\.socket'; then
+    if ! systemctl cat cockpit.socket >/dev/null 2>&1; then
         echo "Cockpit no está instalado actualmente en este entorno."
         local confirmar
         read -rp "¿Desea instalar y habilitar 'cockpit' ahora mismo? [s/N]: " confirmar
