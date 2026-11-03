@@ -164,11 +164,29 @@ limpiar_pantalla() {
     command -v clear >/dev/null 2>&1 && clear || true
 }
 
+calcular_uso_cpu_real() {
+    local u1 n1 s1 i1 w1 q1 sq1 st1 u2 n2 s2 i2 w2 q2 sq2 st2 total1 total2 idle1 idle2 dt di
+    read -r _ u1 n1 s1 i1 w1 q1 sq1 st1 _ < /proc/stat
+    sleep 0.3
+    read -r _ u2 n2 s2 i2 w2 q2 sq2 st2 _ < /proc/stat
+    idle1=$(( i1 + ${w1:-0} ))
+    idle2=$(( i2 + ${w2:-0} ))
+    total1=$(( u1 + n1 + s1 + idle1 + ${q1:-0} + ${sq1:-0} + ${st1:-0} ))
+    total2=$(( u2 + n2 + s2 + idle2 + ${q2:-0} + ${sq2:-0} + ${st2:-0} ))
+    dt=$(( total2 - total1 ))
+    di=$(( idle2 - idle1 ))
+    if (( dt > 0 )); then
+        printf '%d' $(( (100 * (dt - di)) / dt ))
+    else
+        printf '0'
+    fi
+}
+
 obtener_metricas_rapidas() {
     local disco ram cpu
     disco=$(df -P /srv/app 2>/dev/null | awk 'NR==2 {gsub(/%/,"",$5); print $5}' || df -P / | awk 'NR==2 {gsub(/%/,"",$5); print $5}')
     ram=$(free | awk '/^Mem:/ {printf "%.0f", ($3/$2)*100}')
-    cpu=$(awk '/^cpu / {u=$2+$4; t=$2+$4+$5; if (t>0) printf "%.0f", (u/t)*100; else print 0}' /proc/stat 2>/dev/null || echo "0")
+    cpu=$(calcular_uso_cpu_real 2>/dev/null || echo "0")
     printf 'Disco: %s%% (Máx %s%%) | RAM: %s%% (Máx %s%%) | CPU: %s%% (Máx %s%%)\n' \
         "$disco" "$UMBRAL_DISCO" "$ram" "$UMBRAL_RAM" "$cpu" "$UMBRAL_CPU"
 }
@@ -1748,9 +1766,9 @@ ejecutar_monitoreo_umbrales() {
         registrar_alerta "MEMORIA_RAM" "Consumo de RAM en ${uso_ram}% (supera límite del ${UMBRAL_RAM}%)."
     fi
 
-    # 3. Carga de CPU (Umbral 75%)
+    # 3. Carga de CPU (Umbral 75% - cálculo exacto vía delta en /proc/stat)
     local uso_cpu
-    uso_cpu=$(top -bn2 -d 0.3 2>/dev/null | grep -E "^%Cpu" | tail -n 1 | awk '{printf "%.0f", 100 - $8}' || echo "0")
+    uso_cpu=$(calcular_uso_cpu_real 2>/dev/null || echo "0")
     [[ "$uso_cpu" =~ ^[0-9]+$ ]] || uso_cpu=0
     echo "-> 3. Carga de CPU:            ${uso_cpu}% (Umbral crítico: ${UMBRAL_CPU}%)"
     if (( uso_cpu >= UMBRAL_CPU )); then
@@ -1831,7 +1849,7 @@ Description=Ejecución cada 5 minutos del Monitoreo Proactivo S.I.G.S.M.
 
 [Timer]
 OnBootSec=1min
-OnUnitActiveSec=5min
+OnCalendar=*:0/5
 AccuracySec=15s
 Unit=sigsm-monitor.service
 Persistent=true
@@ -1867,6 +1885,11 @@ Unit=sigsm-backup.service
 WantedBy=timers.target
 EOF
 
+    chmod 0644 /etc/systemd/system/sigsm-monitor.service \
+               /etc/systemd/system/sigsm-monitor.timer \
+               /etc/systemd/system/sigsm-backup.service \
+               /etc/systemd/system/sigsm-backup.timer
+
     systemctl daemon-reload
     systemctl enable --now sigsm-monitor.timer
     systemctl enable --now sigsm-backup.timer
@@ -1901,7 +1924,7 @@ gestionar_cockpit() {
     fi
     echo ""
     echo "Cómo visualizar las alertas de este script en Cockpit:"
-    echo "  1. Ingrese al panel web de Cockpit (https://localhost:9090 vía túnel SSH)."
+    echo "  1. Ingrese al panel web de Cockpit (https://sigsm.orientalsystems.xyz/cockpit)."
     echo "  2. En 'Servicios' -> 'Temporizadores' verá 'sigsm-monitor.timer' y 'sigsm-backup.timer'."
     echo "  3. En 'Registros' (Logs) filtre por identificador: SIGSM_MONITOR o SIGSM_OPERADOR."
     pausa
