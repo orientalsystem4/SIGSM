@@ -27,9 +27,9 @@ require_once __DIR__ . '/../Model/ValidacionIdentidad.php';
 
 $accion = $_POST['accion'] ?? $_GET['accion'] ?? '';
 
-// ============================================================
+
 // CREAR
-// ============================================================
+
 if ($accion === 'crear') {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header('Location: ../Vista/listado.php');
@@ -166,9 +166,9 @@ if ($accion === 'crear') {
 }
 
 
-// ============================================================
+
 // EDITAR
-// ============================================================
+
 if ($accion === 'editar') {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header('Location: ../Vista/listado.php');
@@ -240,11 +240,13 @@ if ($accion === 'editar') {
         exit;
     }
 
-    if ($nombreUsuario === '') {
+        if ($nombreUsuario === '') {
         $errores[] = 'El nombre de usuario es obligatorio.';
-    } elseif (
-        UsuarioModelo::existeNombreUsuario($nombreUsuario, $idUsuario)
-    ) {
+    } elseif (strlen($nombreUsuario) < 3 || strlen($nombreUsuario) > 50) {
+        $errores[] = 'El nombre de usuario debe tener entre 3 y 50 caracteres.';
+    } elseif (!preg_match('/^[a-zA-Z0-9_.-]+$/', $nombreUsuario)) {
+        $errores[] = 'El nombre de usuario solo puede contener letras sin tildes, números, puntos, guiones y guiones bajos.';
+    } elseif (UsuarioModelo::existeNombreUsuario($nombreUsuario, $idUsuario)) {
         $errores[] = 'El nombre de usuario ya está en uso.';
     }
 
@@ -341,9 +343,9 @@ if ($accion === 'editar') {
     exit;
 }
 
-// ============================================================
+
 // CAMBIAR ESTADO (Activar / Desactivar)
-// ============================================================
+
 if ($accion === 'cambiar_estado') {
     $idUsuario = (int)($_POST['id_usuario'] ?? $_GET['id_usuario'] ?? 0);
     $activo = (int)($_POST['activo'] ?? $_GET['activo'] ?? 0);

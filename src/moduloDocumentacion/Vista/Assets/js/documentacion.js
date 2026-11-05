@@ -1,15 +1,15 @@
-// ============================================================
+
 // S.I.G.S.M.
 // PORTAL DE DOCUMENTACIÓN Y ENCUESTAS
-// ============================================================
+
 
 
 document.addEventListener("DOMContentLoaded", function () {
 
 
-    // ========================================================
+
     // 1. NAVEGACIÓN PRINCIPAL
-    // ========================================================
+
 
     const navButtons =
         document.querySelectorAll(".nav-btn[data-target]");
@@ -64,9 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    // ========================================================
+
     // 2. SUBNAVEGACIÓN
-    // ========================================================
+
 
     const subButtons =
         document.querySelectorAll(".sub-btn[data-sub]");
@@ -138,9 +138,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    // ========================================================
+
     // 3. DOCUMENTOS
-    // ========================================================
+
 
     cargarDocumentos();
 
@@ -149,9 +149,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    // ========================================================
+
     // 4. ICONOS
-    // ========================================================
+
 
     if (typeof lucide !== "undefined") {
 
@@ -163,9 +163,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-// ============================================================
+
 // CARGAR DOCUMENTOS EN LAS TABLAS
-// ============================================================
+
 
 function cargarDocumentos() {
     const documentos = window.documentosBD || [];

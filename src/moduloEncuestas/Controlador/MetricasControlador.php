@@ -78,9 +78,7 @@ try {
             }
         }
         else if ($idPregunta === 9) {
-            // Es un comentario libre. Como los agrupamos, desempaquetamos si hay repetidos, aunque el group by junta los iguales
-            // Para ver los textos, mejor hacemos una consulta individual para los comentarios, o devolvemos esto.
-            // Wait, el GROUP BY me da el texto y cuántas veces se repite.
+            // Conserva la cantidad de comentarios cuando el mismo texto se repite.
             $texto = trim($fila['texto_libre']);
             if ($texto !== '') {
                 for ($k=0; $k < $fila['cantidad']; $k++) {

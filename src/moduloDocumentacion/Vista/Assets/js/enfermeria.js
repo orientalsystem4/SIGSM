@@ -117,9 +117,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    // =========================================================
+
     // 2. ELEMENTOS DEL FORMULARIO DE TRASLADO
-    // =========================================================
+
 
     const formTraslado =
         document.getElementById('form-traslado');
@@ -162,27 +162,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    // =========================================================
+
     // 3. PACIENTES DE PRUEBA
-    // =========================================================
+
 
     let pacienteEncontrado = null;
     let numeroBusqueda = 0;
     let temporizadorBusqueda = null;
 
 
-    // =========================================================
+
     // 4. CAMBIO DEL TIPO DE ELEMENTO
-    // =========================================================
+
 
     if (tipoElemento) {
 
         tipoElemento.addEventListener('change', () => {
 
 
-            // -------------------------------------------------
+
             // PACIENTE
-            // -------------------------------------------------
+
 
             if (tipoElemento.value === "1") {
 
@@ -208,9 +208,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // -------------------------------------------------
+
             // ÓRGANO = PRIORIDAD MÁXIMA
-            // -------------------------------------------------
+
 
             if (tipoElemento.value === "2") {
 
@@ -239,11 +239,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    // =========================================================
-    // 5. BUSCAR PACIENTE POR CÉDULA
-    // =========================================================
 
-    // 5. BUSCAR PACIENTE POR CEDULA
+    // 5. BUSCAR PACIENTE POR CÉDULA
+
 
     if (ciPaciente) {
         ciPaciente.addEventListener('input', () => {
@@ -319,9 +317,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // =========================================================
+
     // 6. ENVIAR SOLICITUD
-    // =========================================================
+
 
     if (formTraslado) {
 
@@ -330,9 +328,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // -------------------------------------------------
+
             // VALIDAR TIPO DE ELEMENTO
-            // -------------------------------------------------
+
 
             if (tipoElemento.value === "") {
 
@@ -345,9 +343,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // -------------------------------------------------
+
             // VALIDAR PACIENTE
-            // -------------------------------------------------
+
 
             if (tipoElemento.value === "1") {
 
@@ -383,9 +381,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // -------------------------------------------------
+
             // VALIDAR ORIGEN Y DESTINO
-            // -------------------------------------------------
+
 
             if (
                 origen.value === "" ||
@@ -411,9 +409,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // -------------------------------------------------
+
             // VALIDAR CANAL
-            // -------------------------------------------------
+
 
             if (canal.value === "") {
 
@@ -426,9 +424,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // -------------------------------------------------
+
             // VALIDAR FECHA/HORA LÍMITE
-            // -------------------------------------------------
+
 
             if (fechaHoraLimite.value !== "") {
 
@@ -542,9 +540,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // =================================================
+
             // 9. MOSTRAR MENSAJE
-            // =================================================
+
 
             if (mensajeExito) {
 
@@ -556,9 +554,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // =================================================
+
             // 10. LIMPIAR FORMULARIO
-            // =================================================
+
 
             formTraslado.reset();
             pacienteEncontrado = null;
@@ -605,9 +603,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    // =========================================================
+
     // 11. ENCUESTAS
-    // =========================================================
+
 
     const categoriaQR =
         document.getElementById('qr-categoria');
@@ -636,17 +634,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // O si usas `php -S`: window.location.origin + "/moduloEncuestas/Vista/responder.php"
 
 
-    // =========================================================
+
     // 13. GENERAR QR
-    // =========================================================
+
 
     if (btnGenerarQR) {
 
         btnGenerarQR.addEventListener('click', () => {
 
-            // -------------------------------------------------
+
             // VALIDAR ÁREA
-            // -------------------------------------------------
+
 
             if (
                 !categoriaQR ||
@@ -661,9 +659,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // -------------------------------------------------
+
             // NOMBRES PARA MOSTRAR EN PANTALLA
-            // -------------------------------------------------
+
 
             const nombreCategoria =
                 categoriaQR.options[
@@ -674,9 +672,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 lblCategoria.textContent = nombreCategoria;
             }
 
-            // -------------------------------------------------
+
             // URL DE LA ENCUESTA
-            // -------------------------------------------------
+
             // Solo pasamos la categoría, la encuesta es única (institucional)
 
             // Tratamos de armar una ruta dinámica basada en donde estamos parados
@@ -693,9 +691,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 btnAbrir.href = urlEncuesta;
             }
 
-            // -------------------------------------------------
+
             // GENERAR IMAGEN DEL QR
-            // -------------------------------------------------
+
 
             if (qrImg) {
                 qrImg.src =
@@ -708,9 +706,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // -------------------------------------------------
+
             // MOSTRAR RESULTADO
-            // -------------------------------------------------
+
 
             if (qrVacio) {
 
@@ -735,9 +733,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    // =========================================================
+
     // 14. ICONOS
-    // =========================================================
+
 
     if (typeof lucide !== "undefined") {
 

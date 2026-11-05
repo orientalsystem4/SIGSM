@@ -40,9 +40,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 
-        <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
+        <!-- menu lateral -->
 
         <aside class="sidebar" id="sidebar">
 
@@ -119,9 +117,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
 
 
-        <!-- =====================================================
-         CONTENIDO
-    ====================================================== -->
+        <!-- contenido -->
 
         <main class="main-content">
 
@@ -290,9 +286,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                 </div>
 
 
-                <!-- =================================================
-                 SOLICITUD DE TRASLADO
-            ================================================== -->
+                <!-- soli de traslado -->
 
                 <div id="sec-traslados" class="view-section active">
 
@@ -367,7 +361,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
 
 
-                            <!-- DATOS DEL PACIENTE -->
+                            <!-- datos paciente -->
 
                             <div id="datos-paciente" class="hidden">
 
@@ -488,7 +482,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
 
 
-                            <!-- PRIORIDAD Y HORA LÍMITE -->
+                            <!-- PRIORIDAD Y HORA LIMITE -->
 
                             <div class="form-grid">
 
@@ -554,7 +548,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
 
 
-                            <!-- DATOS AUTOMÁTICOS -->
+                            <!-- DATOS AUTOMATICOS -->
 
                             <div class="form-grid">
 
@@ -620,9 +614,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
 
 
-                <!-- =================================================
-                 DOCUMENTACIÓN QR
-            ================================================== -->
+                <!-- documentacion qr -->
 
                 <?php require __DIR__ . '/directorioQR.php'; ?>
 
@@ -781,9 +773,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
 
 
-    <!-- =========================================================
-     JAVASCRIPT
-========================================================== -->
+    <!-- JAVASCRIPT -->
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
     <script src="Assets/js/enfermeria.js?v=20261026-2"></script>

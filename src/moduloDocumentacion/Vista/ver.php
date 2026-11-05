@@ -31,13 +31,11 @@ if ($documento === null) {
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        content="width=device-width, initial-scale=1.0">
 
     <title>S.I.G.S.M. | Detalle de documento</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -152,7 +150,6 @@ if ($documento === null) {
                 text-align: center;
             }
         }
-
     </style>
 
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
@@ -160,126 +157,118 @@ if ($documento === null) {
 
 <body>
 
-<div class="contenedor">
+    <div class="contenedor">
 
-    <div class="cabecera-seccion">
+        <div class="cabecera-seccion">
 
-        <h1>Detalle de documento</h1>
-
-        <a
-            href="documentacion.php"
-            class="enlace-volver"
-        >
-            ← Volver al listado
-        </a>
-
-    </div>
-
-
-    <div class="tarjeta-detalle">
-
-        <dl class="lista-detalle">
-
-            <dt>ID</dt>
-
-            <dd>
-                <?= (int) $documento['id_documento'] ?>
-            </dd>
-
-
-            <dt>Archivo</dt>
-
-            <dd>
-                <?= htmlspecialchars(
-                    basename($documento['archivo_url'])
-                ) ?>
-            </dd>
-
-
-            <dt>Categoría</dt>
-
-            <dd>
-                <?= htmlspecialchars(
-                    $documento['categoria']
-                ) ?>
-            </dd>
-
-
-            <dt>Fecha de carga</dt>
-
-            <dd>
-                <?= htmlspecialchars(
-                    $documento['fecha_carga']
-                ) ?>
-            </dd>
-
-
-            <dt>Cargado por</dt>
-
-            <dd>
-                <?= htmlspecialchars(
-                    $documento['usuario_carga']
-                ) ?>
-            </dd>
-
-
-            <dt>Estado</dt>
-
-            <dd>
-
-                <?php if ((int) $documento['activo'] === 1): ?>
-
-                    <span class="estado-activo">
-                        Activo
-                    </span>
-
-                <?php else: ?>
-
-                    <span class="estado-inactivo">
-                        Inactivo
-                    </span>
-
-                <?php endif; ?>
-
-            </dd>
-
-        </dl>
-
-
-        <div class="acciones-formulario">
-
-                    <a
-                href="documentos/<?= htmlspecialchars(
-                    rawurlencode(basename($documento['archivo_url'])),
-                    ENT_QUOTES,
-                    'UTF-8'
-                ) ?>"
-                class="boton boton-primario"
-                target="_blank"
-                rel="noopener"
-            >
-                Ver PDF
-            </a>
-
-            <a
-                href="editar.php?id=<?= (int) $documento['id_documento'] ?>"
-                class="boton boton-primario"
-            >
-                Editar
-            </a>
+            <h1>Detalle de documento</h1>
 
             <a
                 href="documentacion.php"
-                class="boton boton-secundario"
-            >
-                Volver
+                class="enlace-volver">
+                ← Volver al listado
             </a>
 
         </div>
 
-    </div>
 
-</div>
+        <div class="tarjeta-detalle">
+
+            <dl class="lista-detalle">
+
+                <dt>ID</dt>
+
+                <dd>
+                    <?= (int) $documento['id_documento'] ?>
+                </dd>
+
+
+                <dt>Archivo</dt>
+
+                <dd>
+                    <?= htmlspecialchars(
+                        basename($documento['archivo_url'])
+                    ) ?>
+                </dd>
+
+
+                <dt>Categoría</dt>
+
+                <dd>
+                    <?= htmlspecialchars(
+                        $documento['categoria']
+                    ) ?>
+                </dd>
+
+
+                <dt>Fecha de carga</dt>
+
+                <dd>
+                    <?= htmlspecialchars(
+                        $documento['fecha_carga']
+                    ) ?>
+                </dd>
+
+
+                <dt>Cargado por</dt>
+
+                <dd>
+                    <?= htmlspecialchars(
+                        $documento['usuario_carga']
+                    ) ?>
+                </dd>
+
+
+                <dt>Estado</dt>
+
+                <dd>
+
+                    <?php if ((int) $documento['activo'] === 1): ?>
+
+                        <span class="estado-activo">
+                            Activo
+                        </span>
+
+                    <?php else: ?>
+
+                        <span class="estado-inactivo">
+                            Inactivo
+                        </span>
+
+                    <?php endif; ?>
+
+                </dd>
+
+            </dl>
+
+
+            <div class="acciones-formulario">
+
+                <a
+                    href="archivoPublico.php?id=<?= (int) $documento['id_documento'] ?>"
+                    class="boton boton-primario"
+                    target="_blank"
+                    rel="noopener">
+                    Ver PDF
+                </a>
+
+                <a
+                    href="editar.php?id=<?= (int) $documento['id_documento'] ?>"
+                    class="boton boton-primario">
+                    Editar
+                </a>
+
+                <a
+                    href="documentacion.php"
+                    class="boton boton-secundario">
+                    Volver
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 

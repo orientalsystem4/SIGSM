@@ -41,9 +41,9 @@ $activosEnlace = array_filter(
     <div class="app-layout">
 
 
-        <!-- ================================================= -->
+
         <!-- SIDEBAR -->
-        <!-- ================================================= -->
+
 
         <div class="sidebar-overlay" id="sidebarOverlay">
         </div>
@@ -114,9 +114,8 @@ $activosEnlace = array_filter(
 
 
 
-        <!-- ================================================= -->
         <!-- CONTENIDO PRINCIPAL -->
-        <!-- ================================================= -->
+        
 
         <main class="main-content">
 
@@ -144,20 +143,18 @@ $activosEnlace = array_filter(
 
             <section class="content-wrapper">
                 <?php if (isset($_SESSION['mensaje_traslado'])): ?>
-    <p role="status">
-        <?= htmlspecialchars(
-            $_SESSION['mensaje_traslado'],
-            ENT_QUOTES,
-            'UTF-8'
-        ) ?>
-    </p>
-    <?php unset($_SESSION['mensaje_traslado']); ?>
-<?php endif; ?>
+                    <p role="status">
+                        <?= htmlspecialchars(
+                            $_SESSION['mensaje_traslado'],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </p>
+                    <?php unset($_SESSION['mensaje_traslado']); ?>
+                <?php endif; ?>
 
 
-                <!-- ========================================= -->
                 <!-- SECCIÓN TRASLADOS -->
-                <!-- ========================================= -->
 
                 <div id="sec-traslados" class="view-section active">
 
@@ -192,71 +189,67 @@ $activosEnlace = array_filter(
 
 
 
-                    <!-- ===================================== -->
                     <!-- TRASLADOS ACTIVOS -->
-                    <!-- ===================================== -->
 
                     <div id="sub-curso" class="sub-content active">
 
-    <?php if (!$activosEnlace): ?>
-        <p>No hay traslados activos.</p>
-    <?php endif; ?>
+                        <?php if (!$activosEnlace): ?>
+                            <p>No hay traslados activos.</p>
+                        <?php endif; ?>
 
-    <?php foreach ($activosEnlace as $viaje): ?>
-        <div class="card-traslado">
-            <div class="accordion-header" onclick="toggleAccordion(this)">
-                <div class="header-info">
-                    <h3>
-                        Traslado #<?= (int) $viaje['id_traslado'] ?>
-                        — <?= htmlspecialchars(
-                            $viaje['matricula'] ?? 'Sin vehículo',
-                            ENT_QUOTES,
-                            'UTF-8'
-                        ) ?>
-                    </h3>
+                        <?php foreach ($activosEnlace as $viaje): ?>
+                            <div class="card-traslado">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    <div class="header-info">
+                                        <h3>
+                                            Traslado #<?= (int) $viaje['id_traslado'] ?>
+                                            — <?= htmlspecialchars(
+                                                    $viaje['matricula'] ?? 'Sin vehículo',
+                                                    ENT_QUOTES,
+                                                    'UTF-8'
+                                                ) ?>
+                                        </h3>
 
-                    <span class="badge badge-warning">
-                        <?= htmlspecialchars(
-                            $viaje['estado'] ?? 'Sin estado',
-                            ENT_QUOTES,
-                            'UTF-8'
-                        ) ?>
-                    </span>
-                </div>
+                                        <span class="badge badge-warning">
+                                            <?= htmlspecialchars(
+                                                $viaje['estado'] ?? 'Sin estado',
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>
+                                        </span>
+                                    </div>
 
-                <i data-lucide="chevron-down" class="accordion-icon"></i>
-            </div>
+                                    <i data-lucide="chevron-down" class="accordion-icon"></i>
+                                </div>
 
-            <div class="accordion-content open">
-                <div style="padding: 15px;">
-                    <?php
-                    $datosTraslado = [
-                        'Solicitud' => '#' . $viaje['id_solicitud'],
-                        'Tipo de elemento' => $viaje['elemento'],
-                        'Origen' => $viaje['origen'],
-                        'Destino' => $viaje['destino'],
-                        'Chofer' => $viaje['chofer'] ?? 'Sin asignar',
-                        'Enfermería' => $viaje['enfermeria'] ?? 'Sin asignar'
-                    ];
-                    ?>
+                                <div class="accordion-content open">
+                                    <div style="padding: 15px;">
+                                        <?php
+                                        $datosTraslado = [
+                                            'Solicitud' => '#' . $viaje['id_solicitud'],
+                                            'Tipo de elemento' => $viaje['elemento'],
+                                            'Origen' => $viaje['origen'],
+                                            'Destino' => $viaje['destino'],
+                                            'Chofer' => $viaje['chofer'] ?? 'Sin asignar',
+                                            'Enfermería' => $viaje['enfermeria'] ?? 'Sin asignar'
+                                        ];
+                                        ?>
 
-                    <?php foreach ($datosTraslado as $etiqueta => $valor): ?>
-                        <p class="detail-item">
-                            <strong>
-                                <?= htmlspecialchars($etiqueta, ENT_QUOTES, 'UTF-8') ?>:
-                            </strong>
-                            <?= htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8') ?>
-                        </p>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </div>
-    <?php endforeach; ?>
+                                        <?php foreach ($datosTraslado as $etiqueta => $valor): ?>
+                                            <p class="detail-item">
+                                                <strong>
+                                                    <?= htmlspecialchars($etiqueta, ENT_QUOTES, 'UTF-8') ?>:
+                                                </strong>
+                                                <?= htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8') ?>
+                                            </p>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
 
-</div>
-                    <!-- ===================================== -->
+                    </div>
                     <!-- SOLICITUDES PENDIENTES -->
-                    <!-- ===================================== -->
 
                     <div id="sub-pendientes" class="sub-content hidden">
 
@@ -319,49 +312,65 @@ $activosEnlace = array_filter(
                                     </p>
                                 <?php endforeach; ?>
                                 <?php if (tieneRol([1, 3])): ?>
-    <a
-        href="asignar.php?id=<?= (int) $solicitud['id_solicitud'] ?>"
-        class="btn-action btn-success"
-    >
-        Asignar traslado
-    </a>
-<?php endif; ?>
+                                    <a
+                                        href="asignar.php?id=<?= (int) $solicitud['id_solicitud'] ?>"
+                                        class="btn-action btn-success">
+                                        Asignar traslado
+                                    </a>
+                                <?php endif; ?>
 
                             </div>
                         <?php endforeach; ?>
 
                     </div>
 
-                    <!-- ===================================== -->
                     <!-- HISTORIAL -->
-                    <!-- ===================================== -->
 
                     <div id="sub-canceladas" class="sub-content hidden">
                         <h3>Solicitudes canceladas</h3>
-                        
+
                         <label class="filtro-listado">Buscar cancelación
                             <input type="search" class="form-input" data-filtrar="tabla-canceladas"
                                 placeholder="Solicitud, origen, destino, usuario o motivo">
                         </label>
                         <div class="tabla-responsive">
                             <table class="tabla-historial" id="tabla-canceladas">
-                                <thead><tr>
-                                    <th>Solicitud</th><th>Elemento</th><th>Origen</th><th>Destino</th>
-                                    <th>Solicitante</th><th>Cancelada por</th><th>Fecha</th><th>Motivo</th>
-                                </tr></thead>
-                                <tbody>
-                                <?php if (!$solicitudesCanceladas): ?>
-                                    <tr><td colspan="8">No hay solicitudes canceladas.</td></tr>
-                                <?php endif; ?>
-                                <?php foreach ($solicitudesCanceladas as $cancelada): ?>
-                                    <tr data-fila-busqueda>
-                                        <td>#<?= (int) $cancelada['id_solicitud'] ?></td>
-                                        <?php foreach (['elemento', 'origen', 'destino', 'solicitante',
-                                            'cancelada_por', 'fecha_cancelacion', 'motivo_cancelacion'] as $campo): ?>
-                                            <td><?= htmlspecialchars((string) ($cancelada[$campo] ?? 'Sin registro'), ENT_QUOTES, 'UTF-8') ?></td>
-                                        <?php endforeach; ?>
+                                <thead>
+                                    <tr>
+                                        <th>Solicitud</th>
+                                        <th>Elemento</th>
+                                        <th>Origen</th>
+                                        <th>Destino</th>
+                                        <th>Solicitante</th>
+                                        <th>Cancelada por</th>
+                                        <th>Fecha</th>
+                                        <th>Motivo</th>
                                     </tr>
-                                <?php endforeach; ?>
+                                </thead>
+                                <tbody>
+                                    <?php if (!$solicitudesCanceladas): ?>
+                                        <tr>
+                                            <td colspan="8">No hay solicitudes canceladas.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                    <?php foreach ($solicitudesCanceladas as $cancelada): ?>
+                                        <tr data-fila-busqueda>
+                                            <td>#<?= (int) $cancelada['id_solicitud'] ?></td>
+                                            <?php foreach (
+                                                [
+                                                    'elemento',
+                                                    'origen',
+                                                    'destino',
+                                                    'solicitante',
+                                                    'cancelada_por',
+                                                    'fecha_cancelacion',
+                                                    'motivo_cancelacion'
+                                                ] as $campo
+                                            ): ?>
+                                                <td><?= htmlspecialchars((string) ($cancelada[$campo] ?? 'Sin registro'), ENT_QUOTES, 'UTF-8') ?></td>
+                                            <?php endforeach; ?>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -450,45 +459,45 @@ $activosEnlace = array_filter(
 
 
                                 <tbody>
-    <?php if (!$trasladosEnlace): ?>
-        <tr id="historial-vacio">
-            <td colspan="7">No hay historial de traslados.</td>
-        </tr>
-    <?php endif; ?>
+                                    <?php if (!$trasladosEnlace): ?>
+                                        <tr id="historial-vacio">
+                                            <td colspan="7">No hay historial de traslados.</td>
+                                        </tr>
+                                    <?php endif; ?>
 
-    <?php foreach ($trasladosEnlace as $viaje): ?>
-        <?php foreach (
-            SeguimientoModelo::historial((int) $viaje['id_traslado'])
-            as $evento
-        ): ?>
-            <tr data-fila-busqueda
-                data-ci="<?= htmlspecialchars((string) ($viaje['ci_paciente'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
-                data-vehiculo="<?= $viaje['id_vehiculo'] !== null ? (int) $viaje['id_vehiculo'] : 'sin-vehiculo' ?>"
-                data-traslado="<?= (int) $viaje['id_traslado'] ?>">
-                <td>
-                    <strong>
-                        Traslado #<?= (int) $viaje['id_traslado'] ?>
-                    </strong>
-                </td>
+                                    <?php foreach ($trasladosEnlace as $viaje): ?>
+                                        <?php foreach (
+                                            SeguimientoModelo::historial((int) $viaje['id_traslado'])
+                                            as $evento
+                                        ): ?>
+                                            <tr data-fila-busqueda
+                                                data-ci="<?= htmlspecialchars((string) ($viaje['ci_paciente'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+                                                data-vehiculo="<?= $viaje['id_vehiculo'] !== null ? (int) $viaje['id_vehiculo'] : 'sin-vehiculo' ?>"
+                                                data-traslado="<?= (int) $viaje['id_traslado'] ?>">
+                                                <td>
+                                                    <strong>
+                                                        Traslado #<?= (int) $viaje['id_traslado'] ?>
+                                                    </strong>
+                                                </td>
 
-                <td><?= htmlspecialchars((string) ($viaje['ci_paciente'] ?? 'No corresponde'), ENT_QUOTES, 'UTF-8') ?></td>
-                <td><?= htmlspecialchars((string) ($viaje['matricula'] ?? 'Sin vehículo'), ENT_QUOTES, 'UTF-8') ?></td>
-                <?php foreach (
-                    ['fecha_hora', 'estado', 'usuario', 'observaciones']
-                    as $campo
-                ): ?>
-                    <td>
-                        <?= htmlspecialchars(
-                            (string) ($evento[$campo] ?? ''),
-                            ENT_QUOTES,
-                            'UTF-8'
-                        ) ?>
-                    </td>
-                <?php endforeach; ?>
-            </tr>
-        <?php endforeach; ?>
-    <?php endforeach; ?>
-</tbody>
+                                                <td><?= htmlspecialchars((string) ($viaje['ci_paciente'] ?? 'No corresponde'), ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars((string) ($viaje['matricula'] ?? 'Sin vehículo'), ENT_QUOTES, 'UTF-8') ?></td>
+                                                <?php foreach (
+                                                    ['fecha_hora', 'estado', 'usuario', 'observaciones']
+                                                    as $campo
+                                                ): ?>
+                                                    <td>
+                                                        <?= htmlspecialchars(
+                                                            (string) ($evento[$campo] ?? ''),
+                                                            ENT_QUOTES,
+                                                            'UTF-8'
+                                                        ) ?>
+                                                    </td>
+                                                <?php endforeach; ?>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endforeach; ?>
+                                </tbody>
 
                             </table>
 
@@ -507,14 +516,15 @@ $activosEnlace = array_filter(
 
 
 
-    <!-- ===================================================== -->
     <!-- SCRIPTS -->
-    <!-- ===================================================== -->
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
 
-<script src="assets/js/unidadEnlace.js?v=20261021-1"></script>    <script>
-        if (typeof lucide !== "undefined") { lucide.createIcons(); }
+    <script src="assets/js/unidadEnlace.js?v=20261021-1"></script>
+    <script>
+        if (typeof lucide !== "undefined") {
+            lucide.createIcons();
+        }
     </script>
 
 

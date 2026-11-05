@@ -118,4 +118,48 @@ if (!estaAutenticado()) {
     header('Location: ' . resolverUrlLogin());
     exit;
 }
+// Comprueba que la cuenta y el rol sigan habilitados.
+require_once __DIR__ . '/../conexionBD/conexion.php';
+
+try {
+    $conexion = Conexion::conectar();
+
+    $consulta = $conexion->prepare(
+        'SELECT u.nombre_usuario, r.nombre_rol
+         FROM usuario u
+         INNER JOIN usuario_rol ur ON ur.id_usuario = u.id_usuario
+         INNER JOIN rol r ON r.id_rol = ur.id_rol
+         WHERE u.id_usuario = :usuario
+           AND u.activo = 1
+           AND ur.id_rol = :rol
+         LIMIT 1'
+    );
+
+    $consulta->execute([
+        ':usuario' => (int) $_SESSION['id_usuario'],
+        ':rol' => (int) ($_SESSION['id_rol'] ?? 0)
+    ]);
+
+    $cuentaVigente = $consulta->fetch(PDO::FETCH_ASSOC);
+
+    if (!$cuentaVigente) {
+        $_SESSION = [];
+        session_regenerate_id(true);
+
+        $_SESSION['error'] =
+            'Tu cuenta o tus permisos cambiaron. Volvé a iniciar sesión.';
+
+        header('Location: ' . resolverUrlLogin());
+        exit;
+    }
+
+    $_SESSION['nombre_usuario'] = $cuentaVigente['nombre_usuario'];
+    $_SESSION['nombre_rol'] = $cuentaVigente['nombre_rol'];
+
+} catch (Throwable $error) {
+    error_log('Error al verificar la sesión: ' . $error->getMessage());
+    http_response_code(503);
+    exit('No se pudo verificar la sesión. Intentá nuevamente.');
+}
+
 
