@@ -115,12 +115,6 @@ CREATE TABLE `documento` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `documento`
---
-
-INSERT INTO `documento` (`id_documento`, `archivo_url`, `fecha_carga`, `id_categoria`, `id_usuario_carga`, `activo`) VALUES
-(2, '/documentos/urologia/prostatectomia_radical.pdf', '2026-08-31 20:26:15', 1, 1, 1),
-(4, 'documentos/1788374470_Informe_Urologia_Tratamiento.pdf', '2026-09-02 13:41:10', 2, 4, 0);
 
 -- --------------------------------------------------------
 
