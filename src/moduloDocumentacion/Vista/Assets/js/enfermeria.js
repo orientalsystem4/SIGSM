@@ -1,8 +1,52 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // =========================================================
-    // 1. NAVEGACIÓN
-    // =========================================================
+        let actualizandoSolicitudes = false;
+
+    async function actualizarMisSolicitudes() {
+        const seccion = document.getElementById('sec-mis-solicitudes');
+
+        if (!seccion || actualizandoSolicitudes) return;
+                const hayMotivoEscrito = () =>
+            Array.from(seccion.querySelectorAll('input[name="motivo"]'))
+                .some(campo => campo.value.trim() !== '');
+
+        if (hayMotivoEscrito()) return;
+
+        actualizandoSolicitudes = true;
+        seccion.setAttribute('aria-busy', 'true');
+
+        try {
+            const respuesta = await fetch(window.location.href, {
+                cache: 'no-store'
+            });
+
+            if (respuesta.redirected) {
+                throw new Error('La sesión cambió. Recargá la página.');
+            }
+
+            if (!respuesta.ok) {
+                throw new Error('No se pudieron actualizar las solicitudes.');
+            }
+
+            const html = await respuesta.text();
+            const pagina = new DOMParser().parseFromString(html, 'text/html');
+            const listado = pagina.getElementById('sec-mis-solicitudes');
+
+            if (!listado) {
+                throw new Error('No se encontró el listado. Revisá tu sesión.');
+            }
+
+            if (!hayMotivoEscrito()) {
+                seccion.innerHTML = listado.innerHTML;
+            }        } catch (error) {
+            alert(error.message || 'No se pudo actualizar el listado.');
+        } finally {
+            seccion.removeAttribute('aria-busy');
+            actualizandoSolicitudes = false;
+        }
+    }
+
+   // Navegacion entre secciones
 
     const navButtons =
         document.querySelectorAll('.nav-btn[data-target]');
@@ -39,6 +83,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (targetSection) {
                 targetSection.classList.remove('hidden');
                 targetSection.classList.add('active');
+            }
+
+                        if (
+                targetId === 'sec-mis-solicitudes'
+                && !targetSection?.contains(document.activeElement)
+            ) {
+                actualizarMisSolicitudes();
             }
 
 
@@ -532,9 +583,8 @@ document.addEventListener("DOMContentLoaded", () => {
             prioridad.value = "normal";
 
 
-            mensajePrioridad.textContent =
-                "La prioridad se establece según las características y tiempos del traslado.";
-
+            mensajePrioridad.textContent = "";
+            mensajePrioridad.hidden = true;
 
 
             setTimeout(() => {

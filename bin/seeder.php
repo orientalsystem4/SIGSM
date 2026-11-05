@@ -38,6 +38,13 @@ try {
         ADD COLUMN IF NOT EXISTS id_usuario_cancelacion INT NULL");
     echo "[OK] Columnas de solicitudes verificadas.\n";
 
+        // agrega las columnas de usuarios que falten, conservando los datos existentes
+    $pdo->exec("ALTER TABLE usuario
+        ADD COLUMN IF NOT EXISTS cedula VARCHAR(8) NULL UNIQUE,
+        ADD COLUMN IF NOT EXISTS nombre_completo VARCHAR(150) NULL");
+
+    echo "[OK] Columnas de usuarios verificadas.\n";
+
     $pdo->beginTransaction();
     // Conserva los IDs y permisos; actualiza los nombres acordados.
     $nombreRol = $pdo->prepare('UPDATE rol SET nombre_rol = ? WHERE id_rol = ?');

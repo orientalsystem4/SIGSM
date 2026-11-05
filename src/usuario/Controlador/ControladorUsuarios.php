@@ -2,6 +2,25 @@
 
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 requiereRol([1]);
+// Solo acepta cambios enviados desde los formularios de esta sesión.
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    header('Allow: POST');
+    exit('Método no permitido.');
+}
+
+$token = $_POST['token'] ?? '';
+$tokenSesion = $_SESSION['csrf_usuarios'] ?? '';
+
+if (
+    !is_string($token)
+    || !is_string($tokenSesion)
+    || $tokenSesion === ''
+    || !hash_equals($tokenSesion, $token)
+) {
+    http_response_code(403);
+    exit('La solicitud no es válida. Volvé al listado y recargá la página.');
+}
 
 require_once __DIR__ . '/../Model/UsuarioModelo.php';
 require_once __DIR__ . '/../Model/ValidacionIdentidad.php';

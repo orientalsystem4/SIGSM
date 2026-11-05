@@ -57,8 +57,16 @@ if ($accion === 'crear') {
             )
         );
 
-        if ($extension !== 'pdf') {
+                if ($extension !== 'pdf') {
             $errores[] = 'El archivo debe estar en formato PDF.';
+        } else {
+            // Comprueba el tipo de contenido del archivo.
+            $info = new finfo(FILEINFO_MIME_TYPE);
+            $tipoArchivo = $info->file($archivo['tmp_name']);
+
+            if ($tipoArchivo !== 'application/pdf') {
+                $errores[] = 'El contenido del archivo no corresponde a un PDF.';
+            }
         }
     }
 
@@ -186,6 +194,19 @@ if ($accion === 'editar') {
 
 
     $archivoUrl = null;
+        $errorArchivo = $_FILES['archivo']['error'] ?? UPLOAD_ERR_NO_FILE;
+
+    if (
+        $errorArchivo !== UPLOAD_ERR_OK
+        && $errorArchivo !== UPLOAD_ERR_NO_FILE
+    ) {
+        $_SESSION['errores_documento'] = [
+            'No se pudo subir el archivo. Revisá su tamaño e intentá nuevamente.'
+        ];
+
+        header('Location: ../Vista/editar.php?id=' . $idDocumento);
+        exit;
+    }
 
 
     if (
@@ -238,6 +259,18 @@ if ($accion === 'editar') {
                 $idDocumento
             );
 
+            exit;
+        }
+
+                $info = new finfo(FILEINFO_MIME_TYPE);
+        $tipoArchivo = $info->file($archivo['tmp_name']);
+
+        if ($tipoArchivo !== 'application/pdf') {
+            $_SESSION['errores_documento'] = [
+                'El contenido del archivo no corresponde a un PDF.'
+            ];
+
+            header('Location: ../Vista/editar.php?id=' . $idDocumento);
             exit;
         }
 

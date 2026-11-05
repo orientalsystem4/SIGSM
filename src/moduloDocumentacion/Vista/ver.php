@@ -248,6 +248,19 @@ if ($documento === null) {
 
         <div class="acciones-formulario">
 
+                    <a
+                href="documentos/<?= htmlspecialchars(
+                    rawurlencode(basename($documento['archivo_url'])),
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>"
+                class="boton boton-primario"
+                target="_blank"
+                rel="noopener"
+            >
+                Ver PDF
+            </a>
+
             <a
                 href="editar.php?id=<?= (int) $documento['id_documento'] ?>"
                 class="boton boton-primario"

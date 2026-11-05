@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 requiereRol([1]);
+if (empty($_SESSION['csrf_usuarios'])) {
+    $_SESSION['csrf_usuarios'] = bin2hex(random_bytes(32));
+}
 
 require_once __DIR__ . '/../Model/UsuarioModelo.php';
 
@@ -145,6 +148,8 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
     <?php endif; ?>
 
     <form class="tarjeta-formulario" action="../Controlador/ControladorUsuarios.php" method="POST">
+        <input type="hidden" name="token"
+       value="<?= htmlspecialchars($_SESSION['csrf_usuarios'], ENT_QUOTES, 'UTF-8') ?>">
         <input type="hidden" name="accion" value="crear">
 
         <div class="campo">
