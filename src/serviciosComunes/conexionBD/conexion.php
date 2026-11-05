@@ -30,7 +30,7 @@ class Conexion
 
             $dbname = getenv('DB_NAME') ?: 'sigsm';
             $user = getenv('DB_USER') ?: 'root';
-            $password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'root_password';
+            $password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
             $port = getenv('DB_PORT') ?: '3306';
 
             $conexion = new PDO(

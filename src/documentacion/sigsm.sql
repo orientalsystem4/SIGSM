@@ -180,14 +180,6 @@ CREATE TABLE `historial_estado` (
   `observaciones` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `historial_estado`
---
-
-INSERT INTO `historial_estado` (`id_historial`, `id_traslado`, `id_estado`, `fecha_hora`, `id_usuario`, `observaciones`) VALUES
-(1, 1, 1, '2026-08-31 20:19:47', 1, 'Traslado solicitado'),
-(2, 1, 2, '2026-08-31 20:21:27', 3, 'Vehículo y personal asignados');
-
 -- --------------------------------------------------------
 
 --
@@ -362,16 +354,6 @@ CREATE TABLE `solicitud_traslado` (
   `id_usuario_cancelacion` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `solicitud_traslado`
---
-
-INSERT INTO `solicitud_traslado` (`id_solicitud`, `ci_paciente`, `id_tipo_elemento`, `id_origen`, `id_destino`, `id_canal`, `id_usuario_solicit`, `fecha_solicitud`, `estado_solicitud`, `prioridad`, `fecha_hora_limite`, `observaciones`) VALUES
-(2, '11111111', 1, 1, 2, 1, 1, '2026-08-31 20:09:29', 'Pendiente', 'normal', NULL, NULL),
-(3, '11111111', 1, 1, 3, 1, 1, '2026-08-31 23:40:33', 'Pendiente', 'normal', NULL, NULL),
-(4, NULL, 5, 1, 2, 2, 4, '2026-08-31 23:40:33', 'Pendiente', 'normal', NULL, NULL),
-(5, NULL, 6, 1, 3, 3, 4, '2026-08-31 23:40:33', 'Pendiente', 'normal', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -433,13 +415,6 @@ CREATE TABLE `traslado` (
   `id_ruta` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `traslado`
---
-
-INSERT INTO `traslado` (`id_traslado`, `id_solicitud`, `id_vehiculo`, `id_chofer`, `id_enfermero`, `id_proveedor`, `id_ruta`) VALUES
-(1, 2, 1, 5, 6, NULL, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -475,18 +450,6 @@ CREATE TABLE `usuario` (
   `activo` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `usuario`
---
-
-INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `contrasenha_hash`, `activo`) VALUES
-(1, 'admin_dti', '$2b$12$lHiLScfukco77AFPy/0lUuLzDB69IOpD72FbxeoIVcfBzr816q2Eq', 1),
-(2, 'itanu_miniño', '$2b$12$YIZAmcyHxZjsEhgcYuzuueMEEr6ZawLK7SrvitW92ehn9PLhsrduy', 1),
-(3, 'admin_transporte', '$2b$12$SRdrGS674H1ClH1l.S3Nq.OPWKZetQMujaFsIkubBJqEOsvk3HgfG', 1),
-(4, 'registros_medicos', '$2b$12$nQOA3S5xSLlqXm1CuzMFUezGBcdGTd3ZV2RcQwbtVbtq4YJhbSaUe', 1),
-(5, 'pedro_minino', '$2b$12$WqB4VoEDeNozEZdv8Po0EuvVcxU19tZWzqBB7/guTLvWi9wnLEeve', 1),
-(6, 'lucia_pereira', '$2b$12$8.fWPUn/.GXsjZDKg18Vie9490Ew3aTrrYFn6//KReE2FLOwPE4wi', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -498,18 +461,6 @@ CREATE TABLE `usuario_rol` (
   `id_rol` int(11) NOT NULL,
   `fecha_asignacion` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `usuario_rol`
---
-
-INSERT INTO `usuario_rol` (`id_usuario`, `id_rol`, `fecha_asignacion`) VALUES
-(1, 1, '2026-08-31 19:08:43'),
-(2, 2, '2026-08-31 19:08:43'),
-(3, 3, '2026-08-31 19:08:43'),
-(4, 4, '2026-08-31 19:08:43'),
-(5, 5, '2026-08-31 19:08:43'),
-(6, 6, '2026-08-31 19:08:43');
 
 -- --------------------------------------------------------
 
@@ -754,7 +705,7 @@ ALTER TABLE `estado_traslado`
 -- AUTO_INCREMENT de la tabla `historial_estado`
 --
 ALTER TABLE `historial_estado`
-  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT de la tabla `opcion_respuesta`
@@ -802,7 +753,7 @@ ALTER TABLE `ruta`
 -- AUTO_INCREMENT de la tabla `solicitud_traslado`
 --
 ALTER TABLE `solicitud_traslado`
-  MODIFY `id_solicitud` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_solicitud` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT de la tabla `tipo_elemento`
@@ -820,7 +771,7 @@ ALTER TABLE `tipo_vehiculo`
 -- AUTO_INCREMENT de la tabla `traslado`
 --
 ALTER TABLE `traslado`
-  MODIFY `id_traslado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_traslado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT de la tabla `ubicacion`
@@ -832,7 +783,7 @@ ALTER TABLE `ubicacion`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT de la tabla `vehiculo`
