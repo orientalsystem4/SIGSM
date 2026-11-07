@@ -12,7 +12,7 @@ $conexion = null;
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new DomainException('Solicitud no válida.');
+        throw new DomainException(t('error.solicitud_no_valida_corta'));
     }
 
     $token = $_POST['token'] ?? '';
@@ -23,7 +23,7 @@ try {
         || $tokenSesion === ''
         || !hash_equals($tokenSesion, $token)
     ) {
-        throw new DomainException('Recargá la página e intentá nuevamente.');
+        throw new DomainException(t('error.recargar_pagina'));
     }
 
     $idSolicitud = filter_input(INPUT_POST, 'id_solicitud', FILTER_VALIDATE_INT);
@@ -31,7 +31,7 @@ try {
     $motivo = is_string($motivo) ? trim($motivo) : '';
 
     if (!$idSolicitud || $idSolicitud <= 0) {
-        throw new DomainException('La solicitud no es válida.');
+        throw new DomainException(t('error.solicitud_no_valida'));
     }
 
     if (
@@ -39,7 +39,7 @@ try {
         || preg_match('//u', $motivo) !== 1
         || preg_match_all('/./us', $motivo) > 500
     ) {
-        throw new DomainException('Ingresá un motivo de hasta 500 caracteres.');
+        throw new DomainException(t('cancelar.error_motivo'));
     }
 
     $conexion = Conexion::conectar();
@@ -55,18 +55,18 @@ try {
     $solicitud = $consulta->fetch(PDO::FETCH_ASSOC);
 
     if (!$solicitud) {
-        throw new DomainException('La solicitud no existe.');
+        throw new DomainException(t('cancelar.error_no_existe'));
     }
 
     $esPropia = (int) $solicitud['id_usuario_solicit']
         === (int) $_SESSION['id_usuario'];
 
     if (!tieneRol([1, 3]) && !$esPropia) {
-        throw new DomainException('Solo podés cancelar tus propias solicitudes.');
+        throw new DomainException(t('cancelar.error_ajena'));
     }
 
     if ($solicitud['estado_solicitud'] !== 'Pendiente') {
-        throw new DomainException('La solicitud ya no está pendiente.');
+        throw new DomainException(t('cancelar.error_no_pendiente'));
     }
 
     $consulta = $conexion->prepare(
@@ -78,7 +78,7 @@ try {
     $consulta->execute([':id' => $idSolicitud]);
 
     if ($consulta->fetchColumn() !== false) {
-        throw new DomainException('La solicitud ya tiene un traslado asignado.');
+        throw new DomainException(t('cancelar.error_con_traslado'));
     }
 
     $consulta = $conexion->prepare(
@@ -96,7 +96,7 @@ try {
     ]);
 
     $conexion->commit();
-    $_SESSION['mensaje_cancelacion'] = 'Solicitud cancelada correctamente.';
+    $_SESSION['mensaje_cancelacion'] = t('cancelar.ok');
 } catch (Throwable $e) {
     if ($conexion && $conexion->inTransaction()) {
         $conexion->rollBack();
@@ -106,7 +106,7 @@ try {
         $_SESSION['mensaje_cancelacion'] = $e->getMessage();
     } else {
         error_log('Error al cancelar solicitud: ' . $e->getMessage());
-        $_SESSION['mensaje_cancelacion'] = 'No se pudo cancelar la solicitud.';
+        $_SESSION['mensaje_cancelacion'] = t('cancelar.error_general');
     }
 }
 

@@ -8,7 +8,7 @@ if (empty($_SESSION['csrf_usuarios'])) {
 
 require_once __DIR__ . '/../Model/UsuarioModelo.php';
 
-$tituloPagina = 'Gestión de Usuarios y Roles';
+$tituloPagina = t('usuarios.titulo_pagina');
 $usuarios = UsuarioModelo::listarTodos();
 
 $mensaje = $_SESSION['mensaje'] ?? null;
@@ -18,7 +18,7 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
 
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 
 <head>
     <meta charset="UTF-8">
@@ -295,35 +295,35 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <button class="btn-close-menu" id="closeMenuBtn" type="button" aria-label="Cerrar menú"><i data-lucide="x"></i></button>
-                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo S.I.G.S.M." class="sidebar-logo">
+                <button class="btn-close-menu" id="closeMenuBtn" type="button" aria-label="<?= te('menu.cerrar_menu') ?>"><i data-lucide="x"></i></button>
+                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="<?= te('comun.logo_alt') ?>" class="sidebar-logo">
                 <span>S.I.G.S.M.</span>
             </div>
-            <nav class="sidebar-nav" aria-label="Gestión de Usuarios">
-                <a class="nav-btn active" href="listado.php" aria-current="page"><i data-lucide="users"></i> Gestión de Usuarios</a>
-                <a class="nav-btn" href="crear.php"><i data-lucide="user-plus"></i> Nuevo Usuario</a>
+            <nav class="sidebar-nav" aria-label="<?= te('menu.gestion_usuarios') ?>">
+                <a class="nav-btn active" href="listado.php" aria-current="page"><i data-lucide="users"></i> <?= te('menu.gestion_usuarios') ?></a>
+                <a class="nav-btn" href="crear.php"><i data-lucide="user-plus"></i> <?= te('menu.nuevo_usuario') ?></a>
             </nav>
-            <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="btn-volver-hub"><i data-lucide="grid"></i> Cambiar Módulo</a>
+            <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="btn-volver-hub"><i data-lucide="grid"></i> <?= te('menu.cambiar_modulo') ?></a>
             <div class="sidebar-profile">
                 <div class="profile-info">
                     <span class="profile-name"><?= htmlspecialchars($_SESSION['nombre_usuario'] ?? 'Administrador', ENT_QUOTES, 'UTF-8') ?></span>
-                    <span class="profile-role">Administrador de DTI</span>
+                    <span class="profile-role"><?= htmlspecialchars(etiquetaBd('rol', 1, 'Administrador de DTI'), ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
-                <a href="../../serviciosComunes/autenticacion/logout.php" class="btn-logout" title="Cerrar Sesión" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></a>
+                <a href="../../serviciosComunes/autenticacion/logout.php" class="btn-logout" title="<?= te('menu.cerrar_sesion') ?>" aria-label="<?= te('menu.cerrar_sesion') ?>"><i data-lucide="log-out"></i></a>
             </div>
         </aside>
         <main class="main-content">
             <header class="topbar">
                 <div class="topbar-left">
-                    <button class="btn-menu" id="openMenuBtn" type="button" aria-label="Abrir menú"><i data-lucide="menu"></i></button>
-                    <h2 class="section-title">Gestión de Usuarios</h2>
+                    <button class="btn-menu" id="openMenuBtn" type="button" aria-label="<?= te('menu.abrir_menu') ?>"><i data-lucide="menu"></i></button>
+                    <h2 class="section-title"><?= te('menu.gestion_usuarios') ?></h2>
                 </div>
             </header>
             <section class="content-wrapper">
                 <div class="contenedor">
                     <div class="cabecera-seccion">
                         <div class="grupo-botones">
-                            <a href="crear.php" class="boton boton-primario">+ Nuevo Usuario</a>
+                            <a href="crear.php" class="boton boton-primario">+ <?= te('menu.nuevo_usuario') ?></a>
                         </div>
                     </div>
 
@@ -340,18 +340,18 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
                             <thead>
                                 <tr>
                                     <th style="width: 60px;">ID</th>
-                                    <th>Nombre de Usuario</th>
-                                    <th>Nombre completo</th>
-                                    <th>Cédula</th>
-                                    <th>Rol Asignado</th>
-                                    <th style="width: 120px;">Estado</th>
-                                    <th style="width: 260px;">Acciones</th>
+                                    <th><?= te('usuarios.nombre_usuario') ?></th>
+                                    <th><?= te('usuarios.nombre_completo') ?></th>
+                                    <th><?= te('usuarios.cedula') ?></th>
+                                    <th><?= te('usuarios.rol_asignado') ?></th>
+                                    <th style="width: 120px;"><?= te('campo.estado') ?></th>
+                                    <th style="width: 260px;"><?= te('campo.acciones') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($usuarios)): ?>
                                     <tr>
-                                        <td colspan="7" class="celda-vacia">No hay usuarios registrados en la base de datos.</td>
+                                        <td colspan="7" class="celda-vacia"><?= te('usuarios.sin_usuarios') ?></td>
                                     </tr>
                                 <?php else: ?>
                                     <?php foreach ($usuarios as $u): ?>
@@ -360,41 +360,41 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
                                             <td>
                                                 <strong><?= htmlspecialchars($u['nombre_usuario']) ?></strong>
                                                 <?php if ((int)$u['id_usuario'] === (int)$_SESSION['id_usuario']): ?>
-                                                    <span style="font-size: 11px; color: #0284c7; font-weight: normal;">(Tú)</span>
+                                                    <span style="font-size: 11px; color: #0284c7; font-weight: normal;">(<?= te('usuarios.tu') ?>)</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td><?= htmlspecialchars($u['nombre_completo'] ?? 'Pendiente') ?></td>
-                                            <td><?= htmlspecialchars($u['cedula'] ?? 'Pendiente') ?></td>
+                                            <td><?= htmlspecialchars($u['nombre_completo'] ?? t('usuarios.pendiente')) ?></td>
+                                            <td><?= htmlspecialchars($u['cedula'] ?? t('usuarios.pendiente')) ?></td>
                                             <td>
                                                 <?php if (!empty($u['nombre_rol'])): ?>
-                                                    <span class="badge badge-rol"><?= htmlspecialchars($u['nombre_rol']) ?></span>
+                                                    <span class="badge badge-rol"><?= htmlspecialchars(implode(' / ', array_map(fn($r) => etiquetaBd('rol', $r['id_rol'], $r['nombre_rol']), $u['roles']))) ?></span>
                                                 <?php else: ?>
-                                                    <span style="color: #94a3b8; font-style: italic;">Sin rol asignado</span>
+                                                    <span style="color: #94a3b8; font-style: italic;"><?= te('usuarios.sin_rol') ?></span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
                                                 <?php if ((int)$u['activo'] === 1): ?>
-                                                    <span class="badge badge-activo">Activo</span>
+                                                    <span class="badge badge-activo"><?= te('comun.activo') ?></span>
                                                 <?php else: ?>
-                                                    <span class="badge badge-inactivo">Inactivo</span>
+                                                    <span class="badge badge-inactivo"><?= te('comun.inactivo') ?></span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
                                                 <div class="celda-acciones">
-                                                    <a href="ver.php?id=<?= (int)$u['id_usuario'] ?>" class="enlace-accion">Ver</a>
-                                                    <a href="editar.php?id=<?= (int)$u['id_usuario'] ?>" class="enlace-accion">Editar</a>
+                                                    <a href="ver.php?id=<?= (int)$u['id_usuario'] ?>" class="enlace-accion"><?= te('comun.ver') ?></a>
+                                                    <a href="editar.php?id=<?= (int)$u['id_usuario'] ?>" class="enlace-accion"><?= te('comun.editar') ?></a>
 
                                                     <?php if ((int)$u['id_usuario'] !== (int)$_SESSION['id_usuario']): ?>
                                                         <form method="POST" action="../Controlador/ControladorUsuarios.php" class="forma-en-linea"
-                                                            onsubmit="return confirm('¿Seguro que desea cambiar el estado de este usuario?');">                                                            <input type="hidden" name="token"
+                                                            onsubmit="return confirm(<?= htmlspecialchars(json_encode(t('usuarios.confirmar_estado'), JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>);">                                                            <input type="hidden" name="token"
                                                                 value="<?= htmlspecialchars($_SESSION['csrf_usuarios'], ENT_QUOTES, 'UTF-8') ?>">
                                                             <input type="hidden" name="accion" value="cambiar_estado">
                                                             <input type="hidden" name="id_usuario" value="<?= (int)$u['id_usuario'] ?>">
                                                             <input type="hidden" name="activo" value="<?= (int)$u['activo'] === 1 ? 0 : 1 ?>">
                                                             <?php if ((int)$u['activo'] === 1): ?>
-                                                                <button type="submit" class="enlace-toggle enlace-desactivar">Desactivar</button>
+                                                                <button type="submit" class="enlace-toggle enlace-desactivar"><?= te('usuarios.desactivar') ?></button>
                                                             <?php else: ?>
-                                                                <button type="submit" class="enlace-toggle enlace-activar">Activar</button>
+                                                                <button type="submit" class="enlace-toggle enlace-activar"><?= te('usuarios.activar') ?></button>
                                                             <?php endif; ?>
                                                         </form>
                                                     <?php endif; ?>

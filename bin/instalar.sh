@@ -93,7 +93,7 @@ usuario_admin="${usuario_admin:-admin}"
 [[ "$usuario_admin" =~ ^[A-Za-z0-9_.-]+$ ]] || fallo "SEED_ADMIN_USER solo admite letras, números, punto, guion y guion bajo."
 
 existe="$(docker compose exec -T db sh -c \
-    "mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -N -D \"\$MYSQL_DATABASE\" -e \"SELECT COUNT(*) FROM usuario WHERE nombre_usuario='${usuario_admin}'\"")"
+    "mariadb -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -N -D \"\$MYSQL_DATABASE\" -e \"SELECT COUNT(*) FROM usuario WHERE nombre_usuario='${usuario_admin}'\"")"
 existe="${existe//[$'\r\n ']/}"
 
 clave_admin=""

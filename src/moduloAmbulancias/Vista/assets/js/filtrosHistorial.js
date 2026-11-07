@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (coincide) { eventos++; traslados.add(fila.dataset.traslado); }
         });
         resultado.textContent = eventos
-            ? `${traslados.size} traslado(s), ${eventos} cambio(s) de estado.`
-            : 'No hay registros que coincidan con los filtros.';
-        if (!filas.length) resultado.textContent = 'No hay historial de traslados.';
+            ? tr('js.historial.resultado', { traslados: traslados.size, eventos: eventos })
+            : tr('js.historial.sin_coincidencias');
+        if (!filas.length) resultado.textContent = tr('js.historial.vacio');
     };
     cedula.addEventListener('input', aplicar);
     texto.addEventListener('input', aplicar);

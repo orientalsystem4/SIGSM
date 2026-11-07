@@ -14,7 +14,7 @@ $documento = DocumentoModelo::obtenerPorId($idDocumento);
 if ($documento === null) {
 
     $_SESSION['mensaje'] =
-        'El documento solicitado no existe.';
+        t('doc.no_existe');
 
     header('Location: documentacion.php');
     exit;
@@ -23,7 +23,7 @@ if ($documento === null) {
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 
 <head>
 
@@ -33,7 +33,7 @@ if ($documento === null) {
         name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>S.I.G.S.M. | Detalle de documento</title>
+    <title>S.I.G.S.M. | <?= te('doc.detalle') ?></title>
 
     <style>
         * {
@@ -161,12 +161,12 @@ if ($documento === null) {
 
         <div class="cabecera-seccion">
 
-            <h1>Detalle de documento</h1>
+            <h1><?= te('doc.detalle') ?></h1>
 
             <a
                 href="documentacion.php"
                 class="enlace-volver">
-                ← Volver al listado
+                ← <?= te('doc.volver_listado') ?>
             </a>
 
         </div>
@@ -183,7 +183,7 @@ if ($documento === null) {
                 </dd>
 
 
-                <dt>Archivo</dt>
+                <dt><?= te('doc.archivo') ?></dt>
 
                 <dd>
                     <?= htmlspecialchars(
@@ -192,7 +192,7 @@ if ($documento === null) {
                 </dd>
 
 
-                <dt>Categoría</dt>
+                <dt><?= te('doc.categoria') ?></dt>
 
                 <dd>
                     <?= htmlspecialchars(
@@ -201,7 +201,7 @@ if ($documento === null) {
                 </dd>
 
 
-                <dt>Fecha de carga</dt>
+                <dt><?= te('doc.fecha_carga') ?></dt>
 
                 <dd>
                     <?= htmlspecialchars(
@@ -210,7 +210,7 @@ if ($documento === null) {
                 </dd>
 
 
-                <dt>Cargado por</dt>
+                <dt><?= te('doc.cargado_por') ?></dt>
 
                 <dd>
                     <?= htmlspecialchars(
@@ -219,20 +219,20 @@ if ($documento === null) {
                 </dd>
 
 
-                <dt>Estado</dt>
+                <dt><?= te('campo.estado') ?></dt>
 
                 <dd>
 
                     <?php if ((int) $documento['activo'] === 1): ?>
 
                         <span class="estado-activo">
-                            Activo
+                            <?= te('comun.activo') ?>
                         </span>
 
                     <?php else: ?>
 
                         <span class="estado-inactivo">
-                            Inactivo
+                            <?= te('comun.inactivo') ?>
                         </span>
 
                     <?php endif; ?>
@@ -249,19 +249,19 @@ if ($documento === null) {
                     class="boton boton-primario"
                     target="_blank"
                     rel="noopener">
-                    Ver PDF
+                    <?= te('doc.ver_pdf') ?>
                 </a>
 
                 <a
                     href="editar.php?id=<?= (int) $documento['id_documento'] ?>"
                     class="boton boton-primario">
-                    Editar
+                    <?= te('comun.editar') ?>
                 </a>
 
                 <a
                     href="documentacion.php"
                     class="boton boton-secundario">
-                    Volver
+                    <?= te('comun.volver') ?>
                 </a>
 
             </div>

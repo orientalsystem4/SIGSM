@@ -8,6 +8,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/../idioma/idioma.php';
+
 if (!function_exists('resolverUrlLogin')) {
     /**
      * Determina la URL adecuada de sesion.php dinámicamente según el entorno (Docker, XAMPP, etc.)
@@ -58,6 +60,7 @@ if (!function_exists('obtenerUsuarioActual')) {
         if ($idRol && isset($mapaRoles[$idRol])) {
             $nombreRolUI = $mapaRoles[$idRol];
         }
+        $nombreRolUI = etiquetaBd('rol', $idRol, $nombreRolUI);
 
         return [
             'id_usuario'     => $_SESSION['id_usuario'],
@@ -102,7 +105,7 @@ if (!function_exists('tieneRol')) {
 if (!function_exists('requiereRol')) {
     function requiereRol($roles): void {
         if (!tieneRol($roles)) {
-            $_SESSION['error'] = 'No tiene permisos suficientes para acceder a este módulo.';
+            $_SESSION['error'] = t('guardian.sin_permisos');
             $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
             $pos = stripos($script, '/SIGSM/');
             $base = ($pos !== false) ? substr($script, 0, $pos + strlen('/SIGSM/')) : '/SIGSM/';
@@ -114,7 +117,7 @@ if (!function_exists('requiereRol')) {
 
 // Verificación inmediata al ser incluido: Intercepta la navegación si no hay sesión válida
 if (!estaAutenticado()) {
-    $_SESSION['error'] = 'Debe iniciar sesión para acceder al sistema.';
+    $_SESSION['error'] = t('guardian.debe_iniciar_sesion');
     header('Location: ' . resolverUrlLogin());
     exit;
 }
@@ -147,7 +150,7 @@ try {
         session_regenerate_id(true);
 
         $_SESSION['error'] =
-            'Tu cuenta o tus permisos cambiaron. Volvé a iniciar sesión.';
+            t('guardian.permisos_cambiaron');
 
         header('Location: ' . resolverUrlLogin());
         exit;
@@ -159,7 +162,7 @@ try {
 } catch (Throwable $error) {
     error_log('Error al verificar la sesión: ' . $error->getMessage());
     http_response_code(503);
-    exit('No se pudo verificar la sesión. Intentá nuevamente.');
+    exit(htmlspecialchars(t('guardian.error_verificacion'), ENT_QUOTES, 'UTF-8'));
 }
 
 

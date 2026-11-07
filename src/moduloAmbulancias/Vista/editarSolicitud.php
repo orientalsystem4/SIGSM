@@ -6,7 +6,7 @@ header('Cache-Control: no-store');
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $solicitud = $id && $id > 0 ? EdicionSolicitudModelo::obtener($id, (int) $_SESSION['id_usuario']) : null;
 if (!$solicitud) {
-    $_SESSION['mensaje_edicion'] = 'La solicitud no está disponible para editar: debe ser tuya, estar pendiente y sin traslado asignado.';
+    $_SESSION['mensaje_edicion'] = t('editar_solicitud.no_disponible');
     unset($_SESSION['edicion_solicitud']);
     header('Location: ../../moduloDocumentacion/Vista/enfermeria.php?vista=mis-solicitudes');
     exit;
@@ -31,11 +31,11 @@ function escaparEdicion($valor): string
 }
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGSM | Editar solicitud</title>
+    <title>SIGSM | <?= te('editar_solicitud.titulo_pagina') ?></title>
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
     <style>
         body { margin:0; padding:24px; font-family:Arial,sans-serif; background:#eef2f6; color:#1f2937; }
@@ -50,40 +50,40 @@ function escaparEdicion($valor): string
 </head>
 <body>
 <main>
-    <a href="../../moduloDocumentacion/Vista/enfermeria.php?vista=mis-solicitudes">← Volver a Mis solicitudes</a>
-    <h1>Editar solicitud #<?= (int) $id ?></h1>
-    <p>Podés modificarla mientras esté pendiente y sin traslado asignado.</p>
+    <a href="../../moduloDocumentacion/Vista/enfermeria.php?vista=mis-solicitudes">← <?= te('editar_solicitud.volver') ?></a>
+    <h1><?= te('editar_solicitud.titulo', ['id' => (int) $id]) ?></h1>
+    <p><?= te('editar_solicitud.ayuda') ?></p>
     <?php if ($error !== ''): ?><p class="error" role="alert"><?= escaparEdicion($error) ?></p><?php endif; ?>
     <form action="../Controlador/EditarSolicitud.php" method="POST">
         <input type="hidden" name="token" value="<?= escaparEdicion($_SESSION['csrf_edicion_solicitud']) ?>">
         <input type="hidden" name="id_solicitud" value="<?= (int) $id ?>">
-        <?php foreach (['id_origen' => 'Origen', 'id_destino' => 'Destino'] as $campo => $etiqueta): ?>
-            <label for="<?= $campo ?>"><?= $etiqueta ?></label>
+        <?php foreach (['id_origen' => t('campo.origen'), 'id_destino' => t('campo.destino')] as $campo => $etiqueta): ?>
+            <label for="<?= $campo ?>"><?= escaparEdicion($etiqueta) ?></label>
             <select id="<?= $campo ?>" name="<?= $campo ?>" required>
-                <option value="">Seleccioná una ubicación...</option>
+                <option value=""><?= te('editar_solicitud.seleccione_ubicacion') ?></option>
                 <?php foreach ($ubicaciones as $ubicacion): ?>
-                    <option value="<?= (int) $ubicacion['id_ubicacion'] ?>" <?= (int) $datos[$campo] === (int) $ubicacion['id_ubicacion'] ? 'selected' : '' ?>><?= escaparEdicion($ubicacion['nombre']) ?></option>
+                    <option value="<?= (int) $ubicacion['id_ubicacion'] ?>" <?= (int) $datos[$campo] === (int) $ubicacion['id_ubicacion'] ? 'selected' : '' ?>><?= escaparEdicion(nombreUbicacion($ubicacion['nombre'], $ubicacion['tipo_ubicacion'])) ?></option>
                 <?php endforeach; ?>
             </select>
         <?php endforeach; ?>
-        <label for="prioridad">Prioridad</label>
+        <label for="prioridad"><?= te('campo.prioridad') ?></label>
         <?php if ((int) $solicitud['id_tipo_elemento'] === 2): ?>
-            <input id="prioridad" value="Máxima (traslado de órgano)" readonly>
+            <input id="prioridad" value="<?= te('prioridad.maxima_organo') ?>" readonly>
             <input type="hidden" name="prioridad" value="maxima">
         <?php else: ?>
             <select id="prioridad" name="prioridad" required>
-                <?php foreach (['normal' => 'Normal', 'alta' => 'Alta', 'maxima' => 'Máxima'] as $valor => $texto): ?>
-                    <option value="<?= $valor ?>" <?= $datos['prioridad'] === $valor ? 'selected' : '' ?>><?= $texto ?></option>
+                <?php foreach (['normal' => t('prioridad.normal'), 'alta' => t('prioridad.alta'), 'maxima' => t('prioridad.maxima')] as $valor => $texto): ?>
+                    <option value="<?= $valor ?>" <?= $datos['prioridad'] === $valor ? 'selected' : '' ?>><?= escaparEdicion($texto) ?></option>
                 <?php endforeach; ?>
             </select>
         <?php endif; ?>
-        <label for="fecha_hora_limite">Fecha y hora límite (opcional)</label>
+        <label for="fecha_hora_limite"><?= te('campo.limite_opcional') ?></label>
         <input type="datetime-local" id="fecha_hora_limite" name="fecha_hora_limite" value="<?= escaparEdicion($datos['fecha_hora_limite']) ?>">
-        <label for="observaciones">Observaciones (opcional)</label>
+        <label for="observaciones"><?= te('campo.observaciones_opcional') ?></label>
         <textarea id="observaciones" name="observaciones" maxlength="500"><?= escaparEdicion($datos['observaciones']) ?></textarea>
         <div class="acciones">
-            <button type="submit">Guardar cambios</button>
-            <a href="../../moduloDocumentacion/Vista/enfermeria.php?vista=mis-solicitudes">Volver sin guardar</a>
+            <button type="submit"><?= te('comun.guardar_cambios') ?></button>
+            <a href="../../moduloDocumentacion/Vista/enfermeria.php?vista=mis-solicitudes"><?= te('comun.volver_sin_guardar') ?></a>
         </div>
     </form>
 </main>

@@ -16,7 +16,7 @@ $activosEnlace = array_filter(
 );
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 
 <head>
 
@@ -24,7 +24,7 @@ $activosEnlace = array_filter(
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>S.I.G.S.M. | Unidad de Enlace</title>
+    <title>S.I.G.S.M. | <?= te('modulos.unidad_enlace') ?></title>
 
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
 
@@ -61,7 +61,7 @@ $activosEnlace = array_filter(
                 </button>
 
 
-                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo" class="sidebar-logo">
+                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="<?= te('comun.logo_alt') ?>" class="sidebar-logo">
 
 
                 <span>S.I.G.S.M.</span>
@@ -77,13 +77,13 @@ $activosEnlace = array_filter(
                     <i data-lucide="ambulance" class="icon-sm">
                     </i>
 
-                    Control de Traslados
+                    <?= te('menu.control_traslados') ?>
                 </button>
             </nav>
 
             <?php if (tieneRol([1, 3])): ?>
                 <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="btn-volver-hub">
-                    <i data-lucide="grid"></i> Cambiar Módulo
+                    <i data-lucide="grid"></i> <?= te('menu.cambiar_modulo') ?>
                 </a>
             <?php endif; ?>
 
@@ -102,7 +102,7 @@ $activosEnlace = array_filter(
 
                 </div>
 
-                <a href="../../serviciosComunes/autenticacion/logout.php" class="btn-logout" title="Cerrar Sesión">
+                <a href="../../serviciosComunes/autenticacion/logout.php" class="btn-logout" title="<?= te('menu.cerrar_sesion') ?>" aria-label="<?= te('menu.cerrar_sesion') ?>">
 
                     <i data-lucide="log-out"></i>
 
@@ -132,7 +132,7 @@ $activosEnlace = array_filter(
 
 
                     <h2 class="section-title mb-0">
-                        Portal Unidad de Enlace
+                        <?= te('modulos.unidad_enlace') ?>
                     </h2>
 
                 </div>
@@ -165,23 +165,23 @@ $activosEnlace = array_filter(
 
                         <button class="sub-btn active" data-sub="sub-curso">
 
-                            Traslados activos
+                            <?= te('traslado.activos') ?>
 
                         </button>
 
 
                         <button class="sub-btn" data-sub="sub-pendientes">
 
-                            Solicitudes pendientes
+                            <?= te('enlace.solicitudes_pendientes') ?>
 
                         </button>
 
 
-                        <button class="sub-btn" data-sub="sub-canceladas">Solicitudes canceladas</button>
+                        <button class="sub-btn" data-sub="sub-canceladas"><?= te('enlace.solicitudes_canceladas') ?></button>
 
                         <button class="sub-btn" data-sub="sub-historial">
 
-                            Historial
+                            <?= te('enlace.historial') ?>
 
                         </button>
 
@@ -194,7 +194,7 @@ $activosEnlace = array_filter(
                     <div id="sub-curso" class="sub-content active">
 
                         <?php if (!$activosEnlace): ?>
-                            <p>No hay traslados activos.</p>
+                            <p><?= te('enlace.sin_activos') ?></p>
                         <?php endif; ?>
 
                         <?php foreach ($activosEnlace as $viaje): ?>
@@ -202,9 +202,9 @@ $activosEnlace = array_filter(
                                 <div class="accordion-header" onclick="toggleAccordion(this)">
                                     <div class="header-info">
                                         <h3>
-                                            Traslado #<?= (int) $viaje['id_traslado'] ?>
+                                            <?= te('traslado.numero', ['id' => (int) $viaje['id_traslado']]) ?>
                                             — <?= htmlspecialchars(
-                                                    $viaje['matricula'] ?? 'Sin vehículo',
+                                                    $viaje['matricula'] ?? t('traslado.sin_vehiculo'),
                                                     ENT_QUOTES,
                                                     'UTF-8'
                                                 ) ?>
@@ -212,7 +212,7 @@ $activosEnlace = array_filter(
 
                                         <span class="badge badge-warning">
                                             <?= htmlspecialchars(
-                                                $viaje['estado'] ?? 'Sin estado',
+                                                $viaje['estado'] !== null ? etiquetaBd('estado', $viaje['id_estado'], $viaje['estado']) : t('traslado.sin_estado'),
                                                 ENT_QUOTES,
                                                 'UTF-8'
                                             ) ?>
@@ -226,15 +226,15 @@ $activosEnlace = array_filter(
                                     <div style="padding: 15px;">
                                         <?php
                                         $datosTraslado = [
-                                            'Solicitud' => '#' . $viaje['id_solicitud'],
-                                            'Tipo de elemento' => $viaje['elemento'],
-                                            'Origen' => $viaje['origen'],
-                                            'Destino' => $viaje['destino'],
-                                            'Chofer' => $viaje['chofer'] ?? 'Sin asignar',
-                                            'Enfermería' => $viaje['enfermeria'] ?? 'Sin asignar'
+                                            t('campo.solicitud') => '#' . $viaje['id_solicitud'],
+                                            t('campo.tipo_elemento') => etiquetaBd('elemento', $viaje['id_tipo_elemento'], $viaje['elemento']),
+                                            t('campo.origen') => nombreUbicacion($viaje['origen'], $viaje['origen_tipo']),
+                                            t('campo.destino') => nombreUbicacion($viaje['destino'], $viaje['destino_tipo']),
+                                            t('campo.chofer') => $viaje['chofer'] ?? t('comun.sin_asignar'),
+                                            t('campo.enfermeria') => $viaje['enfermeria'] ?? t('comun.sin_asignar')
                                         ];
                                         if (!empty($viaje['direccion_domicilio'])) {
-                                            $datosTraslado['Dirección del domicilio'] = $viaje['direccion_domicilio'];
+                                            $datosTraslado[t('campo.direccion_domicilio')] = $viaje['direccion_domicilio'];
                                         }
                                         ?>
 
@@ -257,7 +257,7 @@ $activosEnlace = array_filter(
                     <div id="sub-pendientes" class="sub-content hidden">
 
                         <?php if (empty($solicitudesPendientes)): ?>
-                            <p>No hay solicitudes pendientes.</p>
+                            <p><?= te('enlace.sin_pendientes') ?></p>
                         <?php endif; ?>
 
                         <?php foreach ($solicitudesPendientes as $solicitud): ?>
@@ -265,32 +265,32 @@ $activosEnlace = array_filter(
 
                                 <div class="item-header">
                                     <h3 class="card-title">
-                                        Solicitud #<?= (int) $solicitud['id_solicitud'] ?>
+                                        <?= te('solicitud.numero', ['id' => (int) $solicitud['id_solicitud']]) ?>
                                     </h3>
 
-                                    <span class="badge badge-gray">Pendiente</span>
+                                    <span class="badge badge-gray"><?= htmlspecialchars(etiquetaBd('estado_solicitud', 'Pendiente', 'Pendiente'), ENT_QUOTES, 'UTF-8') ?></span>
                                 </div>
 
                                 <?php
                                 $detalles = [
-                                    'Tipo de elemento' => $solicitud['tipo_elemento'],
-                                    'Origen' => $solicitud['origen'],
-                                    'Destino' => $solicitud['destino'],
-                                    'Canal' => $solicitud['canal'],
-                                    'Solicitante' => $solicitud['solicitante'],
-                                    'Fecha de solicitud' => $solicitud['fecha_solicitud'],
-                                    'Prioridad' => $solicitud['prioridad'],
-                                    'Debe llegar antes de' =>
-                                    $solicitud['fecha_hora_limite'] ?? 'Sin horario limite',
-                                    'Observaciones' =>
-                                    $solicitud['observaciones'] ?? 'Sin observaciones'
+                                    t('campo.tipo_elemento') => etiquetaBd('elemento', $solicitud['id_tipo_elemento'], $solicitud['tipo_elemento']),
+                                    t('campo.origen') => nombreUbicacion($solicitud['origen'], $solicitud['origen_tipo']),
+                                    t('campo.destino') => nombreUbicacion($solicitud['destino'], $solicitud['destino_tipo']),
+                                    t('campo.canal') => etiquetaBd('canal', $solicitud['id_canal'], $solicitud['canal']),
+                                    t('campo.solicitante') => $solicitud['solicitante'],
+                                    t('campo.fecha_solicitud') => $solicitud['fecha_solicitud'],
+                                    t('campo.prioridad') => textoPrioridad($solicitud['prioridad']),
+                                    t('campo.limite') =>
+                                    $solicitud['fecha_hora_limite'] ?? t('enlace.sin_limite'),
+                                    t('campo.observaciones') =>
+                                    $solicitud['observaciones'] ?? t('comun.sin_observaciones')
                                 ];
 
                                 if ($solicitud['ci_paciente'] !== null) {
-                                    $detalles['Cedula del paciente'] =
+                                    $detalles[t('campo.cedula_paciente')] =
                                         $solicitud['ci_paciente'];
 
-                                    $detalles['Paciente'] = trim(
+                                    $detalles[t('campo.paciente')] = trim(
                                         ($solicitud['nombre_paciente'] ?? '') . ' ' .
                                             ($solicitud['apellido_paciente'] ?? '')
                                     );
@@ -318,7 +318,7 @@ $activosEnlace = array_filter(
                                     <a
                                         href="asignar.php?id=<?= (int) $solicitud['id_solicitud'] ?>"
                                         class="btn-action btn-success">
-                                        Asignar traslado
+                                        <?= te('enlace.asignar') ?>
                                     </a>
                                 <?php endif; ?>
 
@@ -330,30 +330,30 @@ $activosEnlace = array_filter(
                     <!-- HISTORIAL -->
 
                     <div id="sub-canceladas" class="sub-content hidden">
-                        <h3>Solicitudes canceladas</h3>
+                        <h3><?= te('enlace.solicitudes_canceladas') ?></h3>
 
-                        <label class="filtro-listado">Buscar cancelación
+                        <label class="filtro-listado"><?= te('enlace.buscar_cancelacion') ?>
                             <input type="search" class="form-input" data-filtrar="tabla-canceladas"
-                                placeholder="Solicitud, origen, destino, usuario o motivo">
+                                placeholder="<?= te('enlace.buscar_cancelacion_placeholder') ?>">
                         </label>
                         <div class="tabla-responsive">
                             <table class="tabla-historial" id="tabla-canceladas">
                                 <thead>
                                     <tr>
-                                        <th>Solicitud</th>
-                                        <th>Elemento</th>
-                                        <th>Origen</th>
-                                        <th>Destino</th>
-                                        <th>Solicitante</th>
-                                        <th>Cancelada por</th>
-                                        <th>Fecha</th>
-                                        <th>Motivo</th>
+                                        <th><?= te('campo.solicitud') ?></th>
+                                        <th><?= te('campo.elemento') ?></th>
+                                        <th><?= te('campo.origen') ?></th>
+                                        <th><?= te('campo.destino') ?></th>
+                                        <th><?= te('campo.solicitante') ?></th>
+                                        <th><?= te('campo.cancelada_por') ?></th>
+                                        <th><?= te('campo.fecha') ?></th>
+                                        <th><?= te('campo.motivo') ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php if (!$solicitudesCanceladas): ?>
                                         <tr>
-                                            <td colspan="8">No hay solicitudes canceladas.</td>
+                                            <td colspan="8"><?= te('enlace.sin_canceladas') ?></td>
                                         </tr>
                                     <?php endif; ?>
                                     <?php foreach ($solicitudesCanceladas as $cancelada): ?>
@@ -370,14 +370,23 @@ $activosEnlace = array_filter(
                                                     'motivo_cancelacion'
                                                 ] as $campo
                                             ): ?>
-                                                <td><?= htmlspecialchars((string) ($cancelada[$campo] ?? 'Sin registro'), ENT_QUOTES, 'UTF-8') ?></td>
+                                                <?php
+                                                if ($campo === 'elemento') {
+                                                    $valorCancelada = etiquetaBd('elemento', $cancelada['id_tipo_elemento'], $cancelada['elemento']);
+                                                } elseif ($campo === 'origen' || $campo === 'destino') {
+                                                    $valorCancelada = nombreUbicacion($cancelada[$campo], $cancelada[$campo . '_tipo']);
+                                                } else {
+                                                    $valorCancelada = $cancelada[$campo] ?? t('comun.sin_registro');
+                                                }
+                                                ?>
+                                                <td><?= htmlspecialchars((string) $valorCancelada, ENT_QUOTES, 'UTF-8') ?></td>
                                             <?php endforeach; ?>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
-                        <p class="hidden" data-sin-resultados="tabla-canceladas">No hay coincidencias.</p>
+                        <p class="hidden" data-sin-resultados="tabla-canceladas"><?= te('comun.sin_coincidencias') ?></p>
                     </div>
 
                     <div id="sub-historial" class="sub-content hidden">
@@ -389,27 +398,27 @@ $activosEnlace = array_filter(
                             </i>
 
 
-                            <input type="search" aria-label="Buscar en el historial" id="buscar-historial" class="search-input"
-                                placeholder="Buscar por traslado, estado o usuario...">
+                            <input type="search" aria-label="<?= te('enlace.buscar_historial') ?>" id="buscar-historial" class="search-input"
+                                placeholder="<?= te('enlace.buscar_historial_placeholder') ?>">
 
                         </div>
 
 
 
                         <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:end; margin-bottom:20px;">
-                            <label for="historial-cedula">Cédula del paciente
+                            <label for="historial-cedula"><?= te('campo.cedula_paciente') ?>
                                 <input id="historial-cedula" class="form-input" type="search"
-                                    inputmode="numeric" placeholder="Ej.: 11111111" maxlength="20">
+                                    inputmode="numeric" placeholder="<?= te('enlace.cedula_placeholder') ?>" maxlength="20">
                             </label>
-                            <label for="historial-vehiculo">Vehículo
+                            <label for="historial-vehiculo"><?= te('campo.vehiculo') ?>
                                 <select id="historial-vehiculo" class="form-input">
-                                    <option value="">Todos los vehículos</option>
+                                    <option value=""><?= te('enlace.todos_vehiculos') ?></option>
                                     <?php
                                     $vehiculosHistorial = [];
                                     foreach ($trasladosEnlace as $viajeHistorial) {
                                         if ($viajeHistorial['id_vehiculo'] !== null) {
                                             $vehiculosHistorial[(int) $viajeHistorial['id_vehiculo']] =
-                                                $viajeHistorial['matricula'] ?? ('Vehículo #' . $viajeHistorial['id_vehiculo']);
+                                                $viajeHistorial['matricula'] ?? t('enlace.vehiculo_numero', ['id' => (int) $viajeHistorial['id_vehiculo']]);
                                         }
                                     }
                                     asort($vehiculosHistorial);
@@ -417,10 +426,10 @@ $activosEnlace = array_filter(
                                     <?php foreach ($vehiculosHistorial as $idVehiculo => $matricula): ?>
                                         <option value="<?= (int) $idVehiculo ?>"><?= htmlspecialchars($matricula, ENT_QUOTES, 'UTF-8') ?></option>
                                     <?php endforeach; ?>
-                                    <option value="sin-vehiculo">Sin vehículo asignado</option>
+                                    <option value="sin-vehiculo"><?= te('enlace.sin_vehiculo_asignado') ?></option>
                                 </select>
                             </label>
-                            <button id="limpiar-historial" class="btn-primary" type="button">Limpiar filtros</button>
+                            <button id="limpiar-historial" class="btn-primary" type="button"><?= te('enlace.limpiar_filtros') ?></button>
                         </div>
                         <p id="historial-resultados" role="status" aria-live="polite"></p>
 
@@ -434,27 +443,13 @@ $activosEnlace = array_filter(
 
                                     <tr>
 
-                                        <th>
-                                            Traslado
-                                        </th>
-
-                                        <th>Cédula del paciente</th>
-                                        <th>Vehículo</th>
-                                        <th>
-                                            Fecha/Hora
-                                        </th>
-
-                                        <th>
-                                            Estado
-                                        </th>
-
-                                        <th>
-                                            Usuario
-                                        </th>
-
-                                        <th>
-                                            Observaciones
-                                        </th>
+                                        <th><?= te('campo.traslado') ?></th>
+                                        <th><?= te('campo.cedula_paciente') ?></th>
+                                        <th><?= te('campo.vehiculo') ?></th>
+                                        <th><?= te('campo.fecha_hora') ?></th>
+                                        <th><?= te('campo.estado') ?></th>
+                                        <th><?= te('campo.usuario') ?></th>
+                                        <th><?= te('campo.observaciones') ?></th>
 
                                     </tr>
 
@@ -464,7 +459,7 @@ $activosEnlace = array_filter(
                                 <tbody>
                                     <?php if (!$trasladosEnlace): ?>
                                         <tr id="historial-vacio">
-                                            <td colspan="7">No hay historial de traslados.</td>
+                                            <td colspan="7"><?= te('enlace.sin_historial') ?></td>
                                         </tr>
                                     <?php endif; ?>
 
@@ -479,19 +474,23 @@ $activosEnlace = array_filter(
                                                 data-traslado="<?= (int) $viaje['id_traslado'] ?>">
                                                 <td>
                                                     <strong>
-                                                        Traslado #<?= (int) $viaje['id_traslado'] ?>
+                                                        <?= te('traslado.numero', ['id' => (int) $viaje['id_traslado']]) ?>
                                                     </strong>
                                                 </td>
 
-                                                <td><?= htmlspecialchars((string) ($viaje['ci_paciente'] ?? 'No corresponde'), ENT_QUOTES, 'UTF-8') ?></td>
-                                                <td><?= htmlspecialchars((string) ($viaje['matricula'] ?? 'Sin vehículo'), ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars((string) ($viaje['ci_paciente'] ?? t('comun.no_corresponde')), ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars((string) ($viaje['matricula'] ?? t('traslado.sin_vehiculo')), ENT_QUOTES, 'UTF-8') ?></td>
                                                 <?php foreach (
                                                     ['fecha_hora', 'estado', 'usuario', 'observaciones']
                                                     as $campo
                                                 ): ?>
                                                     <td>
                                                         <?= htmlspecialchars(
-                                                            (string) ($evento[$campo] ?? ''),
+                                                            $campo === 'estado'
+                                                                ? etiquetaBd('estado', $evento['id_estado'], $evento['estado'])
+                                                                : ($campo === 'observaciones'
+                                                                    ? textoObservacionHistorial($evento['observaciones'])
+                                                                    : (string) ($evento[$campo] ?? '')),
                                                             ENT_QUOTES,
                                                             'UTF-8'
                                                         ) ?>
@@ -531,7 +530,8 @@ $activosEnlace = array_filter(
     </script>
 
 
-    <script src="assets/js/filtrosHistorial.js?v=20261025-1"></script>
+    <?= scriptTraduccionesJs(['js.historial.']) ?>
+    <script src="assets/js/filtrosHistorial.js?v=20261107-1"></script>
 </body>
 
 </html>

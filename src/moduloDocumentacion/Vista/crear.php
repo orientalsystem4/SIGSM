@@ -22,7 +22,7 @@ unset(
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 
 <head>
 
@@ -33,7 +33,7 @@ unset(
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>S.I.G.S.M. | Nuevo documentoooo</title>
+    <title>S.I.G.S.M. | <?= te('doc.nuevo') ?></title>
 
     <style>
 
@@ -171,13 +171,13 @@ unset(
 
     <div class="cabecera-seccion">
 
-        <h1>Nuevo documento</h1>
+        <h1><?= te('doc.nuevo') ?></h1>
 
         <a
             href="documentacion.php"
             class="enlace-volver"
         >
-            ← Volver al listado
+            ← <?= te('doc.volver_listado') ?>
         </a>
 
     </div>
@@ -218,7 +218,7 @@ unset(
         <div class="campo">
 
             <label for="id_categoria">
-                Categoría
+                <?= te('doc.categoria') ?>
             </label>
 
             <select
@@ -228,7 +228,7 @@ unset(
             >
 
                 <option value="">
-                    Seleccione una categoría...
+                    <?= te('doc.seleccione_categoria') ?>
                 </option>
 
                 <?php foreach ($categorias as $categoria): ?>
@@ -257,7 +257,7 @@ unset(
         <div class="campo">
 
             <label for="archivo">
-                Archivo PDF
+                <?= te('doc.archivo_pdf') ?>
             </label>
 
             <input
@@ -269,7 +269,7 @@ unset(
             >
 
             <span class="ayuda">
-                El archivo debe estar en formato PDF y no superar los 15 MB.
+                <?= te('doc.ayuda_pdf') ?>
             </span>
 
         </div>
@@ -281,14 +281,14 @@ unset(
                 type="submit"
                 class="boton boton-primario"
             >
-                Guardar documento
+                <?= te('doc.guardar') ?>
             </button>
 
             <a
                 href="documentacion.php"
                 class="boton boton-secundario"
             >
-                Cancelar
+                <?= te('comun.cancelar') ?>
             </a>
 
         </div>

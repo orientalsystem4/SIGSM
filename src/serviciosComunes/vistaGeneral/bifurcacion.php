@@ -6,11 +6,11 @@ requiereRol([1, 2, 3, 4, 5, 6]);
 $usuarioActual = obtenerUsuarioActual();
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.I.G.S.M. | Panel de Módulos</title>
+    <title>S.I.G.S.M. | <?= te('modulos.titulo') ?></title>
     <link rel="stylesheet" href="assets/css/bifurcacion.css">
     <script src="assets/vendor/lucide-1.70.0.min.js"></script>
     <link rel="stylesheet" href="assets/css/tema-institucional.css?v=20261021-1">
@@ -18,10 +18,10 @@ $usuarioActual = obtenerUsuarioActual();
 <body>
     <main class="bifurcacion-container">
         <div class="card">
-            <h2 class="title">Bienvenido a S.I.G.S.M.</h2>
+            <h2 class="title"><?= te('modulos.bienvenida') ?></h2>
 
             <p class="subtitle">
-                Usuario:
+                <?= te('modulos.usuario') ?>
                 <strong>
                     <?= htmlspecialchars(
                         $usuarioActual['nombre_usuario'] ?? 'Usuario'
@@ -34,7 +34,7 @@ $usuarioActual = obtenerUsuarioActual();
                     </em>)
                 <?php endif; ?>
 
-                <br>Seleccione el módulo al que desea ingresar
+                <br><?= te('modulos.instrucciones') ?>
             </p>
 
             <?php
@@ -58,7 +58,7 @@ $usuarioActual = obtenerUsuarioActual();
             <div class="icon-wrapper">
                 <i data-lucide="layout-dashboard"></i>
             </div>
-            <h3 class="card-title">Portal Unidad de Enlace</h3>
+            <h3 class="card-title"><?= te('modulos.unidad_enlace') ?></h3>
         </a>
     <?php endif; ?>
 
@@ -70,7 +70,7 @@ $usuarioActual = obtenerUsuarioActual();
             <div class="icon-wrapper">
                 <i data-lucide="ambulance"></i>
             </div>
-            <h3 class="card-title">Portal Choferes</h3>
+            <h3 class="card-title"><?= te('modulos.choferes') ?></h3>
         </a>
     <?php endif; ?>
 
@@ -82,7 +82,7 @@ $usuarioActual = obtenerUsuarioActual();
             <div class="icon-wrapper">
                 <i data-lucide="clipboard-plus"></i>
             </div>
-            <h3 class="card-title">Portal de Enfermería</h3>
+            <h3 class="card-title"><?= te('modulos.enfermeria') ?></h3>
         </a>
     <?php endif; ?>
 
@@ -94,7 +94,7 @@ $usuarioActual = obtenerUsuarioActual();
             <div class="icon-wrapper">
                 <i data-lucide="folder-open"></i>
             </div>
-            <h3 class="card-title">Portal Documentación</h3>
+            <h3 class="card-title"><?= te('modulos.documentacion') ?></h3>
         </a>
     <?php endif; ?>
 
@@ -106,7 +106,7 @@ $usuarioActual = obtenerUsuarioActual();
             <div class="icon-wrapper">
                 <i data-lucide="users"></i>
             </div>
-            <h3 class="card-title">Gestión de Usuarios</h3>
+            <h3 class="card-title"><?= te('menu.gestion_usuarios') ?></h3>
         </a>
     <?php endif; ?>
 
@@ -117,7 +117,7 @@ $usuarioActual = obtenerUsuarioActual();
                     href="../autenticacion/logout.php"
                     class="btn-logout-link"
                 >
-                    <i data-lucide="log-out"></i> Cerrar Sesión
+                    <i data-lucide="log-out"></i> <?= te('menu.cerrar_sesion') ?>
                 </a>
             </div>
         </div>

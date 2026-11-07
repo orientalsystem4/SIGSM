@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../conexionBD/conexion.php';
 require_once __DIR__ . '/roles.php';
+require_once __DIR__ . '/../idioma/idioma.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: sesion.php');
@@ -26,7 +27,7 @@ $usuario = $_POST['usuario'] ?? '';
 $password = $_POST['password'] ?? '';
 
 if (!is_string($usuario) || !is_string($password)) {
-    $_SESSION['error'] = 'Los datos ingresados no son válidos.';
+    $_SESSION['error'] = t('login.error_datos_invalidos');
     header('Location: sesion.php');
     exit;
 }
@@ -40,7 +41,7 @@ const LOGIN_VENTANA_MIN = 10;
 $usuarioIntento = mb_substr($usuario, 0, 50);
 
 if ($usuario === '' || $password === '') {
-    $_SESSION['error'] = 'Por favor complete todos los campos.';
+    $_SESSION['error'] = t('login.error_campos');
     header('Location: sesion.php');
     exit;
 }
@@ -48,8 +49,8 @@ if ($usuario === '' || $password === '') {
 try {
     $conexion = Conexion::conectar();
 
-    // Bloqueo temporal: 5 fallos en 10 minutos. Mismo mensaje que una clave
-    // incorrecta para no revelar si el usuario existe.
+    // Bloqueo temporal: 5 fallos en 10 minutos. Los intentos se registran por
+    // nombre aunque la cuenta no exista, asi que el aviso no revela si existe.
     $bloqueo = $conexion->prepare("
         SELECT fecha FROM intento_login
         WHERE nombre_usuario = :usuario
@@ -62,7 +63,7 @@ try {
         $vigente = $conexion->prepare("SELECT :fecha > NOW() - INTERVAL " . LOGIN_VENTANA_MIN . " MINUTE");
         $vigente->execute([':fecha' => $quintoFallo]);
         if ((int) $vigente->fetchColumn() === 1) {
-            $_SESSION['error'] = 'Usuario o contraseña incorrectos.';
+            $_SESSION['error'] = t('login.error_bloqueado', ['minutos' => LOGIN_VENTANA_MIN]);
             header('Location: sesion.php');
             exit;
         }
@@ -100,7 +101,7 @@ try {
         ]);
         $conexion->exec("DELETE FROM intento_login WHERE fecha < NOW() - INTERVAL 1 DAY");
 
-        $_SESSION['error'] = 'Usuario o contraseña incorrectos.';
+        $_SESSION['error'] = t('login.error_credenciales');
         header('Location: sesion.php');
         exit;
     }
@@ -110,7 +111,7 @@ try {
     $limpiar->execute([':usuario' => $usuarioIntento]);
 
     if ((int) $user['activo'] !== 1) {
-        $_SESSION['error'] = 'El usuario se encuentra inactivo. Comuníquese con el administrador.';
+        $_SESSION['error'] = t('login.error_inactivo');
         header('Location: sesion.php');
         exit;
     }
@@ -121,7 +122,7 @@ try {
     );
 
     if (empty($roles)) {
-        $_SESSION['error'] = 'Su usuario no tiene roles asignados. Contacte al administrador.';
+        $_SESSION['error'] = t('login.error_sin_roles');
         header('Location: sesion.php');
         exit;
     }
@@ -129,7 +130,7 @@ try {
     // Comprobar que todos los roles tengan un destino definido.
     foreach ($roles as $rol) {
         if (destinoPorRol((int) $rol['id_rol']) === null) {
-            $_SESSION['error'] = 'Uno de sus roles no tiene una pantalla configurada. Contacte al administrador.';
+            $_SESSION['error'] = t('login.error_rol_sin_destino');
             header('Location: sesion.php');
             exit;
         }
@@ -169,7 +170,7 @@ try {
         $_SESSION['token_seleccion_rol']
     );
 
-    $_SESSION['error'] = 'Ocurrió un error al iniciar sesión. Intente nuevamente.';
+    $_SESSION['error'] = t('login.error_general');
     header('Location: sesion.php');
     exit;
 }

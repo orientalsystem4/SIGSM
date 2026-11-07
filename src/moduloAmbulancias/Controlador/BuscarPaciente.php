@@ -9,7 +9,7 @@ if (!tieneRol([1, 2, 6])) {
     http_response_code(403);
     echo json_encode([
         'exito' => false,
-        'mensaje' => 'No tiene permisos para consultar pacientes.'
+        'mensaje' => t('paciente.error_permisos')
     ]);
     exit;
 }
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     header('Allow: GET');
     echo json_encode([
         'exito' => false,
-        'mensaje' => 'Metodo no permitido.'
+        'mensaje' => t('error.metodo')
     ]);
     exit;
 }
@@ -39,7 +39,7 @@ if (!preg_match('/^[0-9]{7,8}$/', $cedula)) {
     http_response_code(400);
     echo json_encode([
         'exito' => false,
-        'mensaje' => 'Ingrese una cedula de 7 u 8 digitos.'
+        'mensaje' => t('paciente.error_cedula')
     ]);
     exit;
 }
@@ -52,8 +52,8 @@ try {
         'encontrado' => $paciente !== null,
         'paciente' => $paciente,
         'mensaje' => $paciente !== null
-            ? 'Paciente encontrado.'
-            : 'No se encontro un paciente con esa cedula.'
+            ? t('paciente.encontrado')
+            : t('paciente.no_encontrado')
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Exception $e) {
@@ -62,6 +62,6 @@ try {
     http_response_code(500);
     echo json_encode([
         'exito' => false,
-        'mensaje' => 'No se pudo consultar el paciente. Intente nuevamente.'
+        'mensaje' => t('paciente.error_general')
     ]);
 }

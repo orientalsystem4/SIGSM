@@ -39,17 +39,17 @@ try {
         || !hash_equals($tokenSesion, $token)
     ) {
         throw new DomainException(
-            'Recargue el formulario e intente nuevamente.'
+            t('error.recargar_formulario')
         );
     }
 
     if (!$idSolicitud || !$idVehiculo || !$idChofer || !$idRuta) {
-        throw new DomainException('Complete los campos obligatorios.');
+        throw new DomainException(t('asignar.error_obligatorios'));
     }
 
     if ($idChofer === $idEnfermero) {
         throw new DomainException(
-            'Chofer y Enfermeria deben ser personas diferentes.'
+            t('asignar.error_mismas_personas')
         );
     }
 
@@ -71,7 +71,7 @@ try {
 
     if (!$solicitud || $solicitud['estado_solicitud'] !== 'Pendiente') {
         throw new DomainException(
-            'La solicitud ya no esta pendiente o no existe.'
+            t('asignar.error_no_pendiente')
         );
     }
 
@@ -90,7 +90,7 @@ try {
     if ((int) $consulta->fetchColumn() > 0) {
         if ((int) $solicitud['id_tipo_elemento'] !== 1) {
             throw new DomainException(
-                'Solo los pacientes pueden trasladarse a un domicilio.'
+                t('domicilio.solo_pacientes')
             );
         }
 
@@ -106,7 +106,7 @@ try {
             || mb_strlen($direccionDomicilio, 'UTF-8') > 255
         ) {
             throw new DomainException(
-                'Ingrese la direccion del domicilio (hasta 255 caracteres).'
+                t('domicilio.error_direccion')
             );
         }
     }
@@ -118,12 +118,12 @@ try {
     $consulta->execute([':id' => $idSolicitud]);
 
     if ($consulta->fetchColumn()) {
-        throw new DomainException('La solicitud ya tiene un traslado.');
+        throw new DomainException(t('asignar.error_ya_tiene'));
     }
 
     if ((int) $solicitud['id_tipo_elemento'] === 1 && !$idEnfermero) {
         throw new DomainException(
-            'Debe asignar Enfermeria para trasladar un paciente.'
+            t('asignar.error_falta_enfermeria')
         );
     }
 
@@ -136,7 +136,7 @@ try {
     $vehiculo = $consulta->fetch(PDO::FETCH_ASSOC);
 
     if (!$vehiculo || (int) $vehiculo['activo'] !== 1) {
-        throw new DomainException('El vehiculo no esta activo.');
+        throw new DomainException(t('asignar.error_vehiculo_inactivo'));
     }
 
     $consulta = $conexion->prepare(
@@ -151,7 +151,7 @@ try {
 
     if (!$consulta->fetchColumn()) {
         throw new DomainException(
-            'El vehiculo no es compatible con lo que se transporta.'
+            t('asignar.error_vehiculo_incompatible')
         );
     }
 
@@ -171,7 +171,7 @@ try {
 
         if ((int) $consulta->fetchColumn() !== 1) {
             throw new DomainException(
-                'Una de las personas seleccionadas no esta activa.'
+                t('asignar.error_persona_inactiva')
             );
         }
 
@@ -188,7 +188,7 @@ try {
 
         if (!$consulta->fetchColumn()) {
             throw new DomainException(
-                'Una persona no tiene el rol necesario para esta asignacion.'
+                t('asignar.error_rol')
             );
         }
     }
@@ -224,7 +224,7 @@ try {
 
     if ($consulta->fetchColumn()) {
         throw new DomainException(
-            'El vehiculo o una persona ya tiene un traslado sin finalizar.'
+            t('asignar.error_ocupado')
         );
     }
 
@@ -242,7 +242,7 @@ try {
 
     if (!$consulta->fetchColumn()) {
         throw new DomainException(
-            'La ruta no corresponde al origen y destino de la solicitud.'
+            t('asignar.error_ruta')
         );
     }
 
@@ -282,7 +282,7 @@ try {
             id_usuario, observaciones
          ) VALUES (
             :traslado, 2, NOW(),
-            :usuario, 'Vehiculo y personal asignados.'
+            :usuario, 'hist.asignado'
          )"
     );
     $consulta->execute([
@@ -293,7 +293,7 @@ try {
     $conexion->commit();
 
     $_SESSION['mensaje_traslado'] =
-        "Traslado #{$idTraslado} asignado correctamente.";
+        t('asignar.ok', ['id' => $idTraslado]);
 
     header('Location: ../Vista/unidadEnlace.php');
     exit;
@@ -308,7 +308,7 @@ try {
     } else {
         error_log('Error al asignar traslado: ' . $e->getMessage());
         $_SESSION['error_asignacion'] =
-            'No se pudo guardar la asignacion. Intente nuevamente.';
+            t('asignar.error_general');
     }
 
     header('Location: ../Vista/asignar.php?id=' . $idSolicitud);

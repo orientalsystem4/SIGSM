@@ -12,7 +12,7 @@ $idDocumento = (int) ($_GET['id'] ?? 0);
 $documento = DocumentoModelo::obtenerPorId($idDocumento);
 
 if ($documento === null) {
-    $_SESSION['mensaje'] = 'El documento solicitado no existe.';
+    $_SESSION['mensaje'] = t('doc.no_existe');
     header('Location: documentacion.php');
     exit;
 }
@@ -25,7 +25,7 @@ unset($_SESSION['errores_documento']);
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 
 <head>
 
@@ -36,7 +36,7 @@ unset($_SESSION['errores_documento']);
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>S.I.G.S.M. | Editar documento</title>
+    <title>S.I.G.S.M. | <?= te('doc.editar') ?></title>
 
     <style>
 
@@ -182,13 +182,13 @@ unset($_SESSION['errores_documento']);
 
     <div class="cabecera-seccion">
 
-        <h1>Editar documento</h1>
+        <h1><?= te('doc.editar') ?></h1>
 
         <a
             href="documentacion.php"
             class="enlace-volver"
         >
-            ← Volver al listado
+            ← <?= te('doc.volver_listado') ?>
         </a>
 
     </div>
@@ -235,7 +235,7 @@ unset($_SESSION['errores_documento']);
         <div class="campo">
 
             <label>
-                Archivo actual
+                <?= te('doc.archivo_actual') ?>
             </label>
 
             <div class="archivo-actual">
@@ -252,7 +252,7 @@ unset($_SESSION['errores_documento']);
         <div class="campo">
 
             <label for="id_categoria">
-                Categoría
+                <?= te('doc.categoria') ?>
             </label>
 
             <select
@@ -262,7 +262,7 @@ unset($_SESSION['errores_documento']);
             >
 
                 <option value="">
-                    Seleccione una categoría...
+                    <?= te('doc.seleccione_categoria') ?>
                 </option>
 
                 <?php foreach ($categorias as $categoria): ?>
@@ -296,7 +296,7 @@ unset($_SESSION['errores_documento']);
         <div class="campo">
 
             <label for="archivo">
-                Reemplazar archivo PDF
+                <?= te('doc.reemplazar_pdf') ?>
             </label>
 
             <input
@@ -307,7 +307,7 @@ unset($_SESSION['errores_documento']);
             >
 
             <span class="ayuda">
-                Es opcional. Si no selecciona un archivo, se mantiene el PDF actual.
+                <?= te('doc.ayuda_reemplazo') ?>
             </span>
 
         </div>
@@ -319,14 +319,14 @@ unset($_SESSION['errores_documento']);
                 type="submit"
                 class="boton boton-primario"
             >
-                Guardar cambios
+                <?= te('comun.guardar_cambios') ?>
             </button>
 
             <a
                 href="documentacion.php"
                 class="boton boton-secundario"
             >
-                Cancelar
+                <?= te('comun.cancelar') ?>
             </a>
 
         </div>

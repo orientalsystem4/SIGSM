@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../conexionBD/conexion.php';
 require_once __DIR__ . '/roles.php';
+require_once __DIR__ . '/../idioma/idioma.php';
 
 // Este dato lo establecera el login tras verificar la contraseña.
 $idUsuario = (int) ($_SESSION['id_usuario_pendiente'] ?? 0);
@@ -38,7 +39,7 @@ try {
             $_SESSION['token_seleccion_rol']
         );
 
-        $_SESSION['error'] = 'La cuenta no se encuentra disponible.';
+        $_SESSION['error'] = t('rol.error_cuenta_no_disponible');
         header('Location: sesion.php');
         exit;
     }
@@ -51,7 +52,7 @@ try {
             $_SESSION['token_seleccion_rol']
         );
 
-        $_SESSION['error'] = 'Su usuario no tiene roles asignados.';
+        $_SESSION['error'] = t('rol.error_sin_roles');
         header('Location: sesion.php');
         exit;
     }
@@ -67,7 +68,7 @@ try {
             !is_string($token)
             || !hash_equals($_SESSION['token_seleccion_rol'], $token)
         ) {
-            $error = 'La solicitud no es válida. Intente nuevamente.';
+            $error = t('rol.error_solicitud_invalida');
         } else {
             $idRol = filter_input(
                 INPUT_POST,
@@ -89,7 +90,7 @@ try {
                 : null;
 
             if ($rolElegido === null || $destino === null) {
-                $error = 'Seleccione un rol habilitado para su cuenta.';
+                $error = t('rol.error_rol_no_habilitado');
             } else {
                 session_regenerate_id(true);
 
@@ -111,7 +112,7 @@ try {
 } catch (Exception $e) {
     error_log('Error al seleccionar rol: ' . $e->getMessage());
 
-    $_SESSION['error'] = 'No se pudo completar el ingreso. Intente nuevamente.';
+    $_SESSION['error'] = t('rol.error_general');
 
     unset(
         $_SESSION['id_usuario_pendiente'],
@@ -123,11 +124,11 @@ try {
 }
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.I.G.S.M. | Seleccionar rol</title>
+    <title>S.I.G.S.M. | <?= te('rol.titulo') ?></title>
 
     <style>
         * { box-sizing: border-box; }
@@ -187,16 +188,10 @@ try {
 </head>
 <body>
     <main class="tarjeta">
-        <h1>Seleccionar rol</h1>
+        <h1><?= te('rol.titulo') ?></h1>
 
         <p>
-            Hola,
-            <strong><?= htmlspecialchars(
-                $usuario['nombre_usuario'],
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?></strong>.
-            Elegí con qué rol querés ingresar.
+            <?= te('rol.saludo', ['usuario' => $usuario['nombre_usuario']]) ?>
         </p>
 
         <?php if ($error !== ''): ?>
@@ -216,16 +211,16 @@ try {
                 ) ?>"
             >
 
-            <label for="id_rol">Rol de trabajo</label>
+            <label for="id_rol"><?= te('rol.etiqueta') ?></label>
 
             <select id="id_rol" name="id_rol" required>
-                <option value="">Seleccione un rol...</option>
+                <option value=""><?= te('rol.placeholder') ?></option>
 
                 <?php foreach ($roles as $rol): ?>
                     <?php if (destinoPorRol((int) $rol['id_rol']) !== null): ?>
                         <option value="<?= (int) $rol['id_rol'] ?>">
                             <?= htmlspecialchars(
-                                $rol['nombre_rol'],
+                                etiquetaBd('rol', $rol['id_rol'], $rol['nombre_rol']),
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?>
@@ -234,7 +229,7 @@ try {
                 <?php endforeach; ?>
             </select>
 
-            <button type="submit">Ingresar</button>
+            <button type="submit"><?= te('rol.boton') ?></button>
         </form>
     </main>
 </body>

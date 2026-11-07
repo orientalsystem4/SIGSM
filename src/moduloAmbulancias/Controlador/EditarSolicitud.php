@@ -6,25 +6,25 @@ require_once __DIR__ . '/../Model/EdicionSolicitudModelo.php';
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Allow: POST');
     http_response_code(405);
-    exit('Método no permitido.');
+    exit(t('error.metodo_acento'));
 }
 $token = $_POST['token'] ?? '';
 if (!is_string($token) || empty($_SESSION['csrf_edicion_solicitud']) || !hash_equals($_SESSION['csrf_edicion_solicitud'], $token)) {
     http_response_code(403);
-    exit('La solicitud no es válida. Volvé al formulario y recargá la página.');
+    exit(t('error.solicitud_volver_formulario'));
 }
 $id = filter_input(INPUT_POST, 'id_solicitud', FILTER_VALIDATE_INT);
 if (!$id || $id < 1) {
     http_response_code(400);
-    exit('Identificador no válido.');
+    exit(t('error.identificador'));
 }
 try {
     EdicionSolicitudModelo::guardar($id, (int) $_SESSION['id_usuario'], $_POST);
     unset($_SESSION['edicion_solicitud']);
-    $_SESSION['mensaje_edicion'] = 'Solicitud #' . $id . ' actualizada correctamente.';
+    $_SESSION['mensaje_edicion'] = t('editar_solicitud.ok', ['id' => $id]);
     header('Location: ../../moduloDocumentacion/Vista/enfermeria.php?vista=mis-solicitudes');
 } catch (Throwable $e) {
-    $error = 'No se pudo guardar la solicitud. Intentá nuevamente.';
+    $error = t('editar_solicitud.error_general');
     if ($e instanceof DomainException) {
         $error = $e->getMessage();
     } else {

@@ -6,7 +6,7 @@ requiereRol([1]);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     header('Allow: POST');
-    exit('Método no permitido.');
+    exit(t('error.metodo_acento'));
 }
 
 $token = $_POST['token'] ?? '';
@@ -19,7 +19,7 @@ if (
     || !hash_equals($tokenSesion, $token)
 ) {
     http_response_code(403);
-    exit('La solicitud no es válida. Volvé al listado y recargá la página.');
+    exit(t('usuarios.error_token'));
 }
 
 require_once __DIR__ . '/../Model/UsuarioModelo.php';
@@ -53,52 +53,52 @@ if ($accion === 'crear') {
 
     // Validar los datos de la cuenta.
     if ($nombreUsuario === '') {
-        $errores[] = 'El nombre de usuario es obligatorio.';
+        $errores[] = t('usuarios.error_nombre_obligatorio');
     } elseif (strlen($nombreUsuario) < 3) {
-        $errores[] = 'El nombre de usuario debe tener al menos 3 caracteres.';
+        $errores[] = t('usuarios.error_nombre_corto');
     } elseif (!preg_match('/^[a-zA-Z0-9_.-]+$/', $nombreUsuario)) {
-        $errores[] = 'El nombre de usuario solo puede contener letras sin tildes, números, puntos, guiones y guiones bajos.';
+        $errores[] = t('usuarios.error_nombre_caracteres');
     } elseif (UsuarioModelo::existeNombreUsuario($nombreUsuario)) {
-        $errores[] = 'El nombre de usuario ya está registrado.';
+        $errores[] = t('usuarios.error_nombre_registrado');
     }
 
     if ($cedula === null) {
-        $errores[] = 'La cédula no es válida. Verifique su dígito verificador.';
+        $errores[] = t('usuarios.error_cedula_digito');
     } elseif (UsuarioModelo::existeCedula($cedula)) {
-        $errores[] = 'La cédula ya está registrada.';
+        $errores[] = t('usuarios.error_cedula_registrada');
     }
     if (!nombreCompletoValido($nombreCompleto)) {
-        $errores[] = 'Ingrese un nombre completo válido (3 a 150 caracteres).';
+        $errores[] = t('usuarios.error_nombre_completo');
     }
 
     if (!is_string($password) || !is_string($confirmarPassword)) {
-        $errores[] = 'Las contraseñas ingresadas no son válidas.';
+        $errores[] = t('usuarios.error_contrasenas_invalidas');
     } else {
         if ($password === '') {
-            $errores[] = 'La contraseña es obligatoria.';
+            $errores[] = t('usuarios.error_contrasena_obligatoria');
         } elseif (strlen($password) < 12) {
-            $errores[] = 'La contraseña debe tener al menos 12 caracteres.';
+            $errores[] = t('usuarios.error_contrasena_corta');
         }
 
         if ($password !== $confirmarPassword) {
-            $errores[] = 'Las contraseñas no coinciden.';
+            $errores[] = t('usuarios.error_no_coinciden');
         }
     }
 
     // Validar la lista de roles.
     if (!is_array($rolesRecibidos)) {
-        $errores[] = 'La selección de roles no es válida.';
+        $errores[] = t('usuarios.error_roles');
     } else {
         foreach ($rolesRecibidos as $valor) {
             if (!is_string($valor)) {
-                $errores[] = 'La selección de roles no es válida.';
+                $errores[] = t('usuarios.error_roles');
                 break;
             }
 
             $idRol = filter_var($valor, FILTER_VALIDATE_INT);
 
             if ($idRol === false || $idRol <= 0) {
-                $errores[] = 'La selección contiene un rol inválido.';
+                $errores[] = t('usuarios.error_rol_invalido');
                 break;
             }
 
@@ -119,9 +119,9 @@ if ($accion === 'crear') {
     );
 
     if (empty($idsRoles)) {
-        $errores[] = 'Debe seleccionar al menos un rol.';
+        $errores[] = t('usuarios.error_sin_rol');
     } elseif (!empty(array_diff($idsRoles, $idsDisponibles))) {
-        $errores[] = 'Uno de los roles seleccionados no existe.';
+        $errores[] = t('usuarios.error_rol_inexistente');
     }
     // Conservar los datos del formulario, sin contraseñas.
     $_SESSION['datos_previos_usuario'] = [
@@ -147,7 +147,7 @@ if ($accion === 'crear') {
 
     if (!$ok) {
         $_SESSION['errores_usuario'] = [
-            'Ocurrió un error al registrar el usuario.'
+            t('usuarios.error_crear')
         ];
 
         header('Location: ../Vista/crear.php');
@@ -159,7 +159,7 @@ if ($accion === 'crear') {
         $_SESSION['errores_usuario']
     );
 
-    $_SESSION['mensaje'] = "Usuario '{$nombreUsuario}' creado con sus roles asignados.";
+    $_SESSION['mensaje'] = t('usuarios.ok_creado', ['usuario' => $nombreUsuario]);
 
     header('Location: ../Vista/listado.php');
     exit;
@@ -203,18 +203,18 @@ if ($accion === 'editar') {
 
     // Validar la lista enviada por el formulario.
     if (!is_array($rolesRecibidos)) {
-        $errores[] = 'La selección de roles no es válida.';
+        $errores[] = t('usuarios.error_roles');
     } else {
         foreach ($rolesRecibidos as $valor) {
             if (!is_string($valor)) {
-                $errores[] = 'La selección de roles no es válida.';
+                $errores[] = t('usuarios.error_roles');
                 break;
             }
 
             $idRol = filter_var($valor, FILTER_VALIDATE_INT);
 
             if ($idRol === false || $idRol <= 0) {
-                $errores[] = 'La selección contiene un rol inválido.';
+                $errores[] = t('usuarios.error_rol_invalido');
                 break;
             }
 
@@ -227,7 +227,7 @@ if ($accion === 'editar') {
 
     // Comprobar que el usuario exista.
     if (!$idUsuario || $idUsuario <= 0) {
-        $_SESSION['error'] = 'Identificador de usuario inválido.';
+        $_SESSION['error'] = t('usuarios.error_id');
         header('Location: ../Vista/listado.php');
         exit;
     }
@@ -235,48 +235,48 @@ if ($accion === 'editar') {
     $usuarioActualizado = UsuarioModelo::obtenerPorId($idUsuario);
 
     if (!$usuarioActualizado) {
-        $_SESSION['error'] = 'El usuario solicitado no existe.';
+        $_SESSION['error'] = t('usuarios.no_existe');
         header('Location: ../Vista/listado.php');
         exit;
     }
 
         if ($nombreUsuario === '') {
-        $errores[] = 'El nombre de usuario es obligatorio.';
+        $errores[] = t('usuarios.error_nombre_obligatorio');
     } elseif (strlen($nombreUsuario) < 3 || strlen($nombreUsuario) > 50) {
-        $errores[] = 'El nombre de usuario debe tener entre 3 y 50 caracteres.';
+        $errores[] = t('usuarios.error_nombre_largo');
     } elseif (!preg_match('/^[a-zA-Z0-9_.-]+$/', $nombreUsuario)) {
-        $errores[] = 'El nombre de usuario solo puede contener letras sin tildes, números, puntos, guiones y guiones bajos.';
+        $errores[] = t('usuarios.error_nombre_caracteres');
     } elseif (UsuarioModelo::existeNombreUsuario($nombreUsuario, $idUsuario)) {
-        $errores[] = 'El nombre de usuario ya está en uso.';
+        $errores[] = t('usuarios.error_nombre_en_uso');
     }
 
     if ($cedulaTexto === '') {
         if (!empty($usuarioActualizado['cedula'])) {
-            $errores[] = 'No puede quitar una cédula ya registrada.';
+            $errores[] = t('usuarios.error_quitar_cedula');
         }
         $cedula = null; // Cuenta anterior: se completará luego.
     } elseif ($cedula === null) {
-        $errores[] = 'La cédula no es válida.';
+        $errores[] = t('usuarios.error_cedula');
     } elseif (UsuarioModelo::existeCedula($cedula, $idUsuario)) {
-        $errores[] = 'La cédula ya está registrada.';
+        $errores[] = t('usuarios.error_cedula_registrada');
     }
     if ($nombreCompleto === '') {
         if (!empty($usuarioActualizado['nombre_completo'])) {
-            $errores[] = 'No puede quitar el nombre completo ya registrado.';
+            $errores[] = t('usuarios.error_quitar_nombre');
         }
         $nombreCompleto = null;
     } elseif (!nombreCompletoValido($nombreCompleto)) {
-        $errores[] = 'Ingrese un nombre completo válido (3 a 150 caracteres).';
+        $errores[] = t('usuarios.error_nombre_completo');
     }
 
     if (!is_string($password)) {
-        $errores[] = 'La contraseña ingresada no es válida.';
+        $errores[] = t('usuarios.error_contrasena_invalida');
     } elseif ($password !== '' && strlen($password) < 12) {
-        $errores[] = 'La nueva contraseña debe tener al menos 12 caracteres.';
+        $errores[] = t('usuarios.error_nueva_corta');
     }
 
     if (!in_array($activo, [0, 1], true)) {
-        $errores[] = 'El estado de la cuenta no es válido.';
+        $errores[] = t('usuarios.error_estado');
     }
 
     // Comprobar los roles contra la base de datos.
@@ -290,22 +290,22 @@ if ($accion === 'editar') {
     );
 
     if (empty($idsRoles)) {
-        $errores[] = 'Debe seleccionar al menos un rol.';
+        $errores[] = t('usuarios.error_sin_rol');
     } elseif (!empty(array_diff($idsRoles, $idsDisponibles))) {
-        $errores[] = 'Uno de los roles seleccionados no existe.';
+        $errores[] = t('usuarios.error_rol_inexistente');
     }
 
 
     // Proteger la cuenta y el rol usados en esta sesion.
     if ($idUsuario === (int) ($_SESSION['id_usuario'] ?? 0)) {
         if ($activo === 0) {
-            $errores[] = 'No puede desactivar su propio usuario mientras tiene la sesión activa.';
+            $errores[] = t('usuarios.error_autodesactivar');
         }
 
         $rolActivo = (int) ($_SESSION['id_rol'] ?? 0);
 
         if (!in_array($rolActivo, $idsRoles, true)) {
-            $errores[] = 'No puede quitarse el rol con el que está trabajando.';
+            $errores[] = t('usuarios.error_quitar_rol_actual');
         }
     }
 
@@ -330,13 +330,13 @@ if ($accion === 'editar') {
             $_SESSION['nombre_usuario'] = $nombreUsuario;
         }
 
-        $_SESSION['mensaje'] = "Usuario '{$nombreUsuario}' actualizado correctamente.";
+        $_SESSION['mensaje'] = t('usuarios.ok_editado', ['usuario' => $nombreUsuario]);
         header('Location: ../Vista/listado.php');
         exit;
     }
 
     $_SESSION['errores_usuario'] = [
-        'Ocurrió un error al actualizar el usuario.'
+        t('usuarios.error_editar')
     ];
 
     header('Location: ../Vista/editar.php?id=' . $idUsuario);
@@ -351,14 +351,14 @@ if ($accion === 'cambiar_estado') {
     $activo = (int)($_POST['activo'] ?? $_GET['activo'] ?? 0);
 
     if ($idUsuario <= 0) {
-        $_SESSION['error'] = 'Identificador de usuario inválido.';
+        $_SESSION['error'] = t('usuarios.error_id');
         header('Location: ../Vista/listado.php');
         exit;
     }
 
     // Regla de seguridad: el usuario administrador actual no puede desactivarse a sí mismo
     if ($idUsuario === (int)$_SESSION['id_usuario'] && $activo === 0) {
-        $_SESSION['error'] = 'No puede desactivar su propio usuario mientras tiene la sesión activa.';
+        $_SESSION['error'] = t('usuarios.error_autodesactivar');
         header('Location: ../Vista/listado.php');
         exit;
     }
@@ -366,10 +366,11 @@ if ($accion === 'cambiar_estado') {
     $ok = UsuarioModelo::cambiarEstado($idUsuario, $activo);
 
     if ($ok) {
-        $estadoTexto = ($activo === 1) ? 'activado' : 'desactivado';
-        $_SESSION['mensaje'] = "El usuario fue {$estadoTexto} exitosamente.";
+        $_SESSION['mensaje'] = $activo === 1
+            ? t('usuarios.ok_activado')
+            : t('usuarios.ok_desactivado');
     } else {
-        $_SESSION['error'] = 'Error al cambiar el estado del usuario.';
+        $_SESSION['error'] = t('usuarios.error_cambiar_estado');
     }
 
     header('Location: ../Vista/listado.php');

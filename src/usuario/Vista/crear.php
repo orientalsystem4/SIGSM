@@ -21,11 +21,11 @@ $rolesSeleccionados = $previos['ids_roles'] ?? [];
 unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.I.G.S.M. | Nuevo Usuario</title>
+    <title>S.I.G.S.M. | <?= te('menu.nuevo_usuario') ?></title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -133,12 +133,12 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
 
 <div class="contenedor">
     <div class="cabecera-seccion">
-        <h1>Registrar Nuevo Usuario</h1>
+        <h1><?= te('usuarios.registrar') ?></h1>
     </div>
 
     <?php if (!empty($errores)): ?>
         <div class="alerta-errores">
-            <strong>Por favor corrija los siguientes errores:</strong>
+            <strong><?= te('usuarios.corrija_errores') ?></strong>
             <ul>
                 <?php foreach ($errores as $error): ?>
                     <li><?= htmlspecialchars($error) ?></li>
@@ -153,26 +153,26 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
         <input type="hidden" name="accion" value="crear">
 
         <div class="campo">
-            <label for="cedula">Cédula de identidad *</label>
+            <label for="cedula"><?= te('usuarios.cedula_identidad') ?> *</label>
             <input type="text" id="cedula" name="cedula" maxlength="12" required
-                   placeholder="Ej.: 12345678" value="<?= htmlspecialchars($previos['cedula'] ?? '') ?>">
+                   placeholder="<?= te('usuarios.cedula_placeholder') ?>" value="<?= htmlspecialchars($previos['cedula'] ?? '') ?>">
         </div>
         <div class="campo">
-            <label for="nombre_completo">Nombre completo *</label>
+            <label for="nombre_completo"><?= te('usuarios.nombre_completo') ?> *</label>
             <input type="text" id="nombre_completo" name="nombre_completo" maxlength="150" required
                    value="<?= htmlspecialchars($previos['nombre_completo'] ?? '') ?>">
         </div>
         <div class="campo">
-            <label for="nombre_usuario">Nombre de Usuario *</label>
+            <label for="nombre_usuario"><?= te('usuarios.nombre_usuario') ?> *</label>
             <input type="text" id="nombre_usuario" name="nombre_usuario"
                    value="<?= htmlspecialchars($previos['nombre_usuario']) ?>"
-                   placeholder="Ej: j_perez" required autofocus>
+                   placeholder="<?= te('usuarios.usuario_placeholder') ?>" required autofocus>
         </div>
 
                <fieldset class="campo">
-            <legend>Roles del usuario *</legend>
+            <legend><?= te('usuarios.roles') ?> *</legend>
 
-            <p>Seleccione al menos un rol.</p>
+            <p><?= te('usuarios.seleccione_rol') ?></p>
 
             <?php foreach ($roles as $r): ?>
                 <label
@@ -191,7 +191,7 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
                     >
 
                     <?= htmlspecialchars(
-                        $r['nombre_rol'],
+                        etiquetaBd('rol', $r['id_rol'], $r['nombre_rol']),
                         ENT_QUOTES,
                         'UTF-8'
                     ) ?>
@@ -200,18 +200,18 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
         </fieldset>
 
         <div class="campo">
-            <label for="password">Contraseña *</label>
-            <input type="password" id="password" name="password" placeholder="Mínimo 12 caracteres" required>
+            <label for="password"><?= te('login.contrasena') ?> *</label>
+            <input type="password" id="password" name="password" placeholder="<?= te('usuarios.contrasena_placeholder') ?>" required>
         </div>
 
         <div class="campo">
-            <label for="confirmar_password">Confirmar Contraseña *</label>
-            <input type="password" id="confirmar_password" name="confirmar_password" placeholder="Repita la contraseña" required>
+            <label for="confirmar_password"><?= te('usuarios.confirmar_contrasena') ?> *</label>
+            <input type="password" id="confirmar_password" name="confirmar_password" placeholder="<?= te('usuarios.repetir_placeholder') ?>" required>
         </div>
 
         <div class="acciones-formulario">
-            <button type="submit" class="boton boton-primario">Crear Usuario</button>
-            <a href="listado.php" class="boton boton-secundario">Volver al listado</a>
+            <button type="submit" class="boton boton-primario"><?= te('usuarios.crear') ?></button>
+            <a href="listado.php" class="boton boton-secundario"><?= te('doc.volver_listado') ?></a>
         </div>
     </form>
 </div>

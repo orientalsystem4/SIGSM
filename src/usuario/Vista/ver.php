@@ -9,16 +9,16 @@ $idUsuario = (int) ($_GET['id'] ?? 0);
 $usuario = UsuarioModelo::obtenerPorId($idUsuario);
 
 if (!$usuario) {
-    $_SESSION['error'] = 'El usuario solicitado no existe.';
+    $_SESSION['error'] = t('usuarios.no_existe');
     header('Location: listado.php');
     exit;
 }
 
-$tituloPagina = 'Detalle de Usuario';
+$tituloPagina = t('usuarios.detalle');
 
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -114,44 +114,44 @@ $tituloPagina = 'Detalle de Usuario';
 
 <div class="contenedor">
     <div class="cabecera-seccion">
-        <h1>Detalle de Usuario</h1>
+        <h1><?= te('usuarios.detalle') ?></h1>
     </div>
 
     <div class="tarjeta-detalle">
         <div class="fila-detalle">
-            <span class="etiqueta">Identificador (ID):</span>
+            <span class="etiqueta"><?= te('usuarios.identificador') ?>:</span>
             <span class="valor">#<?= (int)$usuario['id_usuario'] ?></span>
         </div>
-        <div class="fila-detalle"><span class="etiqueta">Cédula:</span><span class="valor"><?= htmlspecialchars($usuario['cedula'] ?? 'Pendiente') ?></span></div>
-        <div class="fila-detalle"><span class="etiqueta">Nombre completo:</span><span class="valor"><?= htmlspecialchars($usuario['nombre_completo'] ?? 'Pendiente') ?></span></div>
+        <div class="fila-detalle"><span class="etiqueta"><?= te('usuarios.cedula') ?>:</span><span class="valor"><?= htmlspecialchars($usuario['cedula'] ?? t('usuarios.pendiente')) ?></span></div>
+        <div class="fila-detalle"><span class="etiqueta"><?= te('usuarios.nombre_completo') ?>:</span><span class="valor"><?= htmlspecialchars($usuario['nombre_completo'] ?? t('usuarios.pendiente')) ?></span></div>
         <div class="fila-detalle">
-            <span class="etiqueta">Nombre de Usuario:</span>
+            <span class="etiqueta"><?= te('usuarios.nombre_usuario') ?>:</span>
             <span class="valor"><strong><?= htmlspecialchars($usuario['nombre_usuario']) ?></strong></span>
         </div>
         <div class="fila-detalle">
-            <span class="etiqueta">Rol Asignado:</span>
+            <span class="etiqueta"><?= te('usuarios.rol_asignado') ?>:</span>
             <span class="valor">
                 <?php if (!empty($usuario['nombre_rol'])): ?>
-                    <span class="badge badge-rol"><?= htmlspecialchars($usuario['nombre_rol']) ?></span>
+                    <span class="badge badge-rol"><?= htmlspecialchars(implode(' / ', array_map(fn($r) => etiquetaBd('rol', $r['id_rol'], $r['nombre_rol']), $usuario['roles']))) ?></span>
                 <?php else: ?>
-                    <span style="color: #94a3b8; font-style: italic;">Sin rol asignado</span>
+                    <span style="color: #94a3b8; font-style: italic;"><?= te('usuarios.sin_rol') ?></span>
                 <?php endif; ?>
             </span>
         </div>
         <div class="fila-detalle">
-            <span class="etiqueta">Estado de la Cuenta:</span>
+            <span class="etiqueta"><?= te('usuarios.estado_cuenta') ?>:</span>
             <span class="valor">
                 <?php if ((int)$usuario['activo'] === 1): ?>
-                    <span class="badge badge-activo">Activo</span>
+                    <span class="badge badge-activo"><?= te('comun.activo') ?></span>
                 <?php else: ?>
-                    <span class="badge badge-inactivo">Inactivo</span>
+                    <span class="badge badge-inactivo"><?= te('comun.inactivo') ?></span>
                 <?php endif; ?>
             </span>
         </div>
 
         <div class="acciones">
-            <a href="editar.php?id=<?= (int)$usuario['id_usuario'] ?>" class="boton boton-primario">Editar Usuario</a>
-            <a href="listado.php" class="boton boton-secundario">Volver al listado</a>
+            <a href="editar.php?id=<?= (int)$usuario['id_usuario'] ?>" class="boton boton-primario"><?= te('usuarios.editar') ?></a>
+            <a href="listado.php" class="boton boton-secundario"><?= te('doc.volver_listado') ?></a>
         </div>
     </div>
 </div>

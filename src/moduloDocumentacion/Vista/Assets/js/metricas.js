@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function cargarMetricas(categoria) {
         // Mostrar cargando
-        graficosContainer.innerHTML = '<p class="text-center text-muted">Cargando métricas...</p>';
+        graficosContainer.innerHTML = '<p class="text-center text-muted">' + trHtml('js.met.cargando') + '</p>';
         comentariosContainer.innerHTML = '';
         lblTotal.textContent = '-';
         lblPromedio.textContent = '-';
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 if (!data.exito) {
-                    graficosContainer.textContent = data.error || "No se pudieron cargar las métricas.";
+                    graficosContainer.textContent = data.error || tr('js.met.error');
                     return;
                 }
 
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(err => {
                 console.error(err);
-                graficosContainer.innerHTML = `<p style="color:red">Error de conexión al cargar métricas.</p>`;
+                graficosContainer.innerHTML = '<p style="color:red">' + trHtml('js.met.error_conexion') + '</p>';
             });
     }
 
@@ -55,9 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let cantidadPreguntasValidas = 0;
 
         if (data.total === 0) {
-            graficosContainer.innerHTML = '<div class="card-formulario"><p class="text-center text-muted" style="margin:0;">No hay encuestas registradas para esta categoría.</p></div>';
+            graficosContainer.innerHTML = '<div class="card-formulario"><p class="text-center text-muted" style="margin:0;">' + trHtml('js.met.sin_encuestas') + '</p></div>';
             lblPromedio.textContent = '0.0 / 5';
-            comentariosContainer.innerHTML = '<p class="text-muted">Sin comentarios.</p>';
+            comentariosContainer.innerHTML = '<p class="text-muted">' + trHtml('js.met.sin_comentarios') + '</p>';
             return;
         }
 
@@ -109,9 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['1 (Malo)', '2', '3 (Regular)', '4', '5 (Excelente)'],
+                    labels: [tr('js.met.escala_1'), '2', tr('js.met.escala_3'), '4', tr('js.met.escala_5')],
                     datasets: [{
-                        label: 'Votos',
+                        label: tr('js.met.votos'),
                         data: frecuencias,
                         backgroundColor: colorBase,
                         borderRadius: 4
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 label: function(context) {
                                     const val = context.raw;
                                     const perc = Math.round((val / (pregunta.total_respuestas || 1)) * 100);
-                                    return ` ${val} votos (${perc}%)`;
+                                    return ' ' + tr('js.met.votos_detalle', { votos: val, porcentaje: perc });
                                 }
                             }
                         }
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Renderizar comentarios
         if (data.comentarios.length === 0) {
-            comentariosContainer.innerHTML = '<p class="text-muted">Aún no hay comentarios adicionales registrados.</p>';
+            comentariosContainer.innerHTML = '<p class="text-muted">' + trHtml('js.met.sin_comentarios_adicionales') + '</p>';
         } else {
             data.comentarios.forEach(comentario => {
                 const cDiv = document.createElement('div');

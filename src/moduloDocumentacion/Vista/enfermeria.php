@@ -4,6 +4,10 @@ require_once __DIR__ . '/../../serviciosComunes/seguridad/guardian.php';
 requiereRol([1, 2, 6]);
 $usuarioActual = obtenerUsuarioActual();
 require_once __DIR__ . '/../../moduloAmbulancias/Model/SolicitudModelo.php';
+require_once __DIR__ . '/../../moduloAmbulancias/Model/EdicionSolicitudModelo.php';
+
+// Mismo origen de datos que la edicion de solicitudes: incluye el domicilio.
+$ubicaciones = EdicionSolicitudModelo::ubicaciones();
 
 $misSolicitudes = SolicitudModelo::listarPorSolicitante(
     (int) $_SESSION['id_usuario']
@@ -16,13 +20,13 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>S.I.G.S.M. | Portal Enfermería</title>
+    <title>S.I.G.S.M. | <?= te('modulos.enfermeria') ?></title>
 
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css?v=2">
 
@@ -50,7 +54,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                     <i data-lucide="x"></i>
                 </button>
 
-                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="Logo" class="sidebar-logo">
+                <img src="../../serviciosComunes/autenticacion/assets/image.png" alt="<?= te('comun.logo_alt') ?>" class="sidebar-logo">
 
                 <span>S.I.G.S.M.</span>
 
@@ -61,29 +65,29 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
                 <button class="nav-btn active" data-target="sec-traslados">
                     <i data-lucide="ambulance" class="icon-sm"></i>
-                    Solicitar Traslado
+                    <?= te('menu.solicitar_traslado') ?>
                 </button>
                 <button class="nav-btn" data-target="sec-mis-solicitudes">
                     <i data-lucide="list-checks" class="icon-sm"></i>
-                    Mis solicitudes
+                    <?= te('menu.mis_solicitudes') ?>
                 </button>
 
 
                 <button class="nav-btn" data-target="sec-doc-estatica">
                     <i data-lucide="folder-open" class="icon-sm"></i>
-                    Documentación (QR)
+                    <?= te('menu.documentacion_qr') ?>
                 </button>
 
 
                 <button class="nav-btn" data-target="sec-formularios">
                     <i data-lucide="qr-code" class="icon-sm"></i>
-                    Encuestas
+                    <?= te('menu.encuestas') ?>
                 </button>
             </nav>
 
             <?php if (tieneRol('admin') || tieneRol(1)): ?>
                 <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="btn-volver-hub">
-                    <i data-lucide="grid"></i> Cambiar Módulo
+                    <i data-lucide="grid"></i> <?= te('menu.cambiar_modulo') ?>
                 </a>
             <?php endif; ?>
 
@@ -107,7 +111,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                 </div>
 
 
-                <a href="../../serviciosComunes/autenticacion/logout.php" class="btn-logout" title="Cerrar Sesión">
+                <a href="../../serviciosComunes/autenticacion/logout.php" class="btn-logout" title="<?= te('menu.cerrar_sesion') ?>" aria-label="<?= te('menu.cerrar_sesion') ?>">
                     <i data-lucide="log-out"></i>
                 </a>
 
@@ -130,7 +134,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                     </button>
 
                     <h2 class="section-title mb-0">
-                        Portal de Enfermería
+                        <?= te('modulos.enfermeria') ?>
                     </h2>
 
                 </div>
@@ -155,12 +159,12 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                 <?php endif; ?>
                 <div id="sec-mis-solicitudes" class="view-section hidden">
                     <div class="card-formulario">
-                        <h3>Mis solicitudes de traslado</h3>
+                        <h3><?= te('enfermeria.mis_solicitudes_titulo') ?></h3>
 
                         
 
                         <?php if (!$misSolicitudes): ?>
-                            <p>Todavía no enviaste solicitudes.</p>
+                            <p><?= te('enfermeria.sin_solicitudes') ?></p>
                         <?php else: ?>
                             <div style="overflow-x: auto; margin-top: 20px;">
                                 <table style="width: 100%; border-collapse: collapse;">
@@ -168,15 +172,15 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                         <tr>
                                             <?php foreach (
                                                 [
-                                                    'Solicitud',
-                                                    'Fecha',
-                                                    'Elemento',
-                                                    'Origen',
-                                                    'Destino',
-                                                    'Prioridad',
-                                                    'Estado',
-                                                    'Traslado',
-                                                    'Acciones'
+                                                    t('campo.solicitud'),
+                                                    t('campo.fecha'),
+                                                    t('campo.elemento'),
+                                                    t('campo.origen'),
+                                                    t('campo.destino'),
+                                                    t('campo.prioridad'),
+                                                    t('campo.estado'),
+                                                    t('campo.traslado'),
+                                                    t('campo.acciones')
                                                 ]
                                                 as $titulo
                                             ): ?>
@@ -195,14 +199,16 @@ if (empty($_SESSION['csrf_cancelacion'])) {
             $celdas = [
                 '#' . $solicitud['id_solicitud'],
                 $solicitud['fecha_solicitud'],
-                $solicitud['elemento'],
-                $solicitud['origen'],
-                $solicitud['destino'],
-                $solicitud['prioridad'],
-                $solicitud['estado'],
+                etiquetaBd('elemento', $solicitud['id_tipo_elemento'], $solicitud['elemento']),
+                nombreUbicacion($solicitud['origen'], $solicitud['origen_tipo']),
+                nombreUbicacion($solicitud['destino'], $solicitud['destino_tipo']),
+                textoPrioridad($solicitud['prioridad']),
+                $solicitud['id_estado'] !== null
+                    ? etiquetaBd('estado', $solicitud['id_estado'], $solicitud['estado'])
+                    : etiquetaBd('estado_solicitud', $solicitud['estado_solicitud'], $solicitud['estado']),
                 $solicitud['id_traslado'] !== null
                     ? '#' . $solicitud['id_traslado']
-                    : 'Sin asignar'
+                    : t('comun.sin_asignar')
             ];
             ?>
 
@@ -218,7 +224,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                     && $solicitud['id_traslado'] === null
                 ): ?>
                     <a class="btn-primary" style="display: inline-block; margin-bottom: 12px;"
-                       href="../../moduloAmbulancias/Vista/editarSolicitud.php?id=<?= (int) $solicitud['id_solicitud'] ?>">Editar</a>
+                       href="../../moduloAmbulancias/Vista/editarSolicitud.php?id=<?= (int) $solicitud['id_solicitud'] ?>"><?= te('comun.editar') ?></a>
                     <form
                         action="../../moduloAmbulancias/Controlador/CancelarSolicitud.php"
                         method="POST"
@@ -234,39 +240,39 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                             value="<?= (int) $solicitud['id_solicitud'] ?>">
 
                         <label>
-                            Motivo de cancelación
+                            <?= te('enfermeria.motivo_cancelacion') ?>
                             <input type="text" name="motivo"
                                 maxlength="500" required>
                         </label>
 
-                        <button type="submit">Cancelar solicitud</button>
+                        <button type="submit"><?= te('enfermeria.cancelar_solicitud') ?></button>
                     </form>
                 <?php elseif ($solicitud['estado'] === 'Cancelada'): ?>
     <details>
-        <summary>Ver cancelación</summary>
+        <summary><?= te('enfermeria.ver_cancelacion') ?></summary>
 
         <p>
-            <strong>Motivo:</strong>
+            <strong><?= te('campo.motivo') ?>:</strong>
             <?= htmlspecialchars(
-                $solicitud['motivo_cancelacion'] ?? 'Sin registro',
+                $solicitud['motivo_cancelacion'] ?? t('comun.sin_registro'),
                 ENT_QUOTES,
                 'UTF-8'
             ) ?>
         </p>
 
         <p>
-            <strong>Fecha:</strong>
+            <strong><?= te('campo.fecha') ?>:</strong>
             <?= htmlspecialchars(
-                $solicitud['fecha_cancelacion'] ?? 'Sin registro',
+                $solicitud['fecha_cancelacion'] ?? t('comun.sin_registro'),
                 ENT_QUOTES,
                 'UTF-8'
             ) ?>
         </p>
 
         <p>
-            <strong>Cancelada por:</strong>
+            <strong><?= te('campo.cancelada_por') ?>:</strong>
             <?= htmlspecialchars(
-                $solicitud['cancelada_por'] ?? 'Sin registro',
+                $solicitud['cancelada_por'] ?? t('comun.sin_registro'),
                 ENT_QUOTES,
                 'UTF-8'
             ) ?>
@@ -297,7 +303,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                             <h3>
                                 <i data-lucide="ambulance" class="icon-md text-primary"></i>
 
-                                Nueva Solicitud de Traslado
+                                <?= te('enfermeria.nueva_solicitud') ?>
                             </h3>
 
                             
@@ -322,37 +328,37 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                             <div class="form-group">
 
                                 <label>
-                                    Tipo de elemento a trasladar
+                                    <?= te('enfermeria.tipo_elemento') ?>
                                 </label>
 
                                 <select id="tipo-elemento" class="form-input" required>
 
                                     <option value="">
-                                        Seleccione el tipo...
+                                        <?= te('enfermeria.seleccione_tipo') ?>
                                     </option>
 
                                     <option value="1">
-                                        Paciente
+                                        <?= htmlspecialchars(etiquetaBd('elemento', 1, 'Paciente'), ENT_QUOTES, 'UTF-8') ?>
                                     </option>
 
                                     <option value="2">
-                                        Órgano
+                                        <?= htmlspecialchars(etiquetaBd('elemento', 2, 'Órgano'), ENT_QUOTES, 'UTF-8') ?>
                                     </option>
 
                                     <option value="3">
-                                        Muestra biológica
+                                        <?= htmlspecialchars(etiquetaBd('elemento', 3, 'Muestra biológica'), ENT_QUOTES, 'UTF-8') ?>
                                     </option>
 
                                     <option value="4">
-                                        Cadetería de trámites
+                                        <?= htmlspecialchars(etiquetaBd('elemento', 4, 'Cadetería de trámites'), ENT_QUOTES, 'UTF-8') ?>
                                     </option>
 
                                     <option value="5">
-                                        Insumo médico
+                                        <?= htmlspecialchars(etiquetaBd('elemento', 5, 'Insumo médico'), ENT_QUOTES, 'UTF-8') ?>
                                     </option>
 
                                     <option value="6">
-                                        Equipamiento
+                                        <?= htmlspecialchars(etiquetaBd('elemento', 6, 'Equipamiento'), ENT_QUOTES, 'UTF-8') ?>
                                     </option>
 
                                 </select>
@@ -368,15 +374,14 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 <div class="form-group">
 
                                     <label>
-                                        Cédula de Identidad del paciente
+                                        <?= te('enfermeria.cedula_paciente') ?>
                                     </label>
 
                                     <input type="text" id="ci-paciente" class="form-input"
-                                        placeholder="Ingrese la cédula" autocomplete="off" inputmode="numeric">
+                                        placeholder="<?= te('enfermeria.cedula_placeholder') ?>" autocomplete="off" inputmode="numeric">
 
                                     <p id="estado-paciente" class="text-muted">
-                                        Ingrese la cédula para verificar
-                                        que el paciente esté registrado.
+                                        <?= te('enfermeria.cedula_ayuda') ?>
                                     </p>
 
                                 </div>
@@ -392,26 +397,20 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 <div class="form-group">
 
                                     <label>
-                                        Origen
+                                        <?= te('campo.origen') ?>
                                     </label>
 
                                     <select id="origen" class="form-input" required>
 
                                         <option value="">
-                                            Seleccione el origen...
+                                            <?= te('enfermeria.seleccione_origen') ?>
                                         </option>
 
-                                        <option value="1">
-                                            Hospital de Clínicas
-                                        </option>
-
-                                        <option value="2">
-                                            Hospital Maciel
-                                        </option>
-
-                                        <option value="3">
-                                            CHPR
-                                        </option>
+                                        <?php foreach ($ubicaciones as $ubicacion): ?>
+                                            <option value="<?= (int) $ubicacion['id_ubicacion'] ?>">
+                                                <?= htmlspecialchars(nombreUbicacion($ubicacion['nombre'], $ubicacion['tipo_ubicacion']), ENT_QUOTES, 'UTF-8') ?>
+                                            </option>
+                                        <?php endforeach; ?>
 
                                     </select>
 
@@ -421,26 +420,20 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 <div class="form-group">
 
                                     <label>
-                                        Destino
+                                        <?= te('campo.destino') ?>
                                     </label>
 
                                     <select id="destino" class="form-input" required>
 
                                         <option value="">
-                                            Seleccione el destino...
+                                            <?= te('enfermeria.seleccione_destino') ?>
                                         </option>
 
-                                        <option value="1">
-                                            Hospital de Clínicas
-                                        </option>
-
-                                        <option value="2">
-                                            Hospital Maciel
-                                        </option>
-
-                                        <option value="3">
-                                            CHPR
-                                        </option>
+                                        <?php foreach ($ubicaciones as $ubicacion): ?>
+                                            <option value="<?= (int) $ubicacion['id_ubicacion'] ?>">
+                                                <?= htmlspecialchars(nombreUbicacion($ubicacion['nombre'], $ubicacion['tipo_ubicacion']), ENT_QUOTES, 'UTF-8') ?>
+                                            </option>
+                                        <?php endforeach; ?>
 
                                     </select>
 
@@ -455,25 +448,25 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                             <div class="form-group">
 
                                 <label>
-                                    Canal de solicitud
+                                    <?= te('enfermeria.canal') ?>
                                 </label>
 
                                 <select id="canal-solicitud" class="form-input" required>
 
                                     <option value="">
-                                        Seleccione el canal...
+                                        <?= te('enfermeria.seleccione_canal') ?>
                                     </option>
 
                                     <option value="1">
-                                        Gestión Salud
+                                        <?= htmlspecialchars(etiquetaBd('canal', 1, 'Gestión Salud'), ENT_QUOTES, 'UTF-8') ?>
                                     </option>
 
                                     <option value="2">
-                                        Correo
+                                        <?= htmlspecialchars(etiquetaBd('canal', 2, 'Correo'), ENT_QUOTES, 'UTF-8') ?>
                                     </option>
 
                                     <option value="3">
-                                        Papel
+                                        <?= htmlspecialchars(etiquetaBd('canal', 3, 'Papel'), ENT_QUOTES, 'UTF-8') ?>
                                     </option>
 
                                 </select>
@@ -489,21 +482,21 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 <div class="form-group">
 
                                     <label>
-                                        Prioridad del traslado
+                                        <?= te('enfermeria.prioridad') ?>
                                     </label>
 
                                     <select id="prioridad" class="form-input" required>
 
                                         <option value="normal">
-                                            Normal
+                                            <?= te('prioridad.normal') ?>
                                         </option>
 
                                         <option value="alta">
-                                            Alta
+                                            <?= te('prioridad.alta') ?>
                                         </option>
 
                                         <option value="maxima">
-                                            Máxima
+                                            <?= te('prioridad.maxima') ?>
                                         </option>
 
                                     </select>
@@ -516,15 +509,13 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 <div class="form-group">
 
                                     <label>
-                                        Debe llegar antes de
+                                        <?= te('campo.limite') ?>
                                     </label>
 
                                     <input type="datetime-local" id="fecha-hora-limite" class="form-input">
 
                                     <p class="text-muted">
-                                        Opcional. Utilice este campo cuando
-                                        exista un límite de fecha y hora para
-                                        completar el traslado.
+                                        <?= te('enfermeria.limite_ayuda') ?>
                                     </p>
 
                                 </div>
@@ -538,11 +529,11 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                             <div class="form-group">
 
                                 <label>
-                                    Observaciones
+                                    <?= te('campo.observaciones') ?>
                                 </label>
 
                                 <textarea id="observaciones" class="form-input" rows="3" maxlength="500"
-                                    placeholder="Ingrese información relevante para realizar el traslado."></textarea>
+                                    placeholder="<?= te('enfermeria.observaciones_placeholder') ?>"></textarea>
 
                             </div>
 
@@ -555,7 +546,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 <div class="form-group">
 
                                     <label>
-                                        Solicitante
+                                        <?= te('campo.solicitante') ?>
                                     </label>
 
                                     <input
@@ -575,10 +566,10 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 <div class="form-group">
 
                                     <label>
-                                        Estado inicial
+                                        <?= te('enfermeria.estado_inicial') ?>
                                     </label>
 
-                                    <input type="text" id="estado-solicitud" class="form-input" value="Pendiente"
+                                    <input type="text" id="estado-solicitud" class="form-input" value="<?= htmlspecialchars(etiquetaBd('estado_solicitud', 'Pendiente', 'Pendiente'), ENT_QUOTES, 'UTF-8') ?>"
                                         readonly>
 
                                 </div>
@@ -591,7 +582,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
                                 <i data-lucide="send"></i>
 
-                                Enviar Solicitud a Enlace
+                                <?= te('enfermeria.enviar') ?>
 
                             </button>
 
@@ -603,8 +594,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
                             <i data-lucide="check-circle"></i>
 
-                            Solicitud enviada correctamente a la
-                            Unidad de Enlace.
+                            <?= te('enfermeria.enviada') ?>
 
                         </div>
 
@@ -631,7 +621,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
                                     <i data-lucide="qr-code" class="icon-md text-primary"></i>
 
-                                    Generar QR de Encuesta
+                                    <?= te('enfermeria.generar_qr_titulo') ?>
 
                                 </h3>
 
@@ -646,13 +636,13 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 <div class="form-group">
 
                                     <label>
-                                        Área / Categoría
+                                        <?= te('enfermeria.area_categoria') ?>
                                     </label>
 
                                     <select id="qr-categoria" class="form-input" required>
 
                                         <option value="">
-                                            Seleccione el área...
+                                            <?= te('enfermeria.seleccione_area') ?>
                                         </option>
 
                                         <option value="1">
@@ -697,7 +687,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
                                     <i data-lucide="qr-code"></i>
 
-                                    Generar Código QR
+                                    <?= te('enfermeria.generar_qr') ?>
 
                                 </button>
 
@@ -716,7 +706,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 <i data-lucide="smartphone" class="icon-xl text-muted"></i>
 
                                 <p>
-                                    El código QR generado aparecerá aquí.
+                                    <?= te('enfermeria.qr_vacio') ?>
                                 </p>
 
                             </div>
@@ -725,22 +715,22 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                             <div id="qr-generado" class="qr-display hidden">
 
                                 <h4 class="mb-2">
-                                    Código de Encuesta
+                                    <?= te('enfermeria.codigo_encuesta') ?>
                                 </h4>
 
 
-                                <img id="qr-dinamico-img" src="" alt="QR de Encuesta" class="qr-img">
+                                <img id="qr-dinamico-img" src="" alt="<?= te('enfermeria.qr_alt') ?>" class="qr-img">
 
 
                                 <div class="qr-info mt-3">
 
                                     <p>
-                                        <strong>Área:</strong>
+                                        <strong><?= te('enfermeria.area') ?>:</strong>
                                         <span id="lbl-categoria">-</span>
                                     </p>
 
                                     <p class="text-muted">
-                                        Encuesta de Satisfacción Institucional (Anónima)
+                                        <?= te('enfermeria.encuesta_nombre') ?>
                                     </p>
 
                                 </div>
@@ -748,12 +738,12 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
                                 <a id="btn-abrir-encuesta" href="#" target="_blank" class="btn-primary w-100 mt-3 btn-abrir-directo">
                                     <i data-lucide="external-link"></i>
-                                    Abrir Encuesta Directamente
+                                    <?= te('enfermeria.abrir_encuesta') ?>
                                 </a>
 
                                 <button type="button" class="btn-outline w-100 mt-2" onclick="window.print()">
                                     <i data-lucide="printer"></i>
-                                    Imprimir QR
+                                    <?= te('enfermeria.imprimir_qr') ?>
                                 </button>
 
                             </div>
@@ -776,7 +766,8 @@ if (empty($_SESSION['csrf_cancelacion'])) {
     <!-- JAVASCRIPT -->
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
-    <script src="Assets/js/enfermeria.js?v=20261026-2"></script>
+    <?= scriptTraduccionesJs(['js.enf.']) ?>
+    <script src="Assets/js/enfermeria.js?v=20261107-1"></script>
     <script>
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();

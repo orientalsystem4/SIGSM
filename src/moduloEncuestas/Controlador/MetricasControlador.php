@@ -109,6 +109,6 @@ try {
 } catch (Throwable $e) {
     http_response_code(500);
     error_log('Error de metricas: ' . $e->getMessage());
-    echo json_encode(['exito' => false, 'error' => 'No se pudieron consultar las metricas.']);
+    echo json_encode(['exito' => false, 'error' => t('metricas.error')]);
 }
 
