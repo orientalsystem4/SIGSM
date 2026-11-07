@@ -2,73 +2,133 @@
 
 Sistema Informático de Gestión de Servicios Médicos. Proyecto de egreso 2026, Oriental System.
 
-## Instalación con Docker
+## Requisitos del servidor
 
-Requiere Git, Docker con Compose y un navegador. En Windows se utiliza Docker Desktop con WSL 2. Visual Studio Code es opcional para editar el proyecto.
+- Debian con Apache (`apache2`), Docker y Docker Compose (plugin `docker compose`), `openssl` y `git`.
+- Puertos: Apache escucha en el 80 (acceso de los usuarios) y el 22 (administración). Los puertos 8080 (aplicación), 3306 (base) y 8081 (phpMyAdmin) quedan ligados a `127.0.0.1` y no son accesibles desde la red.
+- Carpeta de documentos `/var/lib/sigsm/documentos`: dueño `www-data` (uid/gid 33) y permisos `750`. El instalador la crea.
+- Los archivos `.sh`, `.php` y `.sql` deben tener finales de línea LF (lo fuerza `.gitattributes`). No copiar el proyecto con el explorador de Windows.
 
-### 1. Descargar
+## Instalación en un comando
 
 ```sh
 git clone https://github.com/orientalsystem4/SIGSM.git
 cd SIGSM
+sudo bash bin/instalar.sh
 ```
 
-### 2. Configurar
+Invocar siempre con `bash bin/instalar.sh`, no con `./bin/instalar.sh`, para no depender del bit de ejecución.
 
-Copiar `.env.example` a `.env` (en PowerShell: `Copy-Item .env.example .env`; en Linux: `cp .env.example .env`).
+El instalador verifica los requisitos, genera `.env` con una clave de base de datos aleatoria, crea la carpeta de documentos, levanta los contenedores, prepara la estructura con el seeder, crea el administrador (pide la clave o la genera) y configura Apache como proxy inverso. Al final muestra la URL, el usuario y la clave una sola vez. Se puede ejecutar de nuevo sin cambiar la clave de la base ni la del administrador existente.
 
-Configurar `DB_HOST=db`, `DB_NAME=sigsm`, `DB_USER=root` y elegir `DB_PASS`. Las variables `SEED_ADMIN_USER` y `SEED_ADMIN_PASS` se utilizan solamente al ejecutar `crear_admin.php` sin argumentos. No subir `.env` a Git.
+### Instalación desde pendrive
 
-### 3. Iniciar
+Formatear el pendrive en ext4 (en FAT32/exFAT se pierden permisos y dueño) y copiar el proyecto desde Linux:
 
 ```sh
-docker compose up -d --build
-docker compose ps
-docker compose logs --tail=30 db
+git archive --format=tar.gz -o sigsm.tar.gz HEAD   # no copiar el directorio de trabajo: contiene .env con claves reales
+docker save php:8.0-apache mariadb:10.4 | gzip > imagenes.tar.gz
 ```
 
-En una instalación nueva, Docker importa `src/documentacion/sigsm.sql` al crear el volumen de datos. Esperar a que finalice la inicialización y MariaDB indique `ready for connections` en el puerto 3306 antes de continuar. Los siguientes reinicios conservan la base y no vuelven a importar el SQL.
+En el servidor: extraer `sigsm.tar.gz` y dejar `imagenes.tar.gz` en la carpeta del proyecto, en `bin/` o junto a la carpeta del proyecto; el instalador lo detecta y lo carga con `docker load`. Luego ejecutar `sudo bash bin/instalar.sh`.
 
-### 4. Preparar datos y estructura
+## Instalación manual (respaldo y referencia)
 
-```sh
-docker compose exec web php bin/seeder.php
-```
+1. Copiar `.env.example` a `.env` y completar `DB_PASS` con una clave propia. No subir `.env` a Git.
+2. Crear la carpeta de documentos y copiar el `.htaccess` (que bloquea el acceso directo por URL):
 
-Verifica las columnas de solicitudes, las siete categorías y encuestas, las nueve preguntas y las rutas entre las ubicaciones 1, 2 y 3. También actualiza los nombres de los roles 2, 3 y 6, conservando sus IDs y permisos. Se puede repetir sin duplicar esos datos. No crea usuarios ni restablece contraseñas. Necesita las tablas del SQL base.
+   ```sh
+   sudo install -d -o 33 -g 33 -m 750 /var/lib/sigsm/documentos
+   sudo install -o 33 -g 33 -m 640 src/moduloDocumentacion/Vista/documentos/.htaccess /var/lib/sigsm/documentos/.htaccess
+   ```
 
-Las rutas iniciales son combinaciones entre los tres puntos de prueba; no incluyen distancias ni tiempos oficiales. La API de pacientes todavía no está integrada: la búsqueda por cédula consulta la tabla local `paciente`.
+3. Iniciar y esperar a que `db` figure como `healthy`:
 
-### 5. Crear el administrador
+   ```sh
+   docker compose up -d --build
+   docker compose ps
+   ```
 
-Elegir un usuario y una contraseña, reemplazando los ejemplos:
+   En una instalación nueva, Docker importa `src/documentacion/sigsm.sql` al crear el volumen de datos. Los siguientes reinicios conservan la base.
 
-```sh
-docker compose exec web php bin/crear_admin.php admin_local 'REEMPLAZAR_CON_TU_CLAVE'
-```
+4. Preparar la estructura y los datos iniciales (se puede repetir sin duplicar datos; no crea usuarios ni restablece contraseñas):
 
-Si el usuario ya existe, este comando restablece su contraseña, lo activa y agrega el rol DTI. Se ejecuta por separado del seeder y no es parte de una actualización habitual.
+   ```sh
+   docker compose exec -T web php bin/seeder.php
+   ```
 
-### 6. Abrir
+   Verifica las columnas de solicitudes (incluida `direccion_domicilio`) y usuarios, la tabla `intento_login` (límite de intentos de inicio de sesión), la ubicación genérica «Domicilio del paciente» con sus rutas hacia los hospitales 1, 2 y 3, las siete categorías y encuestas, las nueve preguntas y las rutas entre las ubicaciones 1, 2 y 3, y actualiza los nombres de los roles 2, 3 y 6. Las rutas iniciales no incluyen distancias ni tiempos oficiales. La búsqueda de pacientes por cédula consulta la tabla local `paciente`.
 
-- Sistema: http://localhost:8080/SIGSM/serviciosComunes/autenticacion/sesion.php
-- phpMyAdmin: http://localhost:8081/
+5. Crear el administrador. Si el usuario ya existe, este comando restablece su contraseña, lo activa y agrega el rol DTI:
 
-Iniciar sesión con el usuario preparado en el paso anterior. Desde Gestión de Usuarios, DTI puede crear las cuentas necesarias para probar cada rol.
+   ```sh
+   docker compose exec -T web php bin/crear_admin.php admin_local 'REEMPLAZAR_CON_TU_CLAVE'
+   ```
+
+6. Configurar Apache como proxy inverso (lo que hace el instalador):
+
+   ```sh
+   sudo a2enmod proxy proxy_http headers
+   ```
+
+   Crear `/etc/apache2/sites-available/sigsm.conf`:
+
+   ```apache
+   <VirtualHost *:80>
+       ServerName sigsm.local
+       ProxyPreserveHost On
+       ProxyPass        / http://127.0.0.1:8080/
+       ProxyPassReverse / http://127.0.0.1:8080/
+       RequestHeader set X-Forwarded-Proto "http"
+       LimitRequestBody 20971520
+   </VirtualHost>
+   ```
+
+   Luego `sudo a2dissite 000-default && sudo a2ensite sigsm && sudo apachectl configtest` y, solo si la prueba es correcta, `sudo systemctl reload apache2`. `ProxyPreserveHost On` es obligatorio: los QR usan el dominio desde el que se abre el sistema; sin él apuntarían a `localhost:8080`.
+
+7. Abrir `http://IP_DEL_SERVIDOR/`.
+
+phpMyAdmin no se inicia por defecto. Para depurar: `docker compose --profile debug up -d phpmyadmin` y acceder por túnel SSH al puerto 8081 (`ssh -L 8081:127.0.0.1:8081 usuario@servidor`). Bajarlo después con `docker compose --profile debug stop phpmyadmin`.
+
+Todos los servicios usan `restart: unless-stopped`: vuelven solos al reiniciar el servidor.
 
 ## Actualizar una instalación existente
 
-Comprobar primero que no haya cambios locales pendientes con `git status --short`. Luego, desde la rama que utiliza la instalación:
+Comprobar primero que no haya cambios locales pendientes con `git status --short`. Luego:
 
 ```sh
 git pull --ff-only
 docker compose up -d --build
-docker compose exec web php bin/seeder.php
+docker compose exec -T web php bin/seeder.php
 ```
 
-No importar nuevamente el SQL completo sobre una base en uso. No usar `docker compose down -v` para actualizar: elimina el volumen de la base. Antes de actualizar una instalación compartida, respaldar MariaDB y los archivos de `src/moduloDocumentacion/Vista/documentos`.
+No importar nuevamente el SQL completo sobre una base en uso. Los PDF viven en `/var/lib/sigsm/documentos` y no se ven afectados por la actualización. Los cambios de estructura del seeder no se revierten si luego falla la carga de datos; el script informa el error y puede repetirse después de corregirlo.
 
-Los cambios de estructura del seeder no se revierten si luego falla la carga de datos; el script informa el error y puede repetirse después de corregirlo.
+## Respaldo y restauración
+
+Base de datos y documentos:
+
+```sh
+docker compose exec -T db sh -c 'mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > respaldo_sigsm.sql
+sudo tar -czf documentos.tar.gz -C /var/lib/sigsm documentos
+```
+
+Restaurar (sobre una instalación con la base ya creada):
+
+```sh
+docker compose exec -T db sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < respaldo_sigsm.sql
+sudo tar -xzf documentos.tar.gz -C /var/lib/sigsm
+sudo chown -R 33:33 /var/lib/sigsm/documentos
+```
+
+**Advertencia:** `docker compose down -v` elimina el volumen de la base de datos y borra todos los datos. Para detener los servicios usar `docker compose down` (sin `-v`).
+
+## Usuarios
+
+- `cedula` es `VARCHAR(8)`, única y puede ser `NULL`.
+- `nombre_completo` admite hasta 150 caracteres y puede ser `NULL`.
+- Los usuarios anteriores quedan con ambas columnas vacías hasta completar sus fichas.
+- Estas columnas no están en el SQL base: las agrega `bin/seeder.php` (`ADD COLUMN IF NOT EXISTS`), por lo que hay que ejecutarlo en toda instalación.
 
 ## Roles
 
@@ -96,9 +156,16 @@ Si una cuenta tiene varios roles, elige el rol activo al ingresar. La aprobació
 
 ## QR y archivos
 
-Los QR de documentación llevan al listado público de documentos activos de una categoría. El enlace usa el dominio desde el cual se abre el sistema. Un QR generado en `localhost` no funciona desde otro dispositivo: para una prueba con teléfono usar el servidor publicado o una dirección de la laptop accesible por la red local.
+Los QR de documentación llevan al listado público de documentos activos de una categoría. El enlace usa el dominio desde el cual se abre el sistema; por eso el proxy debe conservar el `Host` (`ProxyPreserveHost On`). Un QR generado en `localhost` no funciona desde otro dispositivo: abrir el sistema por la IP o el nombre del servidor.
 
-Los PDF cargados y los datos creados localmente no se sincronizan automáticamente con GitHub ni con el servidor. Los documentos públicos deben contener información destinada a consulta pública. Los QR, gráficos e iconos actuales usan servicios externos y necesitan acceso a Internet.
+Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Los documentos públicos deben contener información destinada a consulta pública. Los QR, gráficos e iconos actuales usan servicios externos y necesitan acceso a Internet.
+
+## Notas pendientes
+
+- `bin/operador_sigsm.sh` asume Caddy y `php8.4-fpm`; no coincide con el stack instalado (Apache + Docker). Decidir si se adapta o se retira de la entrega.
+- PHP 8.0 y MariaDB 10.4 ya no reciben parches de seguridad: deuda técnica a planificar.
+- No hay HTTPS (red interna, solo HTTP). Si se publica fuera, revisar las cookies de sesión (`secure`, `HttpOnly`).
+- La aplicación usa el usuario `root` de la base; a mediano plazo conviene un usuario con privilegios limitados.
 
 ## Organización
 
@@ -111,4 +178,4 @@ Los PDF cargados y los datos creados localmente no se sincronizan automáticamen
 - `src/usuario`: gestión de cuentas, exclusiva de DTI.
 - `src/serviciosComunes`: autenticación, permisos, conexión y estilos compartidos.
 
-La configuración incluida ejecuta PHP 8.0 y MariaDB 10.4. La instalación y las migraciones se realizan con Docker; no requieren PHP ni MariaDB instalados por separado en la computadora.
+La configuración incluida ejecuta PHP 8.0 y MariaDB 10.4 en contenedores; no requiere PHP ni MariaDB instalados en el servidor.

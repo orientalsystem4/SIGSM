@@ -25,8 +25,8 @@ unset($_SESSION['mensaje']);
 
     <link rel="stylesheet"
         href="Assets/css/documentacion.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../../serviciosComunes/vistaGeneral/assets/vendor/chart-4.6.1.umd.min.js"></script>
+    <script src="../../serviciosComunes/vistaGeneral/assets/vendor/lucide-1.70.0.min.js"></script>
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 

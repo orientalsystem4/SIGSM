@@ -27,9 +27,12 @@ foreach ($envPaths as $path) {
                 list($name, $value) = explode('=', $line, 2);
                 $name = trim($name);
                 $value = trim($value);
-                putenv(sprintf('%s=%s', $name, $value));
-                $_ENV[$name] = $value;
-                $_SERVER[$name] = $value;
+                // Una variable ya definida en el entorno tiene prioridad sobre el .env
+                if (getenv($name) === false) {
+                    putenv(sprintf('%s=%s', $name, $value));
+                    $_ENV[$name] = $value;
+                    $_SERVER[$name] = $value;
+                }
             }
         }
         break;
@@ -38,7 +41,7 @@ foreach ($envPaths as $path) {
 
 // 2. Determinar credenciales (argumentos CLI o variables .env)
 $adminUser = $argv[1] ?? (getenv('SEED_ADMIN_USER') ?: ($_ENV['SEED_ADMIN_USER'] ?? 'admin'));
-$adminPass = $argv[2] ?? (getenv('SEED_ADMIN_PASS') ?: ($_ENV['SEED_ADMIN_PASS'] ?? 'Admin123!'));
+$adminPass = $argv[2] ?? (getenv('SEED_ADMIN_PASS') ?: ($_ENV['SEED_ADMIN_PASS'] ?? ''));
 
 if (empty($adminUser) || empty($adminPass)) {
     fwrite(STDERR, "[ERROR] Debe especificar usuario y contraseña o definirlos en .env (SEED_ADMIN_USER, SEED_ADMIN_PASS).\n");

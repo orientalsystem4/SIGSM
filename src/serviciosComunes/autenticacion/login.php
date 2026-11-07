@@ -33,6 +33,12 @@ if (!is_string($usuario) || !is_string($password)) {
 
 $usuario = trim($usuario);
 
+// Limite de intentos fallidos por nombre de usuario (no por IP: detras del
+// proxy REMOTE_ADDR es siempre la IP interna de Docker).
+const LOGIN_MAX_FALLOS = 5;
+const LOGIN_VENTANA_MIN = 10;
+$usuarioIntento = mb_substr($usuario, 0, 50);
+
 if ($usuario === '' || $password === '') {
     $_SESSION['error'] = 'Por favor complete todos los campos.';
     header('Location: sesion.php');
@@ -41,6 +47,26 @@ if ($usuario === '' || $password === '') {
 
 try {
     $conexion = Conexion::conectar();
+
+    // Bloqueo temporal: 5 fallos en 10 minutos. Mismo mensaje que una clave
+    // incorrecta para no revelar si el usuario existe.
+    $bloqueo = $conexion->prepare("
+        SELECT fecha FROM intento_login
+        WHERE nombre_usuario = :usuario
+        ORDER BY fecha DESC
+        LIMIT 1 OFFSET " . (LOGIN_MAX_FALLOS - 1)
+    );
+    $bloqueo->execute([':usuario' => $usuarioIntento]);
+    $quintoFallo = $bloqueo->fetchColumn();
+    if ($quintoFallo !== false) {
+        $vigente = $conexion->prepare("SELECT :fecha > NOW() - INTERVAL " . LOGIN_VENTANA_MIN . " MINUTE");
+        $vigente->execute([':fecha' => $quintoFallo]);
+        if ((int) $vigente->fetchColumn() === 1) {
+            $_SESSION['error'] = 'Usuario o contraseña incorrectos.';
+            header('Location: sesion.php');
+            exit;
+        }
+    }
 
     // Buscar la cuenta. Los roles se consultan por separado.
     $sql = "
@@ -65,10 +91,23 @@ try {
         !$user
         || !password_verify($password, $user['contrasenha_hash'])
     ) {
+        $registrar = $conexion->prepare(
+            "INSERT INTO intento_login (nombre_usuario, fecha, ip) VALUES (:usuario, NOW(), :ip)"
+        );
+        $registrar->execute([
+            ':usuario' => $usuarioIntento,
+            ':ip'      => mb_substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45)
+        ]);
+        $conexion->exec("DELETE FROM intento_login WHERE fecha < NOW() - INTERVAL 1 DAY");
+
         $_SESSION['error'] = 'Usuario o contraseña incorrectos.';
         header('Location: sesion.php');
         exit;
     }
+
+    // Credenciales correctas: se descartan los fallos previos.
+    $limpiar = $conexion->prepare("DELETE FROM intento_login WHERE nombre_usuario = :usuario");
+    $limpiar->execute([':usuario' => $usuarioIntento]);
 
     if ((int) $user['activo'] !== 1) {
         $_SESSION['error'] = 'El usuario se encuentra inactivo. Comuníquese con el administrador.';

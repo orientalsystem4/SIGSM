@@ -759,9 +759,9 @@ cargar_credenciales_env_produccion() {
     if [[ -f "$DB_ENV_FILE" ]]; then
         # shellcheck disable=SC1090
         source "$DB_ENV_FILE"
-        DB_USER="${DB_USER:-${MYSQL_USER:-orientalsistem}}"
-        DB_PASSWORD="${DB_PASS:-${DB_PASSWORD:-${MYSQL_PASSWORD:-}}}"
-        DEFAULT_DB="${DB_NAME:-${MYSQL_DATABASE:-orientalsistem}}"
+        DB_USER="${DB_USER:-${MARIADB_USER:-${MYSQL_USER:-orientalsistem}}}"
+        DB_PASSWORD="${DB_PASS:-${DB_PASSWORD:-${MARIADB_PASSWORD:-${MYSQL_PASSWORD:-}}}}"
+        DEFAULT_DB="${DB_NAME:-${MARIADB_DATABASE:-${MYSQL_DATABASE:-orientalsistem}}}"
         return 0
     fi
     return 1
@@ -789,7 +789,7 @@ backup_bd_respaldos() {
     if cargar_credenciales_env_produccion && [[ -n "${DB_PASSWORD:-}" ]]; then
         echo "Usando configuración segura del servidor ($DB_ENV_FILE) para base '$DEFAULT_DB'..."
         crear_archivo_credenciales "$DB_USER" "$DB_PASSWORD"
-        if "$dump_bin" "--defaults-extra-file=$CNF_FILE" --single-transaction --routines --events --triggers --databases "$DEFAULT_DB" 2>/dev/null | gzip -c > "$archivo" && gzip -t "$archivo"; then
+        if "$dump_bin" "--defaults-extra-file=$CNF_FILE" --single-transaction --routines --events --triggers --databases "$DEFAULT_DB" 2>>"$LOG_RESPALDOS" | gzip -c > "$archivo" && gzip -t "$archivo"; then
             chmod 600 "$archivo"
             tamano=$(du -h "$archivo" | cut -f1)
             echo "Respaldo de BD exitoso: $archivo (Tamaño: $tamano)"
@@ -815,7 +815,7 @@ backup_bd_respaldos() {
     crear_archivo_credenciales "$db_user" "$db_pass"
 
     echo "Realizando respaldo de base de datos..."
-    if "$dump_bin" "--defaults-extra-file=$CNF_FILE" --all-databases --single-transaction 2>/dev/null | gzip -c > "$archivo" && gzip -t "$archivo"; then
+    if "$dump_bin" "--defaults-extra-file=$CNF_FILE" --all-databases --single-transaction 2>>"$LOG_RESPALDOS" | gzip -c > "$archivo" && gzip -t "$archivo"; then
         chmod 600 "$archivo"
         tamano=$(du -h "$archivo" | cut -f1)
         echo "Respaldo exitoso: $archivo (Tamaño: $tamano)"
@@ -1071,6 +1071,8 @@ crear_archivo_credenciales() {
         printf '[client]\n'
         printf 'user=%s\n' "$usuario"
         printf 'password=%s\n' "$contrasena"
+        # El cliente 11.x exige TLS y el servidor 10.11 no lo tiene
+        printf 'skip-ssl\n'
     } > "$CNF_FILE"
 }
 

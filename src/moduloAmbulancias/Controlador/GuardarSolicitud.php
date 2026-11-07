@@ -144,6 +144,22 @@ try {
         ['canal_solicitud', 'id_canal', $idCanal]
     ];
 
+    if ($idTipo !== 1) {
+        $consulta = $conexion->prepare(
+            "SELECT 1 FROM ubicacion
+             WHERE id_ubicacion IN (:origen, :destino)
+               AND tipo_ubicacion = 'Domicilio' LIMIT 1"
+        );
+        $consulta->execute([':origen' => $idOrigen, ':destino' => $idDestino]);
+
+        if ($consulta->fetchColumn()) {
+            responderSolicitud(422, [
+                'exito' => false,
+                'mensaje' => 'Solo los pacientes pueden trasladarse a un domicilio.'
+            ]);
+        }
+    }
+
     foreach ($referencias as [$tabla, $columna, $id]) {
         $consulta = $conexion->prepare(
             "SELECT 1 FROM $tabla WHERE $columna = :id LIMIT 1"

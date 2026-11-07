@@ -10,7 +10,8 @@ $esChoferSeguimiento = tieneRol(5);
 $esDTISeguimiento = tieneRol(1);
 
 $viajesSeguimiento = SeguimientoModelo::listar(
-    $esChoferSeguimiento ? $idUsuarioSeguimiento : null
+    $esChoferSeguimiento ? $idUsuarioSeguimiento : null,
+    true
 );
 
 if (empty($_SESSION['csrf_seguimiento'])) {
@@ -85,6 +86,9 @@ $activosSeguimiento = array_filter(
                             'Chofer' => $viaje['chofer'] ?? 'Sin asignar',
                             'Enfermería' => $viaje['enfermeria'] ?? 'Sin asignar'
                         ];
+                        if (!empty($viaje['direccion_domicilio'])) {
+                            $datosViaje['Dirección del domicilio'] = $viaje['direccion_domicilio'];
+                        }
                         ?>
 
                         <?php foreach ($datosViaje as $etiqueta => $valor): ?>

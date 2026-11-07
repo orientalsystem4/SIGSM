@@ -75,6 +75,42 @@ try {
         );
     }
 
+    // Traslado al domicilio: solo pacientes y con direccion obligatoria.
+    $consulta = $conexion->prepare(
+        "SELECT COUNT(*) FROM ubicacion
+         WHERE id_ubicacion IN (:origen, :destino)
+           AND tipo_ubicacion = 'Domicilio'"
+    );
+    $consulta->execute([
+        ':origen' => $solicitud['id_origen'],
+        ':destino' => $solicitud['id_destino']
+    ]);
+    $direccionDomicilio = null;
+
+    if ((int) $consulta->fetchColumn() > 0) {
+        if ((int) $solicitud['id_tipo_elemento'] !== 1) {
+            throw new DomainException(
+                'Solo los pacientes pueden trasladarse a un domicilio.'
+            );
+        }
+
+        $direccionDomicilio = $_POST['direccion_domicilio'] ?? '';
+        $direccionDomicilio = is_string($direccionDomicilio)
+            ? trim($direccionDomicilio)
+            : '';
+
+        if (
+            $direccionDomicilio === ''
+            || preg_match('//u', $direccionDomicilio) !== 1
+            || preg_match('/[\x00-\x1F\x7F]/', $direccionDomicilio) === 1
+            || mb_strlen($direccionDomicilio, 'UTF-8') > 255
+        ) {
+            throw new DomainException(
+                'Ingrese la direccion del domicilio (hasta 255 caracteres).'
+            );
+        }
+    }
+
     $consulta = $conexion->prepare(
         'SELECT id_traslado FROM traslado
          WHERE id_solicitud = :id'
@@ -231,10 +267,14 @@ try {
 
     $consulta = $conexion->prepare(
         "UPDATE solicitud_traslado
-         SET estado_solicitud = 'Asignado'
+         SET estado_solicitud = 'Asignado',
+             direccion_domicilio = :direccion
          WHERE id_solicitud = :id"
     );
-    $consulta->execute([':id' => $idSolicitud]);
+    $consulta->execute([
+        ':id' => $idSolicitud,
+        ':direccion' => $direccionDomicilio
+    ]);
 
     $consulta = $conexion->prepare(
         "INSERT INTO historial_estado (

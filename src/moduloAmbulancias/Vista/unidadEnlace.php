@@ -8,7 +8,7 @@ $solicitudesPendientes = SolicitudModelo::listarPendientes();
 $solicitudesCanceladas = SolicitudModelo::listarCanceladas();
 require_once __DIR__ . '/../Model/SeguimientoModelo.php';
 
-$trasladosEnlace = SeguimientoModelo::listar(null);
+$trasladosEnlace = SeguimientoModelo::listar(null, tieneRol([1, 3]));
 
 $activosEnlace = array_filter(
     $trasladosEnlace,
@@ -30,7 +30,7 @@ $activosEnlace = array_filter(
 
     <link rel="stylesheet" href="assets/css/unidadEnlace.css?v=20261021-1">
 
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../../serviciosComunes/vistaGeneral/assets/vendor/lucide-1.70.0.min.js"></script>
 
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
@@ -233,6 +233,9 @@ $activosEnlace = array_filter(
                                             'Chofer' => $viaje['chofer'] ?? 'Sin asignar',
                                             'Enfermería' => $viaje['enfermeria'] ?? 'Sin asignar'
                                         ];
+                                        if (!empty($viaje['direccion_domicilio'])) {
+                                            $datosTraslado['Dirección del domicilio'] = $viaje['direccion_domicilio'];
+                                        }
                                         ?>
 
                                         <?php foreach ($datosTraslado as $etiqueta => $valor): ?>
