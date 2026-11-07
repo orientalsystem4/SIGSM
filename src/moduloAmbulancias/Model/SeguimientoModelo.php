@@ -4,9 +4,11 @@ require_once __DIR__ . '/../../serviciosComunes/conexionBD/conexion.php';
 
 class SeguimientoModelo
 {
-    public static function listar(?int $idChofer): array
+    // La direccion de domicilio es un dato personal: solo se incluye si quien consulta puede verla.
+    public static function listar(?int $idChofer, bool $verDomicilio = false): array
     {
         $conexion = Conexion::conectar();
+        $columnaDomicilio = $verDomicilio ? 's.direccion_domicilio' : 'NULL';
 
         $sql = "
             SELECT
@@ -15,6 +17,7 @@ class SeguimientoModelo
                 t.id_chofer,
                 t.id_vehiculo,
                 s.ci_paciente,
+                $columnaDomicilio AS direccion_domicilio,
                 v.matricula,
                 ch.nombre_usuario AS chofer,
                 en.nombre_usuario AS enfermeria,

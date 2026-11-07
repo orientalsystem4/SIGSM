@@ -28,7 +28,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
     <link rel="stylesheet" href="Assets/css/enfermeria.css?v=2">
 
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../../serviciosComunes/vistaGeneral/assets/vendor/lucide-1.70.0.min.js"></script>
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
 </head>
 

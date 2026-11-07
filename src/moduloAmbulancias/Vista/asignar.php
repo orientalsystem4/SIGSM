@@ -29,6 +29,8 @@ $rutas = TrasladoModelo::listarRutas(
 );
 
 $esPaciente = (int) $solicitud['id_tipo_elemento'] === 1;
+$esDomicilio = (int) $solicitud['es_domicilio'] === 1;
+$domicilioInvalido = $esDomicilio && !$esPaciente;
 
 if (empty($_SESSION['csrf_asignacion'])) {
     $_SESSION['csrf_asignacion'] = bin2hex(random_bytes(32));
@@ -70,7 +72,7 @@ function escaparAsignacion($valor): string
             margin: 20px 0 8px;
             font-weight: bold;
         }
-        select, button {
+        select, input[type=text], button {
             width: 100%;
             padding: 12px;
             border-radius: 6px;
@@ -159,6 +161,15 @@ function escaparAsignacion($valor): string
             <?php endforeach; ?>
         </select>
 
+        <?php if ($domicilioInvalido): ?>
+            <p class="error">Solo los pacientes pueden trasladarse a un domicilio.</p>
+        <?php elseif ($esDomicilio): ?>
+            <label for="direccion_domicilio">Dirección del domicilio</label>
+            <input type="text" id="direccion_domicilio"
+                   name="direccion_domicilio" maxlength="255" required
+                   autocomplete="off">
+        <?php endif; ?>
+
         <label for="ruta">Ruta</label>
         <select id="ruta" name="id_ruta" required>
             <option value="">Seleccione ruta...</option>
@@ -179,7 +190,7 @@ function escaparAsignacion($valor): string
         <?php endif; ?>
 
         <button type="submit"
-            <?= (!$vehiculos || !$choferes || !$rutas
+            <?= (!$vehiculos || !$choferes || !$rutas || $domicilioInvalido
                 || ($esPaciente && !$enfermeria)) ? 'disabled' : '' ?>>
             Confirmar asignación
         </button>

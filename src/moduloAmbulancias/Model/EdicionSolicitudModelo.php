@@ -81,6 +81,13 @@ class EdicionSolicitudModelo
             if (count($q->fetchAll(PDO::FETCH_COLUMN)) !== 2) {
                 throw new DomainException('El origen o destino seleccionado no existe.');
             }
+            if ((int) $solicitud['id_tipo_elemento'] !== 1) {
+                $q = $db->prepare("SELECT 1 FROM ubicacion WHERE id_ubicacion IN (:origen, :destino) AND tipo_ubicacion = 'Domicilio' LIMIT 1");
+                $q->execute([':origen' => $datos['id_origen'], ':destino' => $datos['id_destino']]);
+                if ($q->fetchColumn()) {
+                    throw new DomainException('Solo los pacientes pueden trasladarse a un domicilio.');
+                }
+            }
             // Conserva la prioridad maxima de organos, igual que al crear.
             if ((int) $solicitud['id_tipo_elemento'] === 2) {
                 $datos['prioridad'] = 'maxima';

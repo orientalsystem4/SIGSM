@@ -12,7 +12,8 @@ class TrasladoModelo
             SELECT
                 s.*,
                 o.nombre AS origen,
-                d.nombre AS destino
+                d.nombre AS destino,
+                (o.tipo_ubicacion = 'Domicilio' OR d.tipo_ubicacion = 'Domicilio') AS es_domicilio
             FROM solicitud_traslado s
             INNER JOIN ubicacion o
                 ON o.id_ubicacion = s.id_origen

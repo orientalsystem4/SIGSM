@@ -13,4 +13,7 @@ RUN echo '<?php header("Location: /SIGSM/"); exit; ?>' > /var/www/html/index.php
 # Permite los PDF de hasta 15 MB aceptados por el formulario.
 RUN printf 'upload_max_filesize=15M\npost_max_size=20M\n' > /usr/local/etc/php/conf.d/subidas.ini
 
+# Cookies de sesión. No se activa cookie_secure: la red interna usa HTTP.
+RUN printf 'session.cookie_httponly=1\nsession.cookie_samesite=Lax\nsession.use_strict_mode=1\n' > /usr/local/etc/php/conf.d/sesion.ini
+
 WORKDIR /var/www/html/SIGSM

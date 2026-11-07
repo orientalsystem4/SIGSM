@@ -12,7 +12,7 @@ $usuarioActual = obtenerUsuarioActual();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S.I.G.S.M. | Panel de Módulos</title>
     <link rel="stylesheet" href="assets/css/bifurcacion.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="assets/vendor/lucide-1.70.0.min.js"></script>
     <link rel="stylesheet" href="assets/css/tema-institucional.css?v=20261021-1">
 </head>
 <body>

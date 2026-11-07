@@ -35,7 +35,8 @@ try {
         ADD COLUMN IF NOT EXISTS observaciones VARCHAR(500) NULL,
         ADD COLUMN IF NOT EXISTS motivo_cancelacion VARCHAR(500) NULL,
         ADD COLUMN IF NOT EXISTS fecha_cancelacion DATETIME NULL,
-        ADD COLUMN IF NOT EXISTS id_usuario_cancelacion INT NULL");
+        ADD COLUMN IF NOT EXISTS id_usuario_cancelacion INT NULL,
+        ADD COLUMN IF NOT EXISTS direccion_domicilio VARCHAR(255) NULL");
     echo "[OK] Columnas de solicitudes verificadas.\n";
 
         // agrega las columnas de usuarios que falten, conservando los datos existentes
@@ -44,6 +45,16 @@ try {
         ADD COLUMN IF NOT EXISTS nombre_completo VARCHAR(150) NULL");
 
     echo "[OK] Columnas de usuarios verificadas.\n";
+
+    // Registro de intentos fallidos de inicio de sesion (limite por usuario).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS intento_login (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        nombre_usuario VARCHAR(50) NOT NULL,
+        fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        ip VARCHAR(45) NULL,
+        KEY idx_intento_usuario_fecha (nombre_usuario, fecha)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    echo "[OK] Tabla de intentos de inicio de sesion verificada.\n";
 
     $pdo->beginTransaction();
     // Conserva los IDs y permisos; actualiza los nombres acordados.
@@ -109,7 +120,22 @@ try {
           AND o.id_ubicacion <> d.id_ubicacion
           AND NOT EXISTS (SELECT 1 FROM ruta r
               WHERE r.id_origen = o.id_ubicacion AND r.id_destino = d.id_ubicacion)');
+
+    // Ubicacion generica para traslados al domicilio del paciente. La direccion
+    // se guarda en la solicitud; no se crea una ubicacion por cada casa.
+    $pdo->exec("INSERT INTO ubicacion (nombre, direccion, tipo_ubicacion)
+        SELECT 'Domicilio del paciente', NULL, 'Domicilio' FROM DUAL
+        WHERE NOT EXISTS (SELECT 1 FROM ubicacion WHERE tipo_ubicacion = 'Domicilio')");
+    // Rutas Hospital 1/2/3 <-> Domicilio, sin distancia ni tiempo inventados.
+    $pdo->exec("INSERT INTO ruta (id_origen, id_destino, distancia_km, tiempo_min)
+        SELECT a.id_ubicacion, b.id_ubicacion, NULL, NULL
+        FROM ubicacion a JOIN ubicacion b
+          ON (a.id_ubicacion IN (1, 2, 3) AND b.tipo_ubicacion = 'Domicilio')
+          OR (b.id_ubicacion IN (1, 2, 3) AND a.tipo_ubicacion = 'Domicilio')
+        WHERE NOT EXISTS (SELECT 1 FROM ruta r
+              WHERE r.id_origen = a.id_ubicacion AND r.id_destino = b.id_ubicacion)");
     $pdo->commit();
+    echo "[OK] Ubicacion y rutas de domicilio verificadas.\n";
     echo "[OK] 7 encuestas y 9 preguntas verificadas.\n";
     echo "[OK] Rutas iniciales verificadas.\n";
     echo "Preparacion completada. Usuarios y contrasenas sin cambios.\n";

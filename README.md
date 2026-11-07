@@ -57,7 +57,7 @@ En el servidor: extraer `sigsm.tar.gz` y dejar `imagenes.tar.gz` en la carpeta d
    docker compose exec -T web php bin/seeder.php
    ```
 
-   Verifica las columnas de solicitudes y usuarios, las siete categorías y encuestas, las nueve preguntas y las rutas entre las ubicaciones 1, 2 y 3, y actualiza los nombres de los roles 2, 3 y 6. Las rutas iniciales no incluyen distancias ni tiempos oficiales. La búsqueda de pacientes por cédula consulta la tabla local `paciente`.
+   Verifica las columnas de solicitudes (incluida `direccion_domicilio`) y usuarios, la tabla `intento_login` (límite de intentos de inicio de sesión), la ubicación genérica «Domicilio del paciente» con sus rutas hacia los hospitales 1, 2 y 3, las siete categorías y encuestas, las nueve preguntas y las rutas entre las ubicaciones 1, 2 y 3, y actualiza los nombres de los roles 2, 3 y 6. Las rutas iniciales no incluyen distancias ni tiempos oficiales. La búsqueda de pacientes por cédula consulta la tabla local `paciente`.
 
 5. Crear el administrador. Si el usuario ya existe, este comando restablece su contraseña, lo activa y agrega el rol DTI:
 
