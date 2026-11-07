@@ -27,7 +27,7 @@ Formatear el pendrive en ext4 (en FAT32/exFAT se pierden permisos y dueño) y co
 
 ```sh
 git archive --format=tar.gz -o sigsm.tar.gz HEAD   # no copiar el directorio de trabajo: contiene .env con claves reales
-docker save php:8.0-apache mariadb:10.4 | gzip > imagenes.tar.gz
+docker save php:8.4-apache mariadb:10.11 | gzip > imagenes.tar.gz
 ```
 
 En el servidor: extraer `sigsm.tar.gz` y dejar `imagenes.tar.gz` en la carpeta del proyecto, en `bin/` o junto a la carpeta del proyecto; el instalador lo detecta y lo carga con `docker load`. Luego ejecutar `sudo bash bin/instalar.sh`.
@@ -109,14 +109,14 @@ No importar nuevamente el SQL completo sobre una base en uso. Los PDF viven en `
 Base de datos y documentos:
 
 ```sh
-docker compose exec -T db sh -c 'mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > respaldo_sigsm.sql
+docker compose exec -T db sh -c 'mariadb-dump -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > respaldo_sigsm.sql
 sudo tar -czf documentos.tar.gz -C /var/lib/sigsm documentos
 ```
 
 Restaurar (sobre una instalación con la base ya creada):
 
 ```sh
-docker compose exec -T db sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < respaldo_sigsm.sql
+docker compose exec -T db sh -c 'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < respaldo_sigsm.sql
 sudo tar -xzf documentos.tar.gz -C /var/lib/sigsm
 sudo chown -R 33:33 /var/lib/sigsm/documentos
 ```
@@ -163,7 +163,6 @@ Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Lo
 ## Notas pendientes
 
 - `bin/operador_sigsm.sh` asume Caddy y `php8.4-fpm`; no coincide con el stack instalado (Apache + Docker). Decidir si se adapta o se retira de la entrega.
-- PHP 8.0 y MariaDB 10.4 ya no reciben parches de seguridad: deuda técnica a planificar.
 - No hay HTTPS (red interna, solo HTTP). Si se publica fuera, revisar las cookies de sesión (`secure`, `HttpOnly`).
 - La aplicación usa el usuario `root` de la base; a mediano plazo conviene un usuario con privilegios limitados.
 
@@ -178,4 +177,4 @@ Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Lo
 - `src/usuario`: gestión de cuentas, exclusiva de DTI.
 - `src/serviciosComunes`: autenticación, permisos, conexión y estilos compartidos.
 
-La configuración incluida ejecuta PHP 8.0 y MariaDB 10.4 en contenedores; no requiere PHP ni MariaDB instalados en el servidor.
+La configuración incluida ejecuta PHP 8.4 y MariaDB 10.11 en contenedores, con zona horaria `America/Montevideo`; no requiere PHP ni MariaDB instalados en el servidor. Una base creada con MariaDB 10.4 se actualiza sola al primer arranque (`MARIADB_AUTO_UPGRADE`); respaldarla antes.

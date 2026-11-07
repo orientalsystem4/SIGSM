@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Model/DocumentacionPublicaModelo.php';
 $categoriasDocumentales = DocumentacionPublicaModelo::categorias();
 ?>
 <div id="sec-doc-estatica" class="view-section hidden">
-    <h3 class="mb-md">Directorio de Documentación Médica</h3>
+    <h3 class="mb-md"><?= te('directorio.titulo') ?></h3>
     <div class="qr-grid">
         <?php foreach ($categoriasDocumentales as $categoriaDocumental): ?>
             <div class="qr-card">
@@ -14,17 +14,17 @@ $categoriasDocumentales = DocumentacionPublicaModelo::categorias();
                 </div>
                 <div class="qr-body">
                     <img data-qr-documentacion width="180" height="180" class="qr-img" loading="lazy"
-                         alt="QR de <?= htmlspecialchars($categoriaDocumental['nombre'], ENT_QUOTES, 'UTF-8') ?>">
+                         alt="<?= te('directorio.qr_alt', ['categoria' => $categoriaDocumental['nombre']]) ?>">
                     <p class="text-center mt-2">
                         <a data-enlace-documentacion href="documentosPublicos.php?categoria=<?= (int) $categoriaDocumental['id_categoria'] ?>"
-                           target="_blank" rel="noopener">Abrir documentos</a>
+                           target="_blank" rel="noopener"><?= te('directorio.abrir') ?></a>
                     </p>
-                    <p data-error-qr hidden>No se pudo cargar el QR. Usá el enlace para abrir los documentos.</p>
+                    <p data-error-qr hidden><?= te('directorio.error_qr') ?></p>
                 </div>
             </div>
         <?php endforeach; ?>
     </div>
-    <?php if (!$categoriasDocumentales): ?><p>No hay categorías documentales registradas.</p><?php endif; ?>
+    <?php if (!$categoriasDocumentales): ?><p><?= te('directorio.sin_categorias') ?></p><?php endif; ?>
 </div>
 <script>
     document.querySelectorAll('#sec-doc-estatica .qr-card').forEach(tarjeta => {

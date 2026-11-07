@@ -17,7 +17,7 @@ function responderSolicitud(int $codigo, array $datos): void
 if (!tieneRol([1, 2, 6])) {
     responderSolicitud(403, [
         'exito' => false,
-        'mensaje' => 'No tiene permisos para crear solicitudes.'
+        'mensaje' => t('solicitud.error_permisos')
     ]);
 }
 
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
     responderSolicitud(405, [
         'exito' => false,
-        'mensaje' => 'Metodo no permitido.'
+        'mensaje' => t('error.metodo')
     ]);
 }
 
@@ -40,7 +40,7 @@ if (
 ) {
     responderSolicitud(403, [
         'exito' => false,
-        'mensaje' => 'Recargue la pagina e intente nuevamente.'
+        'mensaje' => t('error.recargar_pagina_usted')
     ]);
 }
 
@@ -79,11 +79,11 @@ $errores = [];
 $fechaLimite = null;
 
 if (!$idTipo || !$idOrigen || !$idDestino || !$idCanal) {
-    $errores[] = 'Complete tipo, origen, destino y canal.';
+    $errores[] = t('solicitud.error_obligatorios');
 }
 
 if ($idOrigen === $idDestino) {
-    $errores[] = 'El origen y el destino deben ser diferentes.';
+    $errores[] = t('solicitud.error_mismo_lugar');
 }
 
 // Mantiene la regla que ya tiene el formulario.
@@ -92,17 +92,17 @@ if ($idTipo === 2) {
 }
 
 if (!in_array($prioridad, ['normal', 'alta', 'maxima'], true)) {
-    $errores[] = 'La prioridad no es valida.';
+    $errores[] = t('solicitud.error_prioridad');
 }
 
 if ($idTipo === 1 && !preg_match('/^[0-9]{7,8}$/', $cedula)) {
-    $errores[] = 'Ingrese una cedula de 7 u 8 digitos.';
+    $errores[] = t('paciente.error_cedula');
 }
 
 if (preg_match('//u', $observaciones) !== 1) {
-    $errores[] = 'Las observaciones contienen caracteres invalidos.';
+    $errores[] = t('solicitud.error_obs_caracteres');
 } elseif (preg_match_all('/./us', $observaciones) > 500) {
-    $errores[] = 'Las observaciones no pueden superar 500 caracteres.';
+    $errores[] = t('solicitud.error_obs_largo');
 }
 
 if ($limiteTexto !== '') {
@@ -118,9 +118,9 @@ if ($limiteTexto !== '') {
         !$fecha
         || $fecha->format('Y-m-d\TH:i') !== $limiteTexto
     ) {
-        $errores[] = 'La fecha y hora limite no son validas.';
+        $errores[] = t('solicitud.error_fecha');
     } elseif ($fecha <= new DateTimeImmutable('now', $zona)) {
-        $errores[] = 'La fecha limite debe ser posterior al momento actual.';
+        $errores[] = t('solicitud.error_fecha_pasada');
     } else {
         $fechaLimite = $fecha->format('Y-m-d H:i:s');
     }
@@ -155,7 +155,7 @@ try {
         if ($consulta->fetchColumn()) {
             responderSolicitud(422, [
                 'exito' => false,
-                'mensaje' => 'Solo los pacientes pueden trasladarse a un domicilio.'
+                'mensaje' => t('domicilio.solo_pacientes')
             ]);
         }
     }
@@ -170,7 +170,7 @@ try {
         if (!$consulta->fetchColumn()) {
             responderSolicitud(422, [
                 'exito' => false,
-                'mensaje' => 'Una de las opciones seleccionadas no existe.'
+                'mensaje' => t('solicitud.error_opcion')
             ]);
         }
     }
@@ -181,7 +181,7 @@ try {
     ) {
         responderSolicitud(422, [
             'exito' => false,
-            'mensaje' => 'No se encontro un paciente con esa cedula.'
+            'mensaje' => t('paciente.no_encontrado')
         ]);
     }
 
@@ -206,7 +206,7 @@ try {
     responderSolicitud(201, [
         'exito' => true,
         'id_solicitud' => $idSolicitud,
-        'mensaje' => "Solicitud #{$idSolicitud} registrada correctamente."
+        'mensaje' => t('solicitud.ok', ['id' => $idSolicitud])
     ]);
 
 } catch (Exception $e) {
@@ -214,6 +214,6 @@ try {
 
     responderSolicitud(500, [
         'exito' => false,
-        'mensaje' => 'No se pudo guardar la solicitud. Intente nuevamente.'
+        'mensaje' => t('solicitud.error_general')
     ]);
 }

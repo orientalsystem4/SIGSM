@@ -12,13 +12,13 @@ $mensaje = $_SESSION['mensaje'] ?? null;
 unset($_SESSION['mensaje']);
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>S.I.G.S.M. | Portal de Documentación y Encuestas</title>
+    <title>S.I.G.S.M. | <?= te('documentacion.portal') ?></title>
 
     <link rel="stylesheet"
         href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
@@ -47,7 +47,7 @@ unset($_SESSION['mensaje']);
 
                 <img
                     src="../../serviciosComunes/autenticacion/assets/image.png"
-                    alt="Logo"
+                    alt="<?= te('comun.logo_alt') ?>"
                     class="sidebar-logo">
 
                 <span>S.I.G.S.M.</span>
@@ -60,7 +60,7 @@ unset($_SESSION['mensaje']);
                     class="nav-btn active"
                     data-target="sec-documentos">
                     <i data-lucide="folder-open" class="icon-sm"></i>
-                    Documentos (Categorías)
+                    <?= te('menu.documentos_categorias') ?>
                 </button>
 
 
@@ -69,13 +69,13 @@ unset($_SESSION['mensaje']);
                     class="nav-btn"
                     data-target="sec-encuestas">
                     <i data-lucide="pie-chart" class="icon-sm"></i>
-                    Encuestas y Métricas
+                    <?= te('menu.encuestas_metricas') ?>
                 </button>
             </nav>
 
             <?php if (tieneRol('admin') || tieneRol(1)): ?>
                 <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="btn-volver-hub">
-                    <i data-lucide="grid"></i> Cambiar Módulo
+                    <i data-lucide="grid"></i> <?= te('menu.cambiar_modulo') ?>
                 </a>
             <?php endif; ?>
 
@@ -101,7 +101,7 @@ unset($_SESSION['mensaje']);
                 <a
                     href="../../serviciosComunes/autenticacion/logout.php"
                     class="btn-logout"
-                    title="Cerrar Sesión">
+                    title="<?= te('menu.cerrar_sesion') ?>" aria-label="<?= te('menu.cerrar_sesion') ?>">
 
                     <i data-lucide="log-out"></i>
 
@@ -129,7 +129,7 @@ unset($_SESSION['mensaje']);
 
 
                     <h2 class="section-title mb-0">
-                        Portal de Documentación y Encuestas
+                        <?= te('documentacion.portal') ?>
                     </h2>
 
                 </div>
@@ -155,22 +155,22 @@ unset($_SESSION['mensaje']);
                     <div class="flex-between mb-3">
 
                         <h3>
-                            Directorio de Archivos
+                            <?= te('documentacion.directorio') ?>
                         </h3>
 
 
                         <a href="crear.php" class="btn-primary" style="text-decoration: none;">
                             <i data-lucide="upload"></i>
-                            Subir Documento
+                            <?= te('documentacion.subir') ?>
                         </a>
                     </div>
 
                     <div style="margin-bottom: 15px;">
-                        <label for="filtro-estado-documentos">Mostrar:</label>
+                        <label for="filtro-estado-documentos"><?= te('documentacion.mostrar') ?>:</label>
 
                         <select id="filtro-estado-documentos">
-                            <option value="1">Activos</option>
-                            <option value="0">Inactivos</option>
+                            <option value="1"><?= te('documentacion.activos') ?></option>
+                            <option value="0"><?= te('documentacion.inactivos') ?></option>
                         </select>
                     </div>
 
@@ -260,19 +260,19 @@ unset($_SESSION['mensaje']);
                                     <tr>
 
                                         <th>
-                                            Documento
+                                            <?= te('documentacion.documento') ?>
                                         </th>
 
                                         <th>
-                                            Fecha de Carga
+                                            <?= te('documentacion.fecha_carga') ?>
                                         </th>
 
                                         <th>
-                                            Responsable
+                                            <?= te('documentacion.responsable') ?>
                                         </th>
 
                                         <th>
-                                            Acciones
+                                            <?= te('campo.acciones') ?>
                                         </th>
 
                                     </tr>
@@ -295,7 +295,7 @@ unset($_SESSION['mensaje']);
                                     display: none;
                                 ">
 
-                                No hay documentos con el estado seleccionado en esta categoría.
+                                <?= te('documentacion.sin_documentos') ?>
 
                             </p>
 
@@ -319,13 +319,13 @@ unset($_SESSION['mensaje']);
 
                                     <tr>
 
-                                        <th>Documento</th>
+                                        <th><?= te('documentacion.documento') ?></th>
 
-                                        <th>Fecha de Carga</th>
+                                        <th><?= te('documentacion.fecha_carga') ?></th>
 
-                                        <th>Responsable</th>
+                                        <th><?= te('documentacion.responsable') ?></th>
 
-                                        <th>Acciones</th>
+                                        <th><?= te('campo.acciones') ?></th>
 
                                     </tr>
 
@@ -347,7 +347,7 @@ unset($_SESSION['mensaje']);
                                     display: none;
                                 ">
 
-                                No hay documentos con el estado seleccionado en esta categoría.
+                                <?= te('documentacion.sin_documentos') ?>
 
                             </p>
 
@@ -371,13 +371,13 @@ unset($_SESSION['mensaje']);
 
                                     <tr>
 
-                                        <th>Documento</th>
+                                        <th><?= te('documentacion.documento') ?></th>
 
-                                        <th>Fecha de Carga</th>
+                                        <th><?= te('documentacion.fecha_carga') ?></th>
 
-                                        <th>Responsable</th>
+                                        <th><?= te('documentacion.responsable') ?></th>
 
-                                        <th>Acciones</th>
+                                        <th><?= te('campo.acciones') ?></th>
 
                                     </tr>
 
@@ -399,7 +399,7 @@ unset($_SESSION['mensaje']);
                                     display: none;
                                 ">
 
-                                No hay documentos con el estado seleccionado en esta categoría.
+                                <?= te('documentacion.sin_documentos') ?>
 
                             </p>
 
@@ -423,13 +423,13 @@ unset($_SESSION['mensaje']);
 
                                     <tr>
 
-                                        <th>Documento</th>
+                                        <th><?= te('documentacion.documento') ?></th>
 
-                                        <th>Fecha de Carga</th>
+                                        <th><?= te('documentacion.fecha_carga') ?></th>
 
-                                        <th>Responsable</th>
+                                        <th><?= te('documentacion.responsable') ?></th>
 
-                                        <th>Acciones</th>
+                                        <th><?= te('campo.acciones') ?></th>
 
                                     </tr>
 
@@ -451,7 +451,7 @@ unset($_SESSION['mensaje']);
                                     display: none;
                                 ">
 
-                                No hay documentos con el estado seleccionado en esta categoría.
+                                <?= te('documentacion.sin_documentos') ?>
 
                             </p>
 
@@ -475,13 +475,13 @@ unset($_SESSION['mensaje']);
 
                                     <tr>
 
-                                        <th>Documento</th>
+                                        <th><?= te('documentacion.documento') ?></th>
 
-                                        <th>Fecha de Carga</th>
+                                        <th><?= te('documentacion.fecha_carga') ?></th>
 
-                                        <th>Responsable</th>
+                                        <th><?= te('documentacion.responsable') ?></th>
 
-                                        <th>Acciones</th>
+                                        <th><?= te('campo.acciones') ?></th>
 
                                     </tr>
 
@@ -503,7 +503,7 @@ unset($_SESSION['mensaje']);
                                     display: none;
                                 ">
 
-                                No hay documentos con el estado seleccionado en esta categoría.
+                                <?= te('documentacion.sin_documentos') ?>
 
                             </p>
 
@@ -527,13 +527,13 @@ unset($_SESSION['mensaje']);
 
                                     <tr>
 
-                                        <th>Documento</th>
+                                        <th><?= te('documentacion.documento') ?></th>
 
-                                        <th>Fecha de Carga</th>
+                                        <th><?= te('documentacion.fecha_carga') ?></th>
 
-                                        <th>Responsable</th>
+                                        <th><?= te('documentacion.responsable') ?></th>
 
-                                        <th>Acciones</th>
+                                        <th><?= te('campo.acciones') ?></th>
 
                                     </tr>
 
@@ -555,7 +555,7 @@ unset($_SESSION['mensaje']);
                                     display: none;
                                 ">
 
-                                No hay documentos con el estado seleccionado en esta categoría.
+                                <?= te('documentacion.sin_documentos') ?>
 
                             </p>
 
@@ -579,13 +579,13 @@ unset($_SESSION['mensaje']);
 
                                     <tr>
 
-                                        <th>Documento</th>
+                                        <th><?= te('documentacion.documento') ?></th>
 
-                                        <th>Fecha de Carga</th>
+                                        <th><?= te('documentacion.fecha_carga') ?></th>
 
-                                        <th>Responsable</th>
+                                        <th><?= te('documentacion.responsable') ?></th>
 
-                                        <th>Acciones</th>
+                                        <th><?= te('campo.acciones') ?></th>
 
                                     </tr>
 
@@ -607,7 +607,7 @@ unset($_SESSION['mensaje']);
                                     display: none;
                                 ">
 
-                                No hay documentos con el estado seleccionado en esta categoría.
+                                <?= te('documentacion.sin_documentos') ?>
 
                             </p>
 
@@ -637,7 +637,7 @@ unset($_SESSION['mensaje']);
                                 class="icon-sm">
                             </i>
 
-                            Métricas Generales
+                            <?= te('documentacion.metricas_generales') ?>
 
                         </button>
 
@@ -651,7 +651,7 @@ unset($_SESSION['mensaje']);
                                 class="icon-sm">
                             </i>
 
-                            Encuestas
+                            <?= te('menu.encuestas') ?>
 
                         </button>
 
@@ -664,9 +664,9 @@ unset($_SESSION['mensaje']);
                     <div id="enc-metricas" class="sub-content active">
 
                         <div class="flex-between mb-3" style="flex-wrap: wrap; gap: 15px;">
-                            <h3>Métricas de Satisfacción Institucional</h3>
+                            <h3><?= te('documentacion.metricas_titulo') ?></h3>
                             <select id="filtro-categoria" class="form-input" style="width: auto; min-width: 200px;">
-                                <option value="0">Todas las Áreas (General)</option>
+                                <option value="0"><?= te('documentacion.todas_areas') ?></option>
                                 <option value="1">Urología</option>
                                 <option value="2">Cardiología</option>
                                 <option value="3">Traumatología</option>
@@ -683,14 +683,14 @@ unset($_SESSION['mensaje']);
                                 <i data-lucide="users" class="kpi-icon text-primary"></i>
                                 <div class="kpi-data">
                                     <h4 id="lbl-total-encuestas">-</h4>
-                                    <p>Respuestas Totales</p>
+                                    <p><?= te('documentacion.respuestas_totales') ?></p>
                                 </div>
                             </div>
                             <div class="kpi-card">
                                 <i data-lucide="star" class="kpi-icon text-warning"></i>
                                 <div class="kpi-data">
                                     <h4 id="lbl-promedio-general">-</h4>
-                                    <p>Promedio General</p>
+                                    <p><?= te('documentacion.promedio_general') ?></p>
                                 </div>
                             </div>
                         </div>
@@ -698,11 +698,11 @@ unset($_SESSION['mensaje']);
                         <!-- CONTENEDOR DE GRÁFICOS DINÁMICOS -->
                         <div id="graficos-container" style="display: flex; flex-direction: column; gap: 20px;">
                             <!-- Aquí se renderizan las tarjetas de preguntas (Chart.js) vía JS -->
-                            <p class="text-center text-muted">Cargando métricas...</p>
+                            <p class="text-center text-muted"><?= te('documentacion.cargando_metricas') ?></p>
                         </div>
 
                         <!-- COMENTARIOS LIBRES -->
-                        <h3 class="mb-3 mt-4" style="margin-top: 2rem;">Comentarios y Sugerencias</h3>
+                        <h3 class="mb-3 mt-4" style="margin-top: 2rem;"><?= te('documentacion.comentarios') ?></h3>
                         <div id="comentarios-container" style="display: flex; flex-direction: column; gap: 15px;">
                             <!-- Comentarios vía JS -->
                         </div>
@@ -716,7 +716,7 @@ unset($_SESSION['mensaje']);
 
 
                         <h3 class="mb-3">
-                            Encuestas
+                            <?= te('menu.encuestas') ?>
                         </h3>
 
 
@@ -740,7 +740,7 @@ unset($_SESSION['mensaje']);
                                 <div>
 
                                     <h4>
-                                        Encuestas pendientes de definición
+                                        <?= te('documentacion.encuestas_pendientes') ?>
                                     </h4>
 
 
@@ -751,8 +751,7 @@ unset($_SESSION['mensaje']);
                                             margin-bottom: 0;
                                         ">
 
-                                        El Hospital de Clínicas proporcionará
-                                        cuatro modelos de encuesta.
+                                        <?= te('documentacion.encuestas_pendientes_detalle') ?>
 
                                     </p>
 
@@ -794,8 +793,9 @@ unset($_SESSION['mensaje']);
     </script>
 
 
-    <script src="Assets/js/documentacion.js?v=20261026"></script>
-    <script src="Assets/js/metricas.js?v=20261026"></script>
+    <?= scriptTraduccionesJs(['js.doc.', 'js.met.']) ?>
+    <script src="Assets/js/documentacion.js?v=20261107-1"></script>
+    <script src="Assets/js/metricas.js?v=20261107-1"></script>
 
 
     <script>

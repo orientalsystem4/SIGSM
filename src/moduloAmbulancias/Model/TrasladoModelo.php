@@ -12,7 +12,9 @@ class TrasladoModelo
             SELECT
                 s.*,
                 o.nombre AS origen,
+                o.tipo_ubicacion AS origen_tipo,
                 d.nombre AS destino,
+                d.tipo_ubicacion AS destino_tipo,
                 (o.tipo_ubicacion = 'Domicilio' OR d.tipo_ubicacion = 'Domicilio') AS es_domicilio
             FROM solicitud_traslado s
             INNER JOIN ubicacion o
@@ -41,6 +43,7 @@ class TrasladoModelo
             SELECT
                 v.id_vehiculo,
                 v.matricula,
+                v.id_tipo_vehiculo,
                 tv.nombre AS tipo
             FROM vehiculo v
             INNER JOIN tipo_vehiculo tv

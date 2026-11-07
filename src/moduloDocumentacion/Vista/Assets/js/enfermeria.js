@@ -21,11 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (respuesta.redirected) {
-                throw new Error('La sesión cambió. Recargá la página.');
+                throw new Error(tr('js.enf.sesion_cambio'));
             }
 
             if (!respuesta.ok) {
-                throw new Error('No se pudieron actualizar las solicitudes.');
+                throw new Error(tr('js.enf.error_actualizar_solicitudes'));
             }
 
             const html = await respuesta.text();
@@ -33,13 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const listado = pagina.getElementById('sec-mis-solicitudes');
 
             if (!listado) {
-                throw new Error('No se encontró el listado. Revisá tu sesión.');
+                throw new Error(tr('js.enf.error_listado'));
             }
 
             if (!hayMotivoEscrito()) {
                 seccion.innerHTML = listado.innerHTML;
             }        } catch (error) {
-            alert(error.message || 'No se pudo actualizar el listado.');
+            alert(error.message || tr('js.enf.error_actualizar_listado'));
         } finally {
             seccion.removeAttribute('aria-busy');
             actualizandoSolicitudes = false;
@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ciPaciente.required = true;
 
                 estadoPaciente.textContent =
-                    "Ingrese la cédula para verificar que el paciente esté registrado.";
+                    tr('js.enf.cedula_ayuda');
 
             } else {
 
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ciPaciente.value = "";
 
                 estadoPaciente.textContent =
-                    "Ingrese la cédula para verificar que el paciente esté registrado.";
+                    tr('js.enf.cedula_ayuda');
 
             }
 
@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 mensajePrioridad.hidden = false;
                 mensajePrioridad.textContent =
-                    "Los traslados de órganos tienen prioridad máxima.";
+                    tr('js.enf.prioridad_organo');
 
             } else {
 
@@ -255,11 +255,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!/^[0-9]{7,8}$/.test(cedula)) {
                 estadoPaciente.textContent =
-                    'Ingrese una cedula de 7 u 8 digitos.';
+                    tr('js.enf.error_cedula');
                 return;
             }
 
-            estadoPaciente.textContent = 'Buscando paciente...';
+            estadoPaciente.textContent = tr('js.enf.buscando');
 
             temporizadorBusqueda = setTimeout(async () => {
                 try {
@@ -288,20 +288,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (!respuesta.ok || !datos.exito) {
                         estadoPaciente.textContent =
-                            datos.mensaje || 'No se pudo consultar el paciente.';
+                            datos.mensaje || tr('js.enf.error_consulta');
                         return;
                     }
 
                     if (!datos.encontrado) {
                         estadoPaciente.textContent =
-                            'No se encontro un paciente con esa cedula.';
+                            tr('js.enf.no_encontrado');
                         return;
                     }
 
                     pacienteEncontrado = datos.paciente;
 
                     estadoPaciente.textContent =
-                        `Paciente encontrado: ${datos.paciente.nombre} ${datos.paciente.apellido}`;
+                        tr('js.enf.encontrado', { nombre: datos.paciente.nombre, apellido: datos.paciente.apellido });
 
                 } catch (error) {
                     if (busquedaActual !== numeroBusqueda) {
@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     pacienteEncontrado = null;
                     estadoPaciente.textContent =
-                        'No se pudo consultar. Revise la conexion y su sesion.';
+                        tr('js.enf.error_conexion');
                 }
             }, 350);
         });
@@ -335,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (tipoElemento.value === "") {
 
                 alert(
-                    "Debe seleccionar el tipo de elemento."
+                    tr('js.enf.error_tipo')
                 );
 
                 return;
@@ -356,7 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (ciIngresada === "") {
 
                     alert(
-                        "Debe ingresar la cédula del paciente."
+                        tr('js.enf.error_sin_cedula')
                     );
 
                     return;
@@ -371,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!pacienteExiste) {
 
                     alert(
-                        "La cédula ingresada no corresponde a un paciente registrado."
+                        tr('js.enf.error_no_registrado')
                     );
 
                     return;
@@ -391,7 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
 
                 alert(
-                    "Debe seleccionar el origen y el destino."
+                    tr('js.enf.error_lugares')
                 );
 
                 return;
@@ -401,7 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (origen.value === destino.value) {
 
                 alert(
-                    "El origen y el destino no pueden ser iguales."
+                    tr('js.enf.error_mismo_lugar')
                 );
 
                 return;
@@ -416,7 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (canal.value === "") {
 
                 alert(
-                    "Debe seleccionar el canal de solicitud."
+                    tr('js.enf.error_canal')
                 );
 
                 return;
@@ -440,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (limite <= ahora) {
 
                     alert(
-                        "La fecha y hora límite debe ser posterior al momento actual."
+                        tr('js.enf.error_fecha')
                     );
 
                     return;
@@ -459,7 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const token = document.getElementById('csrf-traslado');
 
             if (!token || !token.value) {
-                alert('Recargue la pagina antes de enviar la solicitud.');
+                alert(tr('js.enf.error_token'));
                 return;
             }
 
@@ -506,7 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
                 if (respuesta.redirected) {
-                    alert('La sesion finalizo. Vuelva a iniciar sesion.');
+                    alert(tr('js.enf.sesion_finalizada'));
                     return;
                 }
 
@@ -515,7 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!respuesta.ok || !resultado.exito) {
                     alert(
                         resultado.mensaje
-                        || 'No se pudo guardar la solicitud.'
+                        || tr('js.enf.error_guardar')
                     );
                     return;
                 }
@@ -526,8 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             } catch (error) {
                 alert(
-                    'No se pudo confirmar el guardado. '
-                    + 'Revise si la solicitud se registro antes de reenviarla.'
+                    tr('js.enf.error_confirmar')
                 );
                 return;
 
@@ -573,7 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             estadoPaciente.textContent =
-                "Ingrese la cédula para verificar que el paciente esté registrado.";
+                tr('js.enf.cedula_ayuda');
 
 
             prioridad.disabled = false;
@@ -652,7 +651,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
 
                 alert(
-                    "Seleccione un área."
+                    tr('js.enf.error_area')
                 );
 
                 return;

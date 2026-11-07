@@ -4,13 +4,13 @@ requiereRol([1, 3, 5]);
 $usuarioActual = obtenerUsuarioActual();
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>S.I.G.S.M. | Portal Choferes</title>
+    <title>S.I.G.S.M. | <?= te('modulos.choferes') ?></title>
 
     <link rel="stylesheet"
         href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
@@ -36,7 +36,7 @@ $usuarioActual = obtenerUsuarioActual();
 
                 <img
                     src="../../serviciosComunes/autenticacion/assets/image.png"
-                    alt="Logo"
+                    alt="<?= te('comun.logo_alt') ?>"
                     class="sidebar-logo">
 
                 <span>S.I.G.S.M.</span>
@@ -51,7 +51,7 @@ $usuarioActual = obtenerUsuarioActual();
                     data-target="seccion-traslados">
 
                     <i data-lucide="map-pin" class="icon-sm"></i>
-                    Mis Traslados
+                    <?= te('menu.mis_traslados') ?>
 
                 </button>
 
@@ -59,7 +59,7 @@ $usuarioActual = obtenerUsuarioActual();
 
             <?php if (tieneRol([1, 3])): ?>
                 <a href="../../serviciosComunes/vistaGeneral/bifurcacion.php" class="btn-volver-hub">
-                    <i data-lucide="grid"></i> Cambiar Módulo
+                    <i data-lucide="grid"></i> <?= te('menu.cambiar_modulo') ?>
                 </a>
             <?php endif; ?>
 
@@ -84,7 +84,7 @@ $usuarioActual = obtenerUsuarioActual();
                 <a
                     href="../../serviciosComunes/autenticacion/logout.php"
                     class="btn-logout"
-                    title="Cerrar Sesión">
+                    title="<?= te('menu.cerrar_sesion') ?>" aria-label="<?= te('menu.cerrar_sesion') ?>">
 
                     <i data-lucide="log-out"></i>
 
@@ -111,7 +111,7 @@ $usuarioActual = obtenerUsuarioActual();
                     </button>
 
                     <h2 class="section-title mb-0">
-                        Portal de Choferes
+                        <?= te('modulos.choferes') ?>
                     </h2>
 
                 </div>

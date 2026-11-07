@@ -21,14 +21,14 @@ try {
         || $tokenSesion === ''
         || !hash_equals($tokenSesion, $token)
     ) {
-        throw new DomainException('La solicitud no es válida. Recargue la página.');
+        throw new DomainException(t('error.solicitud_recargar'));
     }
 
     $idTraslado = filter_input(INPUT_POST, 'id_traslado', FILTER_VALIDATE_INT);
     $nuevoEstado = filter_input(INPUT_POST, 'id_estado', FILTER_VALIDATE_INT);
 
     if (!$idTraslado || $idTraslado <= 0 || !$nuevoEstado) {
-        throw new DomainException('Datos de traslado inválidos.');
+        throw new DomainException(t('seguimiento.error_datos'));
     }
 
     $idUsuario = (int) $_SESSION['id_usuario'];
@@ -47,11 +47,11 @@ try {
     $traslado = $consulta->fetch(PDO::FETCH_ASSOC);
 
     if (!$traslado) {
-        throw new DomainException('El traslado no existe.');
+        throw new DomainException(t('seguimiento.error_no_existe'));
     }
 
     if (!$esDTI && (int) $traslado['id_chofer'] !== $idUsuario) {
-        throw new DomainException('Solo puede actualizar sus propios traslados.');
+        throw new DomainException(t('seguimiento.error_ajeno'));
     }
 
     $consulta = $conexion->prepare(
@@ -76,7 +76,7 @@ try {
 
     if (($transiciones[$estadoActual] ?? null) !== $nuevoEstado) {
         throw new DomainException(
-            'El estado cambió o la acción no corresponde. Recargue la página.'
+            t('seguimiento.error_estado')
         );
     }
 
@@ -84,15 +84,16 @@ try {
 
     if ($fecha <= $ultimo['fecha_hora']) {
         throw new DomainException(
-            'Espere un segundo antes de registrar el siguiente estado.'
+            t('seguimiento.error_espera')
         );
     }
 
+    // Se guarda una clave estable; la vista la traduce al idioma de quien consulta.
     $observaciones = [
-        3 => 'Se inició el traslado.',
-        4 => 'El vehículo llegó al destino.',
-        5 => 'Se inició el retorno.',
-        6 => 'Traslado finalizado.'
+        3 => 'hist.traslado_iniciado',
+        4 => 'hist.llegada_destino',
+        5 => 'hist.retorno_iniciado',
+        6 => 'hist.traslado_finalizado'
     ];
 
     $consulta = $conexion->prepare(
@@ -102,7 +103,7 @@ try {
     $nombreEstado = $consulta->fetchColumn();
 
     if ($nombreEstado === false) {
-        throw new DomainException('El estado no está configurado en la base.');
+        throw new DomainException(t('seguimiento.error_estado_bd'));
     }
 
     $consulta = $conexion->prepare(
@@ -131,7 +132,7 @@ try {
     $conexion->commit();
 
     $_SESSION['mensaje_seguimiento'] =
-        "Traslado #{$idTraslado}: {$nombreEstado}.";
+        t('seguimiento.ok', ['id' => $idTraslado, 'estado' => etiquetaBd('estado', $nuevoEstado, $nombreEstado)]);
 
 } catch (Throwable $e) {
     if ($conexion && $conexion->inTransaction()) {
@@ -143,7 +144,7 @@ try {
     } else {
         error_log('Error de seguimiento: ' . $e->getMessage());
         $_SESSION['error_seguimiento'] =
-            'No se pudo guardar el cambio de estado.';
+            t('seguimiento.error_general');
     }
 }
 

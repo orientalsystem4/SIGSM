@@ -4,13 +4,13 @@ requiereRol([1, 4]);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     header('Allow: POST');
-    exit('Metodo no permitido.');
+    exit(t('error.metodo'));
 }
 $token = $_POST['token'] ?? '';
 if (!is_string($token) || empty($_SESSION['csrf_documentos'])
     || !hash_equals($_SESSION['csrf_documentos'], $token)) {
     http_response_code(403);
-    exit('La solicitud no es valida. Vuelva al portal y recargue la pagina.');
+    exit(t('doc.error_token'));
 }
 
 require_once __DIR__ . '/../Model/DocumentoModelo.php';
@@ -30,14 +30,14 @@ if ($accion === 'crear') {
     $idCategoria = (int) ($_POST['id_categoria'] ?? 0);
 
     if ($idCategoria <= 0) {
-        $errores[] = 'Debe seleccionar una categoría.';
+        $errores[] = t('doc.error_categoria');
     }
 
     if (
         !isset($_FILES['archivo']) ||
         $_FILES['archivo']['error'] !== UPLOAD_ERR_OK
     ) {
-        $errores[] = 'Debe seleccionar un archivo PDF.';
+        $errores[] = t('doc.error_sin_archivo');
     }
 
     if (count($errores) === 0) {
@@ -47,7 +47,7 @@ if ($accion === 'crear') {
         $maximo = 15 * 1024 * 1024;
 
         if ($archivo['size'] > $maximo) {
-            $errores[] = 'El archivo no puede superar los 15 MB.';
+            $errores[] = t('doc.error_tamano');
         }
 
         $extension = strtolower(
@@ -58,14 +58,14 @@ if ($accion === 'crear') {
         );
 
                 if ($extension !== 'pdf') {
-            $errores[] = 'El archivo debe estar en formato PDF.';
+            $errores[] = t('doc.error_formato');
         } else {
             // Comprueba el tipo de contenido del archivo.
             $info = new finfo(FILEINFO_MIME_TYPE);
             $tipoArchivo = $info->file($archivo['tmp_name']);
 
             if ($tipoArchivo !== 'application/pdf') {
-                $errores[] = 'El contenido del archivo no corresponde a un PDF.';
+                $errores[] = t('doc.error_contenido');
             }
         }
     }
@@ -129,7 +129,7 @@ if ($accion === 'crear') {
     ) {
 
         $_SESSION['errores_documento'] = [
-            'No se pudo guardar el archivo.'
+            t('doc.error_guardar')
         ];
 
         header(
@@ -153,7 +153,7 @@ if ($accion === 'crear') {
 
 
     $_SESSION['mensaje'] =
-        'Documento cargado correctamente.';
+        t('doc.ok_carga');
 
 
     header(
@@ -183,7 +183,7 @@ if ($accion === 'editar') {
     ) {
 
         $_SESSION['mensaje'] =
-            'Los datos ingresados no son válidos.';
+            t('login.error_datos_invalidos');
 
         header(
             'Location: ../Vista/documentacion.php'
@@ -201,7 +201,7 @@ if ($accion === 'editar') {
         && $errorArchivo !== UPLOAD_ERR_NO_FILE
     ) {
         $_SESSION['errores_documento'] = [
-            'No se pudo subir el archivo. Revisá su tamaño e intentá nuevamente.'
+            t('doc.error_subida')
         ];
 
         header('Location: ../Vista/editar.php?id=' . $idDocumento);
@@ -226,7 +226,7 @@ if ($accion === 'editar') {
         ) {
 
             $_SESSION['errores_documento'] = [
-                'El archivo no puede superar los 15 MB.'
+                t('doc.error_tamano')
             ];
 
             header(
@@ -251,7 +251,7 @@ if ($accion === 'editar') {
         ) {
 
             $_SESSION['errores_documento'] = [
-                'El archivo debe estar en formato PDF.'
+                t('doc.error_formato')
             ];
 
             header(
@@ -267,7 +267,7 @@ if ($accion === 'editar') {
 
         if ($tipoArchivo !== 'application/pdf') {
             $_SESSION['errores_documento'] = [
-                'El contenido del archivo no corresponde a un PDF.'
+                t('doc.error_contenido')
             ];
 
             header('Location: ../Vista/editar.php?id=' . $idDocumento);
@@ -320,7 +320,7 @@ if ($accion === 'editar') {
         ) {
 
             $_SESSION['errores_documento'] = [
-                'No se pudo guardar el nuevo archivo.'
+                t('doc.error_guardar_nuevo')
             ];
 
             header(
@@ -346,7 +346,7 @@ if ($accion === 'editar') {
 
 
     $_SESSION['mensaje'] =
-        'Documento actualizado correctamente.';
+        t('doc.ok_edicion');
 
 
     header(
@@ -370,7 +370,7 @@ if ($accion === 'eliminar') {
     if ($idDocumento <= 0) {
 
         $_SESSION['mensaje'] =
-            'Documento inválido.';
+            t('doc.error_invalido');
 
         header(
             'Location: ../Vista/documentacion.php'
@@ -386,7 +386,7 @@ if ($accion === 'eliminar') {
 
 
     $_SESSION['mensaje'] =
-        'Documento dado de baja correctamente.';
+        t('doc.ok_baja');
 
 
     header(

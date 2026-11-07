@@ -18,16 +18,20 @@ services:
         condition: service_healthy
 
   db:
-    image: mariadb:10.4
+    image: mariadb:10.11
     restart: unless-stopped
     env_file:
       - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASS}
       MYSQL_DATABASE: ${DB_NAME}
+      # Actualiza las tablas de sistema si el volumen viene de una version anterior (10.4)
+      MARIADB_AUTO_UPGRADE: "1"
+      # NOW() y CURRENT_TIMESTAMP en hora de Uruguay
+      TZ: America/Montevideo
     healthcheck:
-      # Por TCP: durante la inicialización MariaDB solo escucha en el socket
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      # Script oficial de la imagen: conecta por TCP y confirma que InnoDB termino de iniciar
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
       timeout: 5s
       retries: 20

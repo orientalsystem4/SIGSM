@@ -68,7 +68,10 @@ class SolicitudModelo
                 s.observaciones,
                 te.nombre AS tipo_elemento,
                 origen.nombre AS origen,
+                origen.tipo_ubicacion AS origen_tipo,
                 destino.nombre AS destino,
+                destino.tipo_ubicacion AS destino_tipo,
+                s.id_canal,
                 c.nombre AS canal,
                 u.nombre_usuario AS solicitante,
                 p.nombre AS nombre_paciente,
@@ -110,9 +113,14 @@ class SolicitudModelo
             s.id_solicitud,
             s.fecha_solicitud,
             s.prioridad,
+            s.id_tipo_elemento,
+            s.estado_solicitud,
+            h.id_estado,
             te.nombre AS elemento,
             o.nombre AS origen,
+            o.tipo_ubicacion AS origen_tipo,
             d.nombre AS destino,
+            d.tipo_ubicacion AS destino_tipo,
             t.id_traslado,
 COALESCE(e.nombre, s.estado_solicitud) AS estado,
 s.motivo_cancelacion,
@@ -148,8 +156,9 @@ s.fecha_cancelacion,
     {
         $conexion = Conexion::conectar();
         $consulta = $conexion->query("
-            SELECT s.id_solicitud, s.fecha_cancelacion, s.motivo_cancelacion,
-                   o.nombre AS origen, d.nombre AS destino,
+            SELECT s.id_solicitud, s.id_tipo_elemento, s.fecha_cancelacion, s.motivo_cancelacion,
+                   o.nombre AS origen, o.tipo_ubicacion AS origen_tipo,
+                   d.nombre AS destino, d.tipo_ubicacion AS destino_tipo,
                    te.nombre AS elemento, us.nombre_usuario AS solicitante,
                    uc.nombre_usuario AS cancelada_por
             FROM solicitud_traslado s

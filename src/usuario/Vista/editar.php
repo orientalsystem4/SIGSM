@@ -12,7 +12,7 @@ $idUsuario = (int) ($_GET['id'] ?? 0);
 $usuario = UsuarioModelo::obtenerPorId($idUsuario);
 
 if (!$usuario) {
-    $_SESSION['error'] = 'El usuario solicitado no existe.';
+    $_SESSION['error'] = t('usuarios.no_existe');
     header('Location: listado.php');
     exit;
 }
@@ -24,11 +24,11 @@ unset($_SESSION['errores_usuario']);
 
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.I.G.S.M. | Editar Usuario</title>
+    <title>S.I.G.S.M. | <?= te('usuarios.editar') ?></title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -141,12 +141,12 @@ unset($_SESSION['errores_usuario']);
 
 <div class="contenedor">
     <div class="cabecera-seccion">
-        <h1>Editar Usuario #<?= (int)$usuario['id_usuario'] ?></h1>
+        <h1><?= te('usuarios.editar_numero', ['id' => (int) $usuario['id_usuario']]) ?></h1>
     </div>
 
     <?php if (!empty($errores)): ?>
         <div class="alerta-errores">
-            <strong>Por favor corrija los siguientes errores:</strong>
+            <strong><?= te('usuarios.corrija_errores') ?></strong>
             <ul>
                 <?php foreach ($errores as $error): ?>
                     <li><?= htmlspecialchars($error) ?></li>
@@ -162,26 +162,26 @@ unset($_SESSION['errores_usuario']);
         <input type="hidden" name="id_usuario" value="<?= (int)$usuario['id_usuario'] ?>">
 
         <div class="campo">
-            <label for="cedula">Cédula de identidad (pendiente para cuentas antiguas)</label>
+            <label for="cedula"><?= te('usuarios.cedula_antiguas') ?></label>
             <input type="text" id="cedula" name="cedula" maxlength="12"
                    value="<?= htmlspecialchars($usuario['cedula'] ?? '') ?>">
         </div>
         <div class="campo">
-            <label for="nombre_completo">Nombre completo (pendiente para cuentas antiguas)</label>
+            <label for="nombre_completo"><?= te('usuarios.nombre_antiguas') ?></label>
             <input type="text" id="nombre_completo" name="nombre_completo" maxlength="150"
                    value="<?= htmlspecialchars($usuario['nombre_completo'] ?? '') ?>">
         </div>
         <div class="campo">
-            <label for="nombre_usuario">Nombre de Usuario *</label>
+            <label for="nombre_usuario"><?= te('usuarios.nombre_usuario') ?> *</label>
             <input type="text" id="nombre_usuario" name="nombre_usuario"
                    value="<?= htmlspecialchars($usuario['nombre_usuario']) ?>" required>
         </div>
 
                 <fieldset class="campo">
-            <legend>Roles del usuario *</legend>
+            <legend><?= te('usuarios.roles') ?> *</legend>
 
             <p class="campo-ayuda">
-                Seleccione uno o varios roles.
+                <?= te('usuarios.seleccione_roles') ?>
             </p>
 
             <?php foreach ($roles as $r): ?>
@@ -201,7 +201,7 @@ unset($_SESSION['errores_usuario']);
                     >
 
                     <?= htmlspecialchars(
-                        $r['nombre_rol'],
+                        etiquetaBd('rol', $r['id_rol'], $r['nombre_rol']),
                         ENT_QUOTES,
                         'UTF-8'
                     ) ?>
@@ -210,20 +210,20 @@ unset($_SESSION['errores_usuario']);
         </fieldset>
 
         <div class="campo">
-            <label for="password">Nueva Contraseña (Opcional)</label>
+            <label for="password"><?= te('usuarios.nueva_contrasena') ?></label>
            <input type="password" id="password" name="password">
         </div>
         <div class="campo">
-            <label for="activo">Estado de la Cuenta *</label>
+            <label for="activo"><?= te('usuarios.estado_cuenta') ?> *</label>
             <select id="activo" name="activo" required>
-                <option value="1" <?= ((int)$usuario['activo'] === 1) ? 'selected' : '' ?>>Activo</option>
-                <option value="0" <?= ((int)$usuario['activo'] === 0) ? 'selected' : '' ?>>Inactivo</option>
+                <option value="1" <?= ((int)$usuario['activo'] === 1) ? 'selected' : '' ?>><?= te('comun.activo') ?></option>
+                <option value="0" <?= ((int)$usuario['activo'] === 0) ? 'selected' : '' ?>><?= te('comun.inactivo') ?></option>
             </select>
         </div>
 
         <div class="acciones-formulario">
-            <button type="submit" class="boton boton-primario">Guardar Cambios</button>
-            <a href="listado.php" class="boton boton-secundario">Volver al listado</a>
+            <button type="submit" class="boton boton-primario"><?= te('comun.guardar_cambios') ?></button>
+            <a href="listado.php" class="boton boton-secundario"><?= te('doc.volver_listado') ?></a>
         </div>
     </form>
 </div>

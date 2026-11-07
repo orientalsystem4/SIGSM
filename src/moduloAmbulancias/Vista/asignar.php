@@ -13,7 +13,7 @@ $solicitud = $idSolicitud
 
 if (!$solicitud) {
     http_response_code(404);
-    exit('La solicitud no existe o ya no esta pendiente.');
+    exit(htmlspecialchars(t('asignar.no_disponible'), ENT_QUOTES, 'UTF-8'));
 }
 
 $vehiculos = TrasladoModelo::listarVehiculosCompatibles(
@@ -45,11 +45,11 @@ function escaparAsignacion($valor): string
 }
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGSM | Asignar traslado</title>
+    <title>SIGSM | <?= te('enlace.asignar') ?></title>
 
     <style>
         * { box-sizing: border-box; }
@@ -92,18 +92,18 @@ function escaparAsignacion($valor): string
 </head>
 <body>
 <main>
-    <a href="unidadEnlace.php">← Volver a Unidad de Enlace</a>
+    <a href="unidadEnlace.php">← <?= te('asignar.volver') ?></a>
 
-    <h1>Asignar solicitud #<?= (int) $idSolicitud ?></h1>
+    <h1><?= te('asignar.titulo', ['id' => (int) $idSolicitud]) ?></h1>
 
     <p>
-        <strong>Origen:</strong>
-        <?= escaparAsignacion($solicitud['origen']) ?>
+        <strong><?= te('campo.origen') ?>:</strong>
+        <?= escaparAsignacion(nombreUbicacion($solicitud['origen'], $solicitud['origen_tipo'])) ?>
     </p>
 
     <p>
-        <strong>Destino:</strong>
-        <?= escaparAsignacion($solicitud['destino']) ?>
+        <strong><?= te('campo.destino') ?>:</strong>
+        <?= escaparAsignacion(nombreUbicacion($solicitud['destino'], $solicitud['destino_tipo'])) ?>
     </p>
 
     <?php if ($error !== ''): ?>
@@ -120,25 +120,25 @@ function escaparAsignacion($valor): string
         <input type="hidden" name="id_solicitud"
                value="<?= (int) $idSolicitud ?>">
 
-        <label for="vehiculo">Vehículo</label>
+        <label for="vehiculo"><?= te('campo.vehiculo') ?></label>
         <select id="vehiculo" name="id_vehiculo" required>
-            <option value="">Seleccione vehículo...</option>
+            <option value=""><?= te('asignar.seleccione_vehiculo') ?></option>
             <?php foreach ($vehiculos as $vehiculo): ?>
                 <option value="<?= (int) $vehiculo['id_vehiculo'] ?>">
                     <?= escaparAsignacion(
-                        $vehiculo['tipo'] . ' - ' . $vehiculo['matricula']
+                        etiquetaBd('vehiculo', $vehiculo['id_tipo_vehiculo'], $vehiculo['tipo']) . ' - ' . $vehiculo['matricula']
                     ) ?>
                 </option>
             <?php endforeach; ?>
         </select>
 
         <?php if (!$vehiculos): ?>
-            <p class="error">No hay vehículos activos compatibles.</p>
+            <p class="error"><?= te('asignar.sin_vehiculos') ?></p>
         <?php endif; ?>
 
-        <label for="chofer">Chofer</label>
+        <label for="chofer"><?= te('campo.chofer') ?></label>
         <select id="chofer" name="id_chofer" required>
-            <option value="">Seleccione chofer...</option>
+            <option value=""><?= te('asignar.seleccione_chofer') ?></option>
             <?php foreach ($choferes as $chofer): ?>
                 <option value="<?= (int) $chofer['id_usuario'] ?>">
                     <?= escaparAsignacion($chofer['nombre_usuario']) ?>
@@ -146,13 +146,13 @@ function escaparAsignacion($valor): string
             <?php endforeach; ?>
         </select>
 
-        <label for="enfermeria">Enfermería</label>
+        <label for="enfermeria"><?= te('campo.enfermeria') ?></label>
         <select id="enfermeria" name="id_enfermero"
                 <?= $esPaciente ? 'required' : '' ?>>
             <option value="">
                 <?= $esPaciente
-                    ? 'Seleccione Enfermería...'
-                    : 'Sin asignar' ?>
+                    ? te('asignar.seleccione_enfermeria')
+                    : te('comun.sin_asignar') ?>
             </option>
             <?php foreach ($enfermeria as $persona): ?>
                 <option value="<?= (int) $persona['id_usuario'] ?>">
@@ -162,22 +162,22 @@ function escaparAsignacion($valor): string
         </select>
 
         <?php if ($domicilioInvalido): ?>
-            <p class="error">Solo los pacientes pueden trasladarse a un domicilio.</p>
+            <p class="error"><?= te('domicilio.solo_pacientes') ?></p>
         <?php elseif ($esDomicilio): ?>
-            <label for="direccion_domicilio">Dirección del domicilio</label>
+            <label for="direccion_domicilio"><?= te('campo.direccion_domicilio') ?></label>
             <input type="text" id="direccion_domicilio"
                    name="direccion_domicilio" maxlength="255" required
                    autocomplete="off">
         <?php endif; ?>
 
-        <label for="ruta">Ruta</label>
+        <label for="ruta"><?= te('campo.ruta') ?></label>
         <select id="ruta" name="id_ruta" required>
-            <option value="">Seleccione ruta...</option>
+            <option value=""><?= te('asignar.seleccione_ruta') ?></option>
             <?php foreach ($rutas as $ruta): ?>
                 <option value="<?= (int) $ruta['id_ruta'] ?>">
-                    Ruta #<?= (int) $ruta['id_ruta'] ?>:
+                    <?= te('asignar.ruta_numero', ['id' => (int) $ruta['id_ruta']]) ?>:
                     <?= escaparAsignacion(
-                        $solicitud['origen'] . ' → ' . $solicitud['destino']
+                        nombreUbicacion($solicitud['origen'], $solicitud['origen_tipo']) . ' → ' . nombreUbicacion($solicitud['destino'], $solicitud['destino_tipo'])
                     ) ?>
                 </option>
             <?php endforeach; ?>
@@ -185,14 +185,14 @@ function escaparAsignacion($valor): string
 
         <?php if (!$rutas): ?>
             <p class="error">
-                No hay una ruta registrada para este origen y destino.
+                <?= te('asignar.sin_ruta') ?>
             </p>
         <?php endif; ?>
 
         <button type="submit"
             <?= (!$vehiculos || !$choferes || !$rutas || $domicilioInvalido
                 || ($esPaciente && !$enfermeria)) ? 'disabled' : '' ?>>
-            Confirmar asignación
+            <?= te('asignar.confirmar') ?>
         </button>
     </form>
 </main>

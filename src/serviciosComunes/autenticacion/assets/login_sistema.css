@@ -219,3 +219,28 @@
         padding: 28px 22px;
     }
 }
+/* Selector de idioma (solo en el login) */
+.pagina-login .selector-idioma {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #0f766e;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+.pagina-login .selector-idioma:hover,
+.pagina-login .selector-idioma:focus-visible {
+    border-color: #0f766e;
+    outline: none;
+}

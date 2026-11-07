@@ -198,7 +198,7 @@ function cargarDocumentos() {
 
             const valores = [
                 nombre,
-                documento.fecha_carga || "Sin fecha",
+                documento.fecha_carga || tr('js.doc.sin_fecha'),
                 documento.usuario_carga
             ];
 
@@ -211,8 +211,8 @@ function cargarDocumentos() {
             const acciones = document.createElement("td");
 
             const enlaces = [
-                ["Ver", "ver.php"],
-                ["Editar", "editar.php"]
+                [tr("js.doc.ver"), "ver.php"],
+                [tr("js.doc.editar"), "editar.php"]
             ];
 
             enlaces.forEach(function ([texto, pagina]) {
@@ -240,10 +240,10 @@ function cargarDocumentos() {
 
             const botonBaja = document.createElement("button");
             botonBaja.type = "submit";
-            botonBaja.textContent = "Dar de baja";
+            botonBaja.textContent = tr('js.doc.dar_baja');
 
             formularioBaja.addEventListener("submit", function (evento) {
-                if (!confirm("¿Querés dar de baja este documento?")) {
+                if (!confirm(tr('js.doc.confirmar_baja'))) {
                     evento.preventDefault();
                 }
             });

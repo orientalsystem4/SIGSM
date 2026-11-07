@@ -17,12 +17,15 @@ class SeguimientoModelo
                 t.id_chofer,
                 t.id_vehiculo,
                 s.ci_paciente,
+                s.id_tipo_elemento,
                 $columnaDomicilio AS direccion_domicilio,
                 v.matricula,
                 ch.nombre_usuario AS chofer,
                 en.nombre_usuario AS enfermeria,
                 o.nombre AS origen,
+                o.tipo_ubicacion AS origen_tipo,
                 d.nombre AS destino,
+                d.tipo_ubicacion AS destino_tipo,
                 te.nombre AS elemento,
                 h.id_estado,
                 e.nombre AS estado
@@ -66,7 +69,7 @@ class SeguimientoModelo
         $conexion = Conexion::conectar();
 
         $consulta = $conexion->prepare("
-            SELECT h.fecha_hora, h.observaciones,
+            SELECT h.id_estado, h.fecha_hora, h.observaciones,
                    e.nombre AS estado, u.nombre_usuario AS usuario
             FROM historial_estado h
             JOIN estado_traslado e ON e.id_estado = h.id_estado

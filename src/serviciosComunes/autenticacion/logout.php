@@ -3,6 +3,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// La cookie de idioma no se toca: el login conserva el idioma elegido.
+require_once __DIR__ . '/../idioma/idioma.php';
+
 // 1. Limpiar variables de sesión en memoria
 $_SESSION = [];
 
@@ -25,7 +28,7 @@ session_destroy();
 
 // 4. Iniciar sesión limpia para almacenar mensaje de confirmación
 session_start();
-$_SESSION['mensaje'] = 'Ha cerrado sesión correctamente.';
+$_SESSION['mensaje'] = t('login.sesion_cerrada');
 
 // 5. Redirigir a la vista de login
 header('Location: sesion.php');

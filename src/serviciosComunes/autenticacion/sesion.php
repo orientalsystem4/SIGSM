@@ -3,6 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/../idioma/idioma.php';
+
 // Si ya tiene sesión activa, redirigir según su rol
 if (isset($_SESSION['id_usuario']) && !empty($_SESSION['id_usuario'])) {
     $idRol = isset($_SESSION['id_rol']) ? (int)$_SESSION['id_rol'] : 0;
@@ -21,22 +23,32 @@ $mensaje = $_SESSION['mensaje'] ?? null;
 unset($_SESSION['mensaje']);
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= idiomaActual() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.I.G.S.M. | Iniciar sesión</title>
-<link rel="stylesheet" href="assets/login_sistema.css?v=4">
+    <title>S.I.G.S.M. | <?= te('login.titulo') ?></title>
+<link rel="stylesheet" href="assets/login_sistema.css?v=5">
 </head><body class="pagina-login">
+    <?php $otroIdioma = idiomaActual() === 'es' ? 'en' : 'es'; ?>
+    <a
+        class="selector-idioma"
+        href="../idioma/cambiar.php?lang=<?= $otroIdioma ?>&amp;volver=<?= rawurlencode($_SERVER['SCRIPT_NAME'] ?? '') ?>"
+        lang="<?= $otroIdioma ?>"
+        aria-label="<?= te('idioma.cambiar_a') ?>"
+        title="<?= te('idioma.cambiar_a') ?>"
+    >
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span><?= strtoupper($otroIdioma) ?></span>
+    </a>
     <main class="login-wrapper">
         <section class="login-left" aria-labelledby="titulo-sistema">
             <div class="login-overlay">
                 <div class="login-brand">
                     <h1 id="titulo-sistema">S.I.G.S.M.</h1>
-                    <h2>Hospital de Clínicas</h2>
+                    <h2><?= te('login.hospital') ?></h2>
                     <p>
-                        Gestión de traslados, documentación
-                        y encuestas institucionales.
+                        <?= te('login.descripcion') ?>
                     </p>
                 </div>
             </div>
@@ -47,11 +59,11 @@ unset($_SESSION['mensaje']);
                 <div class="login-header">
                     <img
                         src="assets/image.png"
-                        alt="Logo S.I.G.S.M."
+                        alt="<?= te('comun.logo_alt') ?>"
                         class="login-logo"
                     >
-                    <h2 id="titulo-acceso">Iniciar sesión</h2>
-                    <p>Ingresá tus credenciales para acceder al sistema.</p>
+                    <h2 id="titulo-acceso"><?= te('login.titulo') ?></h2>
+                    <p><?= te('login.instrucciones') ?></p>
                 </div>
 
                 <?php if ($error): ?>
@@ -76,12 +88,12 @@ unset($_SESSION['mensaje']);
 
                 <form action="login.php" method="POST" class="login-form">
                     <div class="login-field">
-                        <label for="usuario">Usuario</label>
+                        <label for="usuario"><?= te('login.usuario') ?></label>
                         <input
                             type="text"
                             id="usuario"
                             name="usuario"
-                            placeholder="Ingrese su usuario"
+                            placeholder="<?= te('login.usuario_placeholder') ?>"
                             autocomplete="username"
                             required
                             autofocus
@@ -89,22 +101,22 @@ unset($_SESSION['mensaje']);
                     </div>
 
                     <div class="login-field">
-                        <label for="password">Contraseña</label>
+                        <label for="password"><?= te('login.contrasena') ?></label>
                         <input
                             type="password"
                             id="password"
                             name="password"
-                            placeholder="Ingrese su contraseña"
+                            placeholder="<?= te('login.contrasena_placeholder') ?>"
                             autocomplete="current-password"
                             required
                         >
                     </div>
 
-                    <button type="submit">Iniciar sesión</button>
+                    <button type="submit"><?= te('login.boton') ?></button>
                 </form>
 
                 <p class="login-help">
-                    Si necesitás ayuda con tu cuenta, contactá a DTI.
+                    <?= te('login.ayuda') ?>
                 </p>
             </div>
         </section>
