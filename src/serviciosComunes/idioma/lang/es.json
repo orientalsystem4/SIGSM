@@ -417,5 +417,7 @@
     "hist.llegada_destino": "El vehículo llegó al destino.",
     "hist.retorno_iniciado": "Se inició el retorno.",
     "hist.traslado_finalizado": "Traslado finalizado.",
-    "login.error_bloqueado": "Demasiados intentos fallidos. Esperá {minutos} minutos e intentá nuevamente."
+    "login.error_bloqueado": "Demasiados intentos fallidos. Esperá {minutos} minutos e intentá nuevamente.",
+    "modulos.monitoreo": "Monitoreo",
+    "modulos.monitoreo_ayuda": "Abre Cockpit en una pestaña nueva"
 }

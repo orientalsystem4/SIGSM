@@ -2,6 +2,12 @@ services:
   web:
     build: .
     restart: unless-stopped
+    # Escalabilidad vertical: tope de recursos para no agotar el servidor
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
     ports:
       # Solo el Apache del host (proxy inverso) debe llegar a este puerto
       - "127.0.0.1:8080:80"
@@ -20,6 +26,11 @@ services:
   db:
     image: mariadb:10.11
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 768M
     env_file:
       - .env
     environment:
