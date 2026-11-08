@@ -44,6 +44,10 @@ class Conexion
                 PDO::ERRMODE_EXCEPTION
             );
 
+            // NOW() y CURRENT_TIMESTAMP en hora de Uruguay, igual que PHP.
+            // Se fija por conexion: no depende de la zona horaria del servidor de la base.
+            $conexion->exec("SET time_zone = '-03:00'");
+
             return $conexion;
 
         } catch (PDOException $e) {
