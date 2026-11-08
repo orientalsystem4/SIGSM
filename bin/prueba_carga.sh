@@ -3,8 +3,8 @@
 # S.I.G.S.M. - Prueba de carga simple
 # Uso: bash bin/prueba_carga.sh [cantidad] [url]
 #   cantidad: peticiones a enviar (por defecto 500)
-#   url:      página a consultar (por defecto http://localhost:8080/)
-# Ejemplo: bash bin/prueba_carga.sh 1000 http://localhost:8080/SIGSM/serviciosComunes/autenticacion/sesion.php
+#   url:      página a consultar (por defecto, el login: página pública y sin escrituras)
+# Ejemplo: bash bin/prueba_carga.sh 1000
 #
 # Usar solo páginas públicas (por ejemplo el login): nunca rutas con sesión
 # ni que escriban en la base de datos.
@@ -14,7 +14,7 @@ set -euo pipefail
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CANTIDAD="${1:-500}"
-URL="${2:-http://localhost:8080/}"
+URL="${2:-http://localhost:8080/SIGSM/serviciosComunes/autenticacion/sesion.php}"
 
 info()  { printf '[i] %s\n' "$*"; }
 fallo() { printf '[ERROR] %s\n' "$*" >&2; exit 1; }
