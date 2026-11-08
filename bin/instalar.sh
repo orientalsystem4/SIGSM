@@ -134,6 +134,38 @@ systemctl enable --now apache2
 systemctl reload apache2
 ok "Apache configurado."
 
+# 7b. Respaldo diario -------------------------------------------------------------
+# Se reescriben las unidades en cada ejecución: si el proyecto cambia de carpeta,
+# volver a ejecutar el instalador actualiza la ruta del script.
+cat > /etc/systemd/system/sigsm-respaldo.service <<UNIDAD
+[Unit]
+Description=Respaldo diario de S.I.G.S.M. (base de datos y documentos)
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash $RAIZ/bin/respaldar.sh
+UNIDAD
+
+cat > /etc/systemd/system/sigsm-respaldo.timer <<'UNIDAD'
+[Unit]
+Description=Ejecuta el respaldo de S.I.G.S.M. todos los días a las 03:00 (hora de Uruguay)
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 America/Montevideo
+Persistent=true
+Unit=sigsm-respaldo.service
+
+[Install]
+WantedBy=timers.target
+UNIDAD
+
+chmod 0644 /etc/systemd/system/sigsm-respaldo.service /etc/systemd/system/sigsm-respaldo.timer
+systemctl daemon-reload
+systemctl enable --now sigsm-respaldo.timer >/dev/null
+ok "Respaldo diario programado (sigsm-respaldo.timer, 03:00)."
+
 # 8. Resumen --------------------------------------------------------------------
 ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
 echo

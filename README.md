@@ -106,19 +106,57 @@ No importar nuevamente el SQL completo sobre una base en uso. Los PDF viven en `
 
 ## Respaldo y restauración
 
-Base de datos y documentos:
+### Respaldo automático
+
+`bin/instalar.sh` programa `sigsm-respaldo.timer`, que ejecuta `bin/respaldar.sh` todos los días a las 03:00 hora de Uruguay. Si el equipo estaba apagado a esa hora, el respaldo se hace al encenderlo (`Persistent=true`). Cada ejecución genera:
+
+| Qué | Dónde |
+| --- | --- |
+| Base de datos (`mariadb-dump --single-transaction`, comprimido) | `/var/backups/sigsm/databases/db_sigsm_FECHA.sql.gz` |
+| PDF subidos | `/var/backups/sigsm/documentos/documentos_FECHA.tar.gz` |
+| Registro (fecha, `[OK]` o `[ERROR]` y el motivo) | `/var/log/respaldos_sigsm.log` |
+
+Se conservan 14 días: las copias más antiguas se borran solo después de un respaldo correcto. Si el volcado queda vacío o el archivo está dañado (`gzip -t`), el script registra `[ERROR]` y termina con un código distinto de 0. La clave de la base se lee del `.env` y no aparece en la línea de comandos (no se ve con `ps`).
+
+Comandos útiles:
 
 ```sh
-docker compose exec -T db sh -c 'mariadb-dump -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > respaldo_sigsm.sql
-sudo tar -czf documentos.tar.gz -C /var/lib/sigsm documentos
+sudo bash bin/respaldar.sh                 # respaldo manual inmediato
+systemctl list-timers sigsm-respaldo.timer # próxima ejecución
+tail /var/log/respaldos_sigsm.log          # últimos resultados
 ```
 
-Restaurar (sobre una instalación con la base ya creada):
+Los respaldos quedan en el mismo equipo: si el disco falla, se pierden junto con el sistema. Conviene copiar periódicamente `/var/backups/sigsm` a otro medio.
+
+### Comprobar un respaldo sin tocar la base real
+
+Desde la carpeta del proyecto. El volcado incluye `CREATE DATABASE` y `USE`; se quitan para cargarlo en una base de prueba:
 
 ```sh
-docker compose exec -T db sh -c 'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < respaldo_sigsm.sql
-sudo tar -xzf documentos.tar.gz -C /var/lib/sigsm
+export MYSQL_PWD="$(grep '^DB_PASS=' .env | cut -d= -f2-)"
+ULTIMO=$(ls -t /var/backups/sigsm/databases/db_sigsm_*.sql.gz | head -1)
+docker compose exec -T -e MYSQL_PWD db mariadb -uroot -e "CREATE DATABASE sigsm_prueba"
+gzip -dc "$ULTIMO" | grep -v -E '^(CREATE DATABASE|USE )' | docker compose exec -T -e MYSQL_PWD db mariadb -uroot sigsm_prueba
+docker compose exec -T -e MYSQL_PWD db mariadb -uroot -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='sigsm_prueba'; SELECT COUNT(*) FROM sigsm_prueba.usuario"
+docker compose exec -T -e MYSQL_PWD db mariadb -uroot -e "DROP DATABASE sigsm_prueba"
+unset MYSQL_PWD
+```
+
+Los números deben coincidir con los de la base `sigsm`.
+
+### Restaurar
+
+Detener la aplicación para que nadie escriba durante la restauración. El volcado reemplaza las tablas de la base `sigsm`:
+
+```sh
+docker compose stop web
+export MYSQL_PWD="$(grep '^DB_PASS=' .env | cut -d= -f2-)"
+gzip -dc /var/backups/sigsm/databases/db_sigsm_FECHA.sql.gz | docker compose exec -T -e MYSQL_PWD db mariadb -uroot
+unset MYSQL_PWD
+sudo tar -xzf /var/backups/sigsm/documentos/documentos_FECHA.tar.gz -C /var/lib/sigsm
 sudo chown -R 33:33 /var/lib/sigsm/documentos
+sudo chmod 750 /var/lib/sigsm/documentos
+docker compose start web
 ```
 
 **Advertencia:** `docker compose down -v` elimina el volumen de la base de datos y borra todos los datos. Para detener los servicios usar `docker compose down` (sin `-v`).
@@ -134,7 +172,7 @@ SIGSM corre en tres entornos. **El código es el mismo en los tres**: lo que cam
 | Base de datos | MariaDB 10.11 en el contenedor `db` | MariaDB en un contenedor de Podman | MariaDB 10.11 en el contenedor `db` |
 | Cómo se instala | `docker compose up -d --build` (ver *Instalación manual*) | Configuración manual del administrador | `sudo bash bin/instalar.sh` |
 | Cómo se despliega | Trabajo diario en la rama `santi` | `git pull` en el servidor | `git pull` + `docker compose up -d --build` |
-| Respaldos | No se respaldan (datos de prueba) | Automáticos: `operador-sigsm --backup` todos los días a las 03:00 UTC (00:00 en Montevideo) en `/var/backups/sigsm/`; a los 30 días pasan a largo plazo y se borran a los 70 | Manuales con los comandos de *Respaldo y restauración*; los PDF están en `/var/lib/sigsm/documentos` |
+| Respaldos | No se respaldan (datos de prueba) | Automáticos: `operador-sigsm --backup` todos los días a las 03:00 UTC (00:00 en Montevideo) en `/var/backups/sigsm/`; a los 30 días pasan a largo plazo y se borran a los 70 | Automáticos: `sigsm-respaldo.timer` todos los días a las 03:00 (hora de Uruguay) en `/var/backups/sigsm/{databases,documentos}`; se conservan 14 días |
 
 Qué cambia en el `.env` según el entorno (sin valores reales; las claves nunca se suben a Git):
 
@@ -323,6 +361,9 @@ Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Lo
 
 ## Organización
 
+- `bin/instalar.sh`: instalador completo (incluye el respaldo diario).
+- `bin/respaldar.sh`: respaldo de la base y de los documentos.
+- `bin/prueba_carga.sh`: prueba de carga sobre el login.
 - `bin/crear_admin.php`: creación o restablecimiento del administrador.
 - `bin/seeder.php`: preparación de estructura y datos iniciales.
 - `src/documentacion/sigsm.sql`: estructura y datos de partida.
