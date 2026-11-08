@@ -19,7 +19,7 @@ sudo bash bin/instalar.sh
 
 Invocar siempre con `bash bin/instalar.sh`, no con `./bin/instalar.sh`, para no depender del bit de ejecución.
 
-El instalador verifica los requisitos, genera `.env` con una clave de base de datos aleatoria, crea la carpeta de documentos, levanta los contenedores, prepara la estructura con el seeder, crea el administrador (pide la clave o la genera) y configura Apache como proxy inverso. Al final muestra la URL, el usuario y la clave una sola vez. Se puede ejecutar de nuevo sin cambiar la clave de la base ni la del administrador existente.
+El instalador verifica los requisitos, genera `.env` con una clave de base de datos aleatoria, crea la carpeta de documentos, levanta los contenedores, prepara la estructura con el seeder, crea el administrador (pide la clave o la genera) configura Apache como proxy inverso, programa el respaldo diario y el monitoreo, y hace un primer respaldo (si falla, avisa y la instalación continúa). Al final muestra la URL, el usuario y la clave una sola vez. Se puede ejecutar de nuevo sin cambiar la clave de la base ni la del administrador existente.
 
 ### Instalación desde pendrive
 
@@ -106,19 +106,57 @@ No importar nuevamente el SQL completo sobre una base en uso. Los PDF viven en `
 
 ## Respaldo y restauración
 
-Base de datos y documentos:
+### Respaldo automático
+
+`bin/instalar.sh` programa `sigsm-respaldo.timer`, que ejecuta `bin/respaldar.sh` todos los días a las 03:00 hora de Uruguay. Si el equipo estaba apagado a esa hora, el respaldo se hace al encenderlo (`Persistent=true`). Cada ejecución genera:
+
+| Qué | Dónde |
+| --- | --- |
+| Base de datos (`mariadb-dump --single-transaction`, comprimido) | `/var/backups/sigsm/databases/db_sigsm_FECHA.sql.gz` |
+| PDF subidos | `/var/backups/sigsm/documentos/documentos_FECHA.tar.gz` |
+| Registro (fecha, `[OK]` o `[ERROR]` y el motivo) | `/var/log/respaldos_sigsm.log` |
+
+Se conservan 14 días: las copias más antiguas se borran solo después de un respaldo correcto. Si el volcado queda vacío o el archivo está dañado (`gzip -t`), el script registra `[ERROR]` y termina con un código distinto de 0. La clave de la base se lee del `.env` y no aparece en la línea de comandos (no se ve con `ps`).
+
+Comandos útiles:
 
 ```sh
-docker compose exec -T db sh -c 'mariadb-dump -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > respaldo_sigsm.sql
-sudo tar -czf documentos.tar.gz -C /var/lib/sigsm documentos
+sudo bash bin/respaldar.sh                 # respaldo manual inmediato
+systemctl list-timers sigsm-respaldo.timer # próxima ejecución
+tail /var/log/respaldos_sigsm.log          # últimos resultados
 ```
 
-Restaurar (sobre una instalación con la base ya creada):
+Los respaldos quedan en el mismo equipo: si el disco falla, se pierden junto con el sistema. Conviene copiar periódicamente `/var/backups/sigsm` a otro medio.
+
+### Comprobar un respaldo sin tocar la base real
+
+Desde la carpeta del proyecto. El volcado incluye `CREATE DATABASE` y `USE`; se quitan para cargarlo en una base de prueba:
 
 ```sh
-docker compose exec -T db sh -c 'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < respaldo_sigsm.sql
-sudo tar -xzf documentos.tar.gz -C /var/lib/sigsm
+export MYSQL_PWD="$(grep '^DB_PASS=' .env | cut -d= -f2-)"
+ULTIMO=$(ls -t /var/backups/sigsm/databases/db_sigsm_*.sql.gz | head -1)
+docker compose exec -T -e MYSQL_PWD db mariadb -uroot -e "CREATE DATABASE sigsm_prueba"
+gzip -dc "$ULTIMO" | grep -v -E '^(CREATE DATABASE|USE )' | docker compose exec -T -e MYSQL_PWD db mariadb -uroot sigsm_prueba
+docker compose exec -T -e MYSQL_PWD db mariadb -uroot -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='sigsm_prueba'; SELECT COUNT(*) FROM sigsm_prueba.usuario"
+docker compose exec -T -e MYSQL_PWD db mariadb -uroot -e "DROP DATABASE sigsm_prueba"
+unset MYSQL_PWD
+```
+
+Los números deben coincidir con los de la base `sigsm`.
+
+### Restaurar
+
+Detener la aplicación para que nadie escriba durante la restauración. El volcado reemplaza las tablas de la base `sigsm`:
+
+```sh
+docker compose stop web
+export MYSQL_PWD="$(grep '^DB_PASS=' .env | cut -d= -f2-)"
+gzip -dc /var/backups/sigsm/databases/db_sigsm_FECHA.sql.gz | docker compose exec -T -e MYSQL_PWD db mariadb -uroot
+unset MYSQL_PWD
+sudo tar -xzf /var/backups/sigsm/documentos/documentos_FECHA.tar.gz -C /var/lib/sigsm
 sudo chown -R 33:33 /var/lib/sigsm/documentos
+sudo chmod 750 /var/lib/sigsm/documentos
+docker compose start web
 ```
 
 **Advertencia:** `docker compose down -v` elimina el volumen de la base de datos y borra todos los datos. Para detener los servicios usar `docker compose down` (sin `-v`).
@@ -134,7 +172,7 @@ SIGSM corre en tres entornos. **El código es el mismo en los tres**: lo que cam
 | Base de datos | MariaDB 10.11 en el contenedor `db` | MariaDB en un contenedor de Podman | MariaDB 10.11 en el contenedor `db` |
 | Cómo se instala | `docker compose up -d --build` (ver *Instalación manual*) | Configuración manual del administrador | `sudo bash bin/instalar.sh` |
 | Cómo se despliega | Trabajo diario en la rama `santi` | `git pull` en el servidor | `git pull` + `docker compose up -d --build` |
-| Respaldos | No se respaldan (datos de prueba) | Automáticos: `operador-sigsm --backup` todos los días a las 03:00 UTC (00:00 en Montevideo) en `/var/backups/sigsm/`; a los 30 días pasan a largo plazo y se borran a los 70 | Manuales con los comandos de *Respaldo y restauración*; los PDF están en `/var/lib/sigsm/documentos` |
+| Respaldos | No se respaldan (datos de prueba) | Automáticos: `operador-sigsm --backup` todos los días a las 03:00 UTC (00:00 en Montevideo) en `/var/backups/sigsm/`; a los 30 días pasan a largo plazo y se borran a los 70 | Automáticos: `sigsm-respaldo.timer` todos los días a las 03:00 (hora de Uruguay) en `/var/backups/sigsm/{databases,documentos}`; se conservan 14 días |
 
 Qué cambia en el `.env` según el entorno (sin valores reales; las claves nunca se suben a Git):
 
@@ -180,12 +218,32 @@ Si en la columna del límite aparece la memoria total del equipo (por ejemplo `1
 
 **Cockpit** es un panel web del servidor (CPU, memoria, discos, servicios y registros), en el puerto 9090. Para que DTI tenga un acceso directo, definir en el `.env` `COCKPIT_URL=http://IP_DEL_SERVIDOR:9090` y aplicar con `docker compose up -d`: aparece la tarjeta *Monitoreo* en el panel de módulos, solo para el rol DTI. Sin la variable no se muestra. En el servidor de demostración Cockpit ya está instalado y solo se accede por túnel SSH (ver *Configuración manual del servidor*); su instalación no forma parte de este repositorio.
 
-**Monitor del operador** (`bin/operador_sigsm.sh`): con `sudo bash bin/operador_sigsm.sh --instalar` queda como comando global `operador-sigsm` y activa dos timers de systemd:
+**Monitor del operador** (`bin/operador_sigsm.sh`, solo en el servidor de demostración): con `sudo bash bin/operador_sigsm.sh --instalar` queda como comando global `operador-sigsm` y activa dos timers de systemd:
 
 - `sigsm-monitor.timer`, cada 5 minutos: alerta si el disco supera el **85 %**, la RAM el **80 %** o la CPU el **75 %**, y revisa los servicios esenciales. Las alertas van a `/var/log/alertas_sigsm.log` y al journal con la etiqueta `SIGSM_MONITOR`, así que también se ven en Cockpit (*Registros*).
 - `sigsm-backup.timer`, todos los días a las 03:00 UTC: respaldo de la base (resultado en `/var/log/gestion_respaldos.log`).
 
-Este script es la herramienta de operación del servidor de demostración (Caddy + PHP-FPM). Está en adaptación para Docker, para cubrir también la instalación del instituto (Apache + Docker).
+El servidor de demostración (Caddy + PHP-FPM) usa este operador. No se instala en el instituto.
+
+**Monitor de la instalación Docker** (`bin/monitorear.sh`, en el instituto): `bin/instalar.sh` programa `sigsm-monitor-docker.timer`, que lo ejecuta cada 5 minutos. Revisa:
+
+| Qué | Alerta cuando |
+| --- | --- |
+| Contenedores `web` y `db` (`docker compose ps`) | Alguno no está en ejecución, o Docker no responde |
+| Aplicación (`curl` a `http://127.0.0.1:8080/`) | No responde 200 ni 302 |
+| CPU y RAM de cada contenedor (`docker stats`, sobre su propio límite) | CPU > **75 %** o RAM > **80 %** |
+| Disco de `/` y de `/var/backups` | Ocupación > **85 %** |
+| Último respaldo de la base (`/var/backups/sigsm/databases`) | No hay, o tiene 26 horas o más |
+
+Solo escribe cuando algo falla: en `/var/log/alertas_sigsm.log`, con el mismo formato que el operador, y en el journal con la etiqueta `SIGSM_MONITOR` (visible en Cockpit, *Registros*). Termina con código 0 si todo está bien y 1 si hubo alguna alerta. Para revisarlo a mano:
+
+```sh
+sudo bash bin/monitorear.sh; echo $?       # sin salida y 0 = todo bien
+tail /var/log/alertas_sigsm.log            # alertas registradas
+journalctl -t SIGSM_MONITOR --since today  # las mismas, en el journal
+```
+
+Las unidades de este monitor se llaman `sigsm-monitor-docker.*`, distintas de las `sigsm-monitor.*` del operador, así que no se pisan si alguien instala los dos.
 
 **Prueba de carga** (`bin/prueba_carga.sh`): envía peticiones al login (página pública, sin escrituras en la base) y muestra `docker stats` antes, durante y después.
 
@@ -317,12 +375,16 @@ Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Lo
 
 ## Notas pendientes
 
-- `bin/operador_sigsm.sh` está en adaptación para Docker: hoy cubre el servidor de demostración (Caddy + `php8.4-fpm`) y se extenderá a la instalación del instituto (Apache + Docker).
+- `bin/operador_sigsm.sh` es la herramienta del servidor de demostración (Caddy + `php8.4-fpm`). La instalación Docker del instituto usa `bin/monitorear.sh` y `bin/respaldar.sh`.
 - No hay HTTPS (red interna, solo HTTP). Si se publica fuera, revisar las cookies de sesión (`secure`, `HttpOnly`).
 - La aplicación usa el usuario `root` de la base; a mediano plazo conviene un usuario con privilegios limitados.
 
 ## Organización
 
+- `bin/instalar.sh`: instalador completo (incluye el respaldo diario y el monitoreo).
+- `bin/respaldar.sh`: respaldo de la base y de los documentos.
+- `bin/monitorear.sh`: monitoreo de la instalación Docker.
+- `bin/prueba_carga.sh`: prueba de carga sobre el login.
 - `bin/crear_admin.php`: creación o restablecimiento del administrador.
 - `bin/seeder.php`: preparación de estructura y datos iniciales.
 - `src/documentacion/sigsm.sql`: estructura y datos de partida.

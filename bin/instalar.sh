@@ -134,6 +134,78 @@ systemctl enable --now apache2
 systemctl reload apache2
 ok "Apache configurado."
 
+# 7b. Respaldo diario -------------------------------------------------------------
+# Se reescriben las unidades en cada ejecución: si el proyecto cambia de carpeta,
+# volver a ejecutar el instalador actualiza la ruta del script.
+cat > /etc/systemd/system/sigsm-respaldo.service <<UNIDAD
+[Unit]
+Description=Respaldo diario de S.I.G.S.M. (base de datos y documentos)
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash $RAIZ/bin/respaldar.sh
+UNIDAD
+
+cat > /etc/systemd/system/sigsm-respaldo.timer <<'UNIDAD'
+[Unit]
+Description=Ejecuta el respaldo de S.I.G.S.M. todos los días a las 03:00 (hora de Uruguay)
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 America/Montevideo
+Persistent=true
+Unit=sigsm-respaldo.service
+
+[Install]
+WantedBy=timers.target
+UNIDAD
+
+chmod 0644 /etc/systemd/system/sigsm-respaldo.service /etc/systemd/system/sigsm-respaldo.timer
+systemctl daemon-reload
+systemctl enable --now sigsm-respaldo.timer >/dev/null
+ok "Respaldo diario programado (sigsm-respaldo.timer, 03:00)."
+
+# 7c. Monitoreo cada 5 minutos ----------------------------------------------------
+cat > /etc/systemd/system/sigsm-monitor-docker.service <<UNIDAD
+[Unit]
+Description=Monitoreo de S.I.G.S.M. (contenedores, aplicación, recursos y respaldo)
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash $RAIZ/bin/monitorear.sh
+UNIDAD
+
+cat > /etc/systemd/system/sigsm-monitor-docker.timer <<'UNIDAD'
+[Unit]
+Description=Ejecuta el monitoreo de S.I.G.S.M. cada 5 minutos
+
+[Timer]
+OnBootSec=2min
+OnCalendar=*:0/5
+Unit=sigsm-monitor-docker.service
+
+[Install]
+WantedBy=timers.target
+UNIDAD
+
+chmod 0644 /etc/systemd/system/sigsm-monitor-docker.service /etc/systemd/system/sigsm-monitor-docker.timer
+systemctl daemon-reload
+systemctl enable --now sigsm-monitor-docker.timer >/dev/null
+ok "Monitoreo programado (sigsm-monitor-docker.timer, cada 5 minutos)."
+
+# 7d. Primer respaldo ------------------------------------------------------------
+# La base ya está sana (paso 4). Así el monitor no avisa "no hay respaldos" hasta
+# las 03:00. Si falla, solo se advierte: la instalación sigue.
+info "Haciendo el primer respaldo..."
+if salida_respaldo="$(bash "$RAIZ/bin/respaldar.sh" 2>&1)"; then
+    ok "Primer respaldo hecho: ${salida_respaldo##*$'\n'}"
+else
+    printf '[ADVERTENCIA] El primer respaldo falló: %s\n' "${salida_respaldo##*$'\n'}" >&2
+    printf '[ADVERTENCIA] La instalación continúa. Revisar /var/log/respaldos_sigsm.log y repetir con: sudo bash bin/respaldar.sh\n' >&2
+fi
+
 # 8. Resumen --------------------------------------------------------------------
 ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
 echo
