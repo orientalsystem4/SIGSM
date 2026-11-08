@@ -166,6 +166,46 @@ systemctl daemon-reload
 systemctl enable --now sigsm-respaldo.timer >/dev/null
 ok "Respaldo diario programado (sigsm-respaldo.timer, 03:00)."
 
+# 7c. Monitoreo cada 5 minutos ----------------------------------------------------
+cat > /etc/systemd/system/sigsm-monitor-docker.service <<UNIDAD
+[Unit]
+Description=Monitoreo de S.I.G.S.M. (contenedores, aplicación, recursos y respaldo)
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash $RAIZ/bin/monitorear.sh
+UNIDAD
+
+cat > /etc/systemd/system/sigsm-monitor-docker.timer <<'UNIDAD'
+[Unit]
+Description=Ejecuta el monitoreo de S.I.G.S.M. cada 5 minutos
+
+[Timer]
+OnBootSec=2min
+OnCalendar=*:0/5
+Unit=sigsm-monitor-docker.service
+
+[Install]
+WantedBy=timers.target
+UNIDAD
+
+chmod 0644 /etc/systemd/system/sigsm-monitor-docker.service /etc/systemd/system/sigsm-monitor-docker.timer
+systemctl daemon-reload
+systemctl enable --now sigsm-monitor-docker.timer >/dev/null
+ok "Monitoreo programado (sigsm-monitor-docker.timer, cada 5 minutos)."
+
+# 7d. Primer respaldo ------------------------------------------------------------
+# La base ya está sana (paso 4). Así el monitor no avisa "no hay respaldos" hasta
+# las 03:00. Si falla, solo se advierte: la instalación sigue.
+info "Haciendo el primer respaldo..."
+if salida_respaldo="$(bash "$RAIZ/bin/respaldar.sh" 2>&1)"; then
+    ok "Primer respaldo hecho: ${salida_respaldo##*$'\n'}"
+else
+    printf '[ADVERTENCIA] El primer respaldo falló: %s\n' "${salida_respaldo##*$'\n'}" >&2
+    printf '[ADVERTENCIA] La instalación continúa. Revisar /var/log/respaldos_sigsm.log y repetir con: sudo bash bin/respaldar.sh\n' >&2
+fi
+
 # 8. Resumen --------------------------------------------------------------------
 ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
 echo
