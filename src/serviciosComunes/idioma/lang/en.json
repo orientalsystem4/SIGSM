@@ -445,5 +445,7 @@
     "hist.llegada_destino": "The vehicle arrived at the destination.",
     "hist.retorno_iniciado": "The return started.",
     "hist.traslado_finalizado": "Transfer finished.",
-    "login.error_bloqueado": "Too many failed attempts. Wait {minutos} minutes and try again."
+    "login.error_bloqueado": "Too many failed attempts. Wait {minutos} minutes and try again.",
+    "modulos.monitoreo": "Monitoring",
+    "modulos.monitoreo_ayuda": "Opens Cockpit in a new tab"
 }

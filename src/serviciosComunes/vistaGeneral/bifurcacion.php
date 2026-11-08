@@ -4,6 +4,21 @@ require_once __DIR__ . '/../seguridad/guardian.php';
 requiereRol([1, 2, 3, 4, 5, 6]);
 
 $usuarioActual = obtenerUsuarioActual();
+
+// Enlace a Cockpit (monitoreo del servidor): solo DTI y solo si COCKPIT_URL
+// es una URL http(s) valida. Sin la variable no se muestra la tarjeta.
+$urlMonitoreo = null;
+if (tieneRol([1])) {
+    require_once __DIR__ . '/../conexionBD/conexion.php';
+    Conexion::cargarEntorno();
+    $valor = trim((string) getenv('COCKPIT_URL'));
+    if (
+        filter_var($valor, FILTER_VALIDATE_URL) !== false
+        && in_array(strtolower((string) parse_url($valor, PHP_URL_SCHEME)), ['http', 'https'], true)
+    ) {
+        $urlMonitoreo = $valor;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= idiomaActual() ?>">
@@ -107,6 +122,21 @@ $usuarioActual = obtenerUsuarioActual();
                 <i data-lucide="users"></i>
             </div>
             <h3 class="card-title"><?= te('menu.gestion_usuarios') ?></h3>
+        </a>
+    <?php endif; ?>
+
+    <?php if ($urlMonitoreo !== null): ?>
+        <a
+            href="<?= htmlspecialchars($urlMonitoreo, ENT_QUOTES, 'UTF-8') ?>"
+            class="module-card"
+            target="_blank"
+            rel="noopener"
+            title="<?= te('modulos.monitoreo_ayuda') ?>"
+        >
+            <div class="icon-wrapper">
+                <i data-lucide="activity"></i>
+            </div>
+            <h3 class="card-title"><?= te('modulos.monitoreo') ?></h3>
         </a>
     <?php endif; ?>
 

@@ -2,25 +2,31 @@
 
 class Conexion
 {
+    // Cargar variables del .env si existe y no están definidas en el entorno.
+    // En Docker las variables ya llegan al contenedor por env_file.
+    public static function cargarEntorno(): void
+    {
+        $envPath = __DIR__ . '/../../../.env';
+        if (file_exists($envPath)) {
+            $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos(trim($line), '#') === 0 || strpos($line, '=') === false) continue;
+                list($name, $value) = explode('=', $line, 2);
+                $name = trim($name);
+                $value = trim($value);
+                if (!getenv($name)) {
+                    putenv(sprintf('%s=%s', $name, $value));
+                }
+                $_ENV[$name] = $value;
+                $_SERVER[$name] = $value;
+            }
+        }
+    }
+
     public static function conectar(): PDO
     {
         try {
-            // Cargar variables del .env si existe y no están definidas en el entorno
-            $envPath = __DIR__ . '/../../../.env';
-            if (file_exists($envPath)) {
-                $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                foreach ($lines as $line) {
-                    if (strpos(trim($line), '#') === 0) continue;
-                    list($name, $value) = explode('=', $line, 2);
-                    $name = trim($name);
-                    $value = trim($value);
-                    if (!getenv($name)) {
-                        putenv(sprintf('%s=%s', $name, $value));
-                    }
-                    $_ENV[$name] = $value;
-                    $_SERVER[$name] = $value;
-                }
-            }
+            self::cargarEntorno();
 
             $host = getenv('DB_HOST') ?: 'db';
             // Si se ejecuta en CLI desde el host fuera del contenedor y 'db' no resuelve, usar 127.0.0.1
