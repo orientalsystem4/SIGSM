@@ -125,6 +125,6 @@ unset($_SESSION['mensaje']);
             </div>
         </section>
     </main>
-    <script src="../vistaGeneral/assets/js/validacion.js?v=20261109-1"></script>
+    <script src="../vistaGeneral/assets/js/validacion.js?v=20261109-2"></script>
 </body>
 </html>

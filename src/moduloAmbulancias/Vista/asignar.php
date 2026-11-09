@@ -113,7 +113,7 @@ function escaparAsignacion($valor): string
         </p>
     <?php endif; ?>
 
-    <form action="../Controlador/AsignarTraslado.php" method="POST">
+    <form action="../Controlador/AsignarTraslado.php" method="POST" data-validar-form>
 
         <input type="hidden" name="token"
                value="<?= escaparAsignacion($_SESSION['csrf_asignacion']) ?>">
@@ -135,7 +135,9 @@ function escaparAsignacion($valor): string
         <?php endif; ?>
 
         <label for="vehiculo"><?= te('campo.vehiculo') ?></label>
-        <select id="vehiculo" name="id_vehiculo">
+        <select id="vehiculo" name="id_vehiculo"
+                <?= $proveedores ? 'data-validar-si="proveedor="' : '' ?>
+                data-validar="requerido" data-msg-requerido="<?= te('asignar.error_obligatorios') ?>">
             <option value=""><?= te('asignar.seleccione_vehiculo') ?></option>
             <?php foreach ($vehiculos as $vehiculo): ?>
                 <option value="<?= (int) $vehiculo['id_vehiculo'] ?>">
@@ -151,7 +153,9 @@ function escaparAsignacion($valor): string
         <?php endif; ?>
 
         <label for="chofer"><?= te('campo.chofer') ?></label>
-        <select id="chofer" name="id_chofer">
+        <select id="chofer" name="id_chofer"
+                <?= $proveedores ? 'data-validar-si="proveedor="' : '' ?>
+                data-validar="requerido" data-msg-requerido="<?= te('asignar.error_obligatorios') ?>">
             <option value=""><?= te('asignar.seleccione_chofer') ?></option>
             <?php foreach ($choferes as $chofer): ?>
                 <option value="<?= (int) $chofer['id_usuario'] ?>">
@@ -162,7 +166,10 @@ function escaparAsignacion($valor): string
 
         <label for="enfermeria"><?= te('campo.enfermeria') ?></label>
         <select id="enfermeria" name="id_enfermero"
-                <?= $esPaciente ? 'required' : '' ?>>
+                <?= $esPaciente ? 'required' : '' ?>
+                data-validar="<?= $esPaciente ? 'requerido ' : '' ?>distinto:chofer"
+                data-msg-requerido="<?= te('asignar.error_falta_enfermeria') ?>"
+                data-msg-distinto="<?= te('asignar.error_mismas_personas') ?>">
             <option value="">
                 <?= $esPaciente
                     ? te('asignar.seleccione_enfermeria')
@@ -181,11 +188,14 @@ function escaparAsignacion($valor): string
             <label for="direccion_domicilio"><?= te('campo.direccion_domicilio') ?></label>
             <input type="text" id="direccion_domicilio"
                    name="direccion_domicilio" maxlength="255" required
-                   autocomplete="off">
+                   autocomplete="off"
+                   data-validar="requerido max:255 patron" data-patron="^[^\x00-\x1F\x7F]*$"
+                   data-msg="<?= te('domicilio.error_direccion') ?>">
         <?php endif; ?>
 
         <label for="ruta"><?= te('campo.ruta') ?></label>
-        <select id="ruta" name="id_ruta" required>
+        <select id="ruta" name="id_ruta" required
+                data-validar="requerido" data-msg-requerido="<?= te('asignar.error_obligatorios') ?>">
             <option value=""><?= te('asignar.seleccione_ruta') ?></option>
             <?php foreach ($rutas as $ruta): ?>
                 <option value="<?= (int) $ruta['id_ruta'] ?>">
@@ -210,6 +220,7 @@ function escaparAsignacion($valor): string
         </button>
     </form>
 </main>
+<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-2"></script>
 <script src="assets/js/asignar.js?v=20261109-1"></script>
 </body>
 </html>

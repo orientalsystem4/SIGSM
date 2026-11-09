@@ -228,6 +228,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                     <form
                         action="../../moduloAmbulancias/Controlador/CancelarSolicitud.php"
                         method="POST"
+                        data-validar-form
                     >
                         <input type="hidden" name="token"
                             value="<?= htmlspecialchars(
@@ -242,7 +243,9 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                         <label>
                             <?= te('enfermeria.motivo_cancelacion') ?>
                             <input type="text" name="motivo"
-                                maxlength="500" required>
+                                maxlength="500" required
+                                data-validar="requerido max:500"
+                                data-msg="<?= te('cancelar.error_motivo') ?>">
                         </label>
 
                         <button type="submit"><?= te('enfermeria.cancelar_solicitud') ?></button>
@@ -312,7 +315,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
 
 
-                        <form id="form-traslado" class="mt-3">
+                        <form id="form-traslado" class="mt-3" data-validar-form>
                             <input
                                 type="hidden"
                                 id="csrf-traslado"
@@ -331,7 +334,9 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                     <?= te('enfermeria.tipo_elemento') ?>
                                 </label>
 
-                                <select id="tipo-elemento" class="form-input" required>
+                                <select id="tipo-elemento" class="form-input" required
+                                    data-validar="requerido"
+                                    data-msg-requerido="<?= te('js.enf.error_tipo') ?>">
 
                                     <option value="">
                                         <?= te('enfermeria.seleccione_tipo') ?>
@@ -378,7 +383,11 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                     </label>
 
                                     <input type="text" id="ci-paciente" class="form-input"
-                                        placeholder="<?= te('enfermeria.cedula_placeholder') ?>" autocomplete="off" inputmode="numeric">
+                                        placeholder="<?= te('enfermeria.cedula_placeholder') ?>" autocomplete="off" inputmode="numeric"
+                                        data-validar-si="tipo-elemento=1"
+                                        data-validar="requerido patron" data-patron="^(?:[ .-]*[0-9]){7,8}[ .-]*$"
+                                        data-msg-requerido="<?= te('js.enf.error_sin_cedula') ?>"
+                                        data-msg-patron="<?= te('paciente.error_cedula') ?>">
 
                                     <p id="estado-paciente" class="text-muted">
                                         <?= te('enfermeria.cedula_ayuda') ?>
@@ -400,7 +409,9 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                         <?= te('campo.origen') ?>
                                     </label>
 
-                                    <select id="origen" class="form-input" required>
+                                    <select id="origen" class="form-input" required
+                                        data-validar="requerido"
+                                        data-msg-requerido="<?= te('js.enf.error_lugares') ?>">
 
                                         <option value="">
                                             <?= te('enfermeria.seleccione_origen') ?>
@@ -423,7 +434,10 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                         <?= te('campo.destino') ?>
                                     </label>
 
-                                    <select id="destino" class="form-input" required>
+                                    <select id="destino" class="form-input" required
+                                        data-validar="requerido distinto:origen"
+                                        data-msg-requerido="<?= te('js.enf.error_lugares') ?>"
+                                        data-msg-distinto="<?= te('js.enf.error_mismo_lugar') ?>">
 
                                         <option value="">
                                             <?= te('enfermeria.seleccione_destino') ?>
@@ -451,7 +465,9 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                     <?= te('enfermeria.canal') ?>
                                 </label>
 
-                                <select id="canal-solicitud" class="form-input" required>
+                                <select id="canal-solicitud" class="form-input" required
+                                    data-validar="requerido"
+                                    data-msg-requerido="<?= te('js.enf.error_canal') ?>">
 
                                     <option value="">
                                         <?= te('enfermeria.seleccione_canal') ?>
@@ -485,7 +501,9 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                         <?= te('enfermeria.prioridad') ?>
                                     </label>
 
-                                    <select id="prioridad" class="form-input" required>
+                                    <select id="prioridad" class="form-input" required
+                                        data-validar="requerido en:normal,alta,maxima"
+                                        data-msg="<?= te('solicitud.error_prioridad_acento') ?>">
 
                                         <option value="normal">
                                             <?= te('prioridad.normal') ?>
@@ -512,7 +530,9 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                         <?= te('campo.limite') ?>
                                     </label>
 
-                                    <input type="datetime-local" id="fecha-hora-limite" class="form-input">
+                                    <input type="datetime-local" id="fecha-hora-limite" class="form-input"
+                                        data-validar="futura"
+                                        data-msg-futura="<?= te('js.enf.error_fecha') ?>">
 
                                     <p class="text-muted">
                                         <?= te('enfermeria.limite_ayuda') ?>
@@ -533,7 +553,9 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                 </label>
 
                                 <textarea id="observaciones" class="form-input" rows="3" maxlength="500"
-                                    placeholder="<?= te('enfermeria.observaciones_placeholder') ?>"></textarea>
+                                    placeholder="<?= te('enfermeria.observaciones_placeholder') ?>"
+                                    data-validar="max:500"
+                                    data-msg-max="<?= te('solicitud.error_obs_largo') ?>"></textarea>
 
                             </div>
 
@@ -767,6 +789,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
     <?= scriptTraduccionesJs(['js.enf.']) ?>
+    <script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-2"></script>
     <script src="Assets/js/enfermeria.js?v=20261107-1"></script>
     <script>
         if (typeof lucide !== 'undefined') {

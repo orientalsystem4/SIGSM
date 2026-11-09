@@ -5,6 +5,7 @@
 // Cada regla toma su mensaje de data-msg-REGLA (impreso por PHP con te()).
 // Un campo opcional vacio no se valida. Los errores aparecen al salir del campo
 // o al enviar, nunca antes de que la persona lo haya tocado.
+// data-validar-si="ID=valor": las reglas del campo solo aplican si se cumple.
 //
 // Reglas:
 //   requerido      no vacio (se recorta como trim() de PHP; las contrasenas no)
@@ -14,6 +15,8 @@
 //   cedula         como normalizarCedula() de ValidacionIdentidad.php
 //   nombre         como nombreCompletoValido() de ValidacionIdentidad.php
 //   igual:ID       mismo valor que el campo con ese id (se evalua aunque este vacio)
+//   distinto:ID    distinto del campo con ese id (si ambos tienen valor)
+//   en:a,b,c       uno de esos valores
 //   grupo          en un contenedor: al menos una casilla marcada
 //   futura         fecha y hora posterior al momento actual
 //   pdf            archivo con extension .pdf y tipo application/pdf
@@ -94,6 +97,11 @@
             var archivo = el.files && el.files[0];
             return !archivo || archivo.size <= Number(a[0]);
         },
+        distinto: function (el, v, a) {
+            var otro = document.getElementById(a[0]);
+            return !otro || otro.value === '' || el.value !== otro.value;
+        },
+        en: function (el, v, a) { return a[0].split(',').indexOf(v) !== -1; },
         entero: function (el, v, a) {
             if (!/^-?[0-9]+$/.test(v)) {
                 return false;
@@ -103,9 +111,20 @@
         }
     };
 
+    // data-validar-si="ID=valor": las reglas solo aplican si ese campo tiene ese valor
+    function condicionCumplida(el) {
+        var condicion = el.dataset.validarSi;
+        if (!condicion) {
+            return true;
+        }
+        var partes = condicion.split('=');
+        var otro = document.getElementById(partes[0]);
+        return !!otro && otro.value === partes.slice(1).join('=');
+    }
+
     // Devuelve el mensaje del primer error, o '' si el campo es valido
     function error(el) {
-        if (el.disabled) {
+        if (el.disabled || !condicionCumplida(el)) {
             return '';
         }
         var grupo = esGrupo(el);
@@ -126,29 +145,33 @@
         return '';
     }
 
+    // El mensaje queda debajo del campo; se guarda en el propio campo
+    // (hay formularios repetidos, sin id, como el de cancelar solicitud)
     function mensajeDe(el) {
-        var id = (el.id || el.dataset.validarId || '') + '-validacion';
-        var p = el.id ? document.getElementById(id) : null;
-        if (!p) {
+        var p = el.validacionMensaje;
+        if (!p || !p.isConnected) {
             p = document.createElement('p');
             p.className = 'validacion-mensaje';
             p.setAttribute('aria-live', 'polite');
+            p.id = 'validacion-' + (++contador);
             if (el.id) {
-                p.id = id;
+                p.id = el.id + '-validacion';
+            }
+            if (!esGrupo(el)) {
                 var descritos = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
-                if (descritos.indexOf(id) === -1) {
-                    descritos.push(id);
-                    el.setAttribute('aria-describedby', descritos.join(' '));
-                }
+                descritos.push(p.id);
+                el.setAttribute('aria-describedby', descritos.join(' '));
             }
             if (esGrupo(el)) {
                 el.appendChild(p);
             } else {
                 el.insertAdjacentElement('afterend', p);
             }
+            el.validacionMensaje = p;
         }
         return p;
     }
+    var contador = 0;
 
     // Valida un campo; solo muestra el mensaje si ya fue tocado
     function validarCampo(el) {
@@ -162,9 +185,11 @@
             } else {
                 el.removeAttribute('aria-invalid');
             }
-            var p = mensajeDe(el);
-            p.textContent = texto;
-            p.hidden = texto === '';
+            if (texto || el.validacionMensaje) {
+                var p = mensajeDe(el);
+                p.textContent = texto;
+                p.hidden = texto === '';
+            }
         }
         return texto === '';
     }
@@ -173,8 +198,7 @@
         return Array.prototype.slice.call(form.querySelectorAll('[data-validar]'));
     }
 
-    // Valida todo el formulario; enfoca el primer error. Lo usan tambien los
-    // formularios que se envian por fetch (SIGSMValidacion.validar(form)).
+    // Valida todo el formulario y enfoca el primer error
     function validar(form) {
         var primero = null;
         campos(form).forEach(function (el) {
@@ -183,18 +207,6 @@
                 primero = el;
             }
         });
-        // Restricciones HTML de los campos sin data-validar (required, maxlength...)
-        if (!primero) {
-            Array.prototype.forEach.call(form.elements, function (el) {
-                if (!primero && !el.dataset.validar && el.willValidate && !el.checkValidity()) {
-                    primero = el;
-                }
-            });
-            if (primero) {
-                primero.reportValidity();
-                return false;
-            }
-        }
         if (primero) {
             var foco = esGrupo(primero) ? primero.querySelector('input, select, textarea') : primero;
             if (foco) {
@@ -202,47 +214,87 @@
             }
             return false;
         }
+        // Restricciones HTML de los campos sin data-validar (required, maxlength...)
+        var nativo = Array.prototype.filter.call(form.elements, function (el) {
+            return !el.dataset.validar && el.willValidate && !el.checkValidity();
+        })[0];
+        if (nativo) {
+            nativo.reportValidity();
+            return false;
+        }
         return true;
     }
 
-    function campoDe(form, objetivo) {
-        var el = objetivo.closest('[data-validar]');
-        return el && form.contains(el) ? el : null;
+    // Delegado en document: sirve tambien para formularios que llegan despues
+    // (por ejemplo, "Mis solicitudes" se vuelve a cargar por fetch).
+    function formularioDe(objetivo) {
+        var form = objetivo && objetivo.closest ? objetivo.closest('form[data-validar-form]') : null;
+        if (form) {
+            // Los mensajes los muestra este script, no el globo del navegador
+            form.noValidate = true;
+        }
+        return form;
     }
 
-    function preparar(form) {
-        // Los mensajes los muestra este script, no el globo del navegador
-        form.noValidate = true;
+    function campoDe(objetivo) {
+        return objetivo && objetivo.closest ? objetivo.closest('[data-validar]') : null;
+    }
 
-        form.addEventListener('focusout', function (e) {
-            var el = campoDe(form, e.target);
-            // En un grupo, solo cuando el foco sale del grupo entero
-            if (el && !(esGrupo(el) && e.relatedTarget && el.contains(e.relatedTarget))) {
-                el.dataset.validarTocado = '1';
-                validarCampo(el);
-            }
-        });
+    document.addEventListener('focusin', function (e) {
+        formularioDe(e.target);
+    });
+    // Antes de que el navegador valide al hacer clic en enviar
+    document.addEventListener('click', function (e) {
+        formularioDe(e.target);
+    }, true);
 
-        // Al corregir, el error desaparece; y los campos que dependen de otro
-        // (confirmar contrasena) se vuelven a revisar
-        function revisar() {
+    document.addEventListener('focusout', function (e) {
+        var el = formularioDe(e.target) && campoDe(e.target);
+        // En un grupo, solo cuando el foco sale del grupo entero
+        if (el && !(esGrupo(el) && e.relatedTarget && el.contains(e.relatedTarget))) {
+            el.dataset.validarTocado = '1';
+            validarCampo(el);
+        }
+    });
+
+    // Al corregir, el error desaparece; y los campos que dependen de otro
+    // (confirmar contrasena, origen y destino) se vuelven a revisar
+    function revisar(e) {
+        var form = formularioDe(e.target);
+        if (form) {
             campos(form).forEach(validarCampo);
         }
-        form.addEventListener('input', revisar);
-        form.addEventListener('change', revisar);
-
-        // En captura: corre antes que otros manejadores de envio del formulario
-        form.addEventListener('submit', function (e) {
-            if (!validar(form)) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-            }
-        }, true);
-
-        revisar();
     }
+    document.addEventListener('input', revisar);
+    document.addEventListener('change', revisar);
+
+    // En captura sobre document: corre antes que los manejadores de envio del
+    // propio formulario (por ejemplo, los que envian por fetch)
+    document.addEventListener('submit', function (e) {
+        var form = formularioDe(e.target);
+        if (form && !validar(form)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+        }
+    }, true);
+
+    // Al vaciar el formulario (por ejemplo, despues de guardar) vuelve a su estado inicial
+    document.addEventListener('reset', function (e) {
+        var form = formularioDe(e.target);
+        if (form) {
+            campos(form).forEach(function (el) {
+                delete el.dataset.validarTocado;
+                el.removeAttribute('aria-invalid');
+                if (el.validacionMensaje) {
+                    el.validacionMensaje.hidden = true;
+                }
+            });
+        }
+    });
 
     window.SIGSMValidacion = { validar: validar, validarCampo: validarCampo };
 
-    Array.prototype.forEach.call(document.querySelectorAll('form[data-validar-form]'), preparar);
+    Array.prototype.forEach.call(document.querySelectorAll('form[data-validar-form]'), function (form) {
+        form.noValidate = true;
+    });
 })();

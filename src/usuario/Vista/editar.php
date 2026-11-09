@@ -242,6 +242,6 @@ unset($_SESSION['errores_usuario']);
     </form>
 </div>
 
-<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-1"></script>
+<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-2"></script>
 </body>
 </html>
