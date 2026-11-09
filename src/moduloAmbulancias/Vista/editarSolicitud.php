@@ -36,7 +36,7 @@ function escaparEdicion($valor): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIGSM | <?= te('editar_solicitud.titulo_pagina') ?></title>
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
     <style>
         body { margin:0; padding:24px; font-family:Arial,sans-serif; background:#eef2f6; color:#1f2937; }
         main { max-width:700px; margin:auto; padding:28px; background:white; border-radius:16px; }
@@ -54,12 +54,15 @@ function escaparEdicion($valor): string
     <h1><?= te('editar_solicitud.titulo', ['id' => (int) $id]) ?></h1>
     <p><?= te('editar_solicitud.ayuda') ?></p>
     <?php if ($error !== ''): ?><p class="error" role="alert"><?= escaparEdicion($error) ?></p><?php endif; ?>
-    <form action="../Controlador/EditarSolicitud.php" method="POST">
+    <form action="../Controlador/EditarSolicitud.php" method="POST" data-validar-form>
         <input type="hidden" name="token" value="<?= escaparEdicion($_SESSION['csrf_edicion_solicitud']) ?>">
         <input type="hidden" name="id_solicitud" value="<?= (int) $id ?>">
         <?php foreach (['id_origen' => t('campo.origen'), 'id_destino' => t('campo.destino')] as $campo => $etiqueta): ?>
             <label for="<?= $campo ?>"><?= escaparEdicion($etiqueta) ?></label>
-            <select id="<?= $campo ?>" name="<?= $campo ?>" required>
+            <select id="<?= $campo ?>" name="<?= $campo ?>" required
+                    data-validar="requerido<?= $campo === 'id_destino' ? ' distinto:id_origen' : '' ?>"
+                    data-msg-requerido="<?= te('editar_solicitud.error_lugares') ?>"
+                    data-msg-distinto="<?= te('solicitud.error_mismo_lugar') ?>">
                 <option value=""><?= te('editar_solicitud.seleccione_ubicacion') ?></option>
                 <?php foreach ($ubicaciones as $ubicacion): ?>
                     <option value="<?= (int) $ubicacion['id_ubicacion'] ?>" <?= (int) $datos[$campo] === (int) $ubicacion['id_ubicacion'] ? 'selected' : '' ?>><?= escaparEdicion(nombreUbicacion($ubicacion['nombre'], $ubicacion['tipo_ubicacion'])) ?></option>
@@ -71,21 +74,26 @@ function escaparEdicion($valor): string
             <input id="prioridad" value="<?= te('prioridad.maxima_organo') ?>" readonly>
             <input type="hidden" name="prioridad" value="maxima">
         <?php else: ?>
-            <select id="prioridad" name="prioridad" required>
+            <select id="prioridad" name="prioridad" required
+                    data-validar="requerido en:normal,alta,maxima"
+                    data-msg="<?= te('solicitud.error_prioridad_acento') ?>">
                 <?php foreach (['normal' => t('prioridad.normal'), 'alta' => t('prioridad.alta'), 'maxima' => t('prioridad.maxima')] as $valor => $texto): ?>
                     <option value="<?= $valor ?>" <?= $datos['prioridad'] === $valor ? 'selected' : '' ?>><?= escaparEdicion($texto) ?></option>
                 <?php endforeach; ?>
             </select>
         <?php endif; ?>
         <label for="fecha_hora_limite"><?= te('campo.limite_opcional') ?></label>
-        <input type="datetime-local" id="fecha_hora_limite" name="fecha_hora_limite" value="<?= escaparEdicion($datos['fecha_hora_limite']) ?>">
+        <input type="datetime-local" id="fecha_hora_limite" name="fecha_hora_limite" value="<?= escaparEdicion($datos['fecha_hora_limite']) ?>"
+               data-validar="futura" data-msg-futura="<?= te('editar_solicitud.error_fecha_pasada') ?>">
         <label for="observaciones"><?= te('campo.observaciones_opcional') ?></label>
-        <textarea id="observaciones" name="observaciones" maxlength="500"><?= escaparEdicion($datos['observaciones']) ?></textarea>
+        <textarea id="observaciones" name="observaciones" maxlength="500"
+                  data-validar="max:500" data-msg-max="<?= te('editar_solicitud.error_obs') ?>"><?= escaparEdicion($datos['observaciones']) ?></textarea>
         <div class="acciones">
             <button type="submit"><?= te('comun.guardar_cambios') ?></button>
             <a href="../../moduloDocumentacion/Vista/enfermeria.php?vista=mis-solicitudes"><?= te('comun.volver_sin_guardar') ?></a>
         </div>
     </form>
 </main>
+<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-6"></script>
 </body>
 </html>

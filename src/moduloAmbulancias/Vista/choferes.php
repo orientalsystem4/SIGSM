@@ -17,7 +17,7 @@ $usuarioActual = obtenerUsuarioActual();
 
         <link rel="stylesheet" href="assets/css/choferes.css?v=20261019-2">
     <script src="../../serviciosComunes/vistaGeneral/assets/vendor/lucide-1.70.0.min.js"></script>
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
 </head>
 
 <body>

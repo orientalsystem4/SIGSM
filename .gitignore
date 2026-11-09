@@ -1,2 +1,4 @@
 .env
 src/moduloDocumentacion/Vista/documentos/*.pdf
+.env.*
+!.env.example

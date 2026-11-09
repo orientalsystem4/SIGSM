@@ -244,3 +244,14 @@
     border-color: #0f766e;
     outline: none;
 }
+
+/* Validacion en el navegador (vistaGeneral/assets/js/validacion.js) */
+.pagina-login .validacion-mensaje {
+    color: #991b1b;
+    font-size: 0.85rem;
+    margin: 4px 0 0;
+}
+
+.pagina-login [aria-invalid="true"] {
+    border-color: #b91c1c;
+}

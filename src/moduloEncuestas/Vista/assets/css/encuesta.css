@@ -134,3 +134,21 @@ textarea {
     .encuesta-header, .formulario { padding: 20px; }
 }
 
+
+/* Validacion en el navegador (serviciosComunes/vistaGeneral/assets/js/validacion.js) */
+.validacion-mensaje {
+    color: #991b1b;
+    font-size: 0.9rem;
+    margin: 6px 0 0;
+}
+
+.pregunta[aria-invalid="true"] h3 {
+    color: #991b1b;
+}
+
+.validacion-contador {
+    color: #667085;
+    font-size: 0.85rem;
+    margin: 4px 0 0;
+    text-align: right;
+}

@@ -69,7 +69,8 @@ if (!$conexionEncontrada) {
 }
 
 try {
-    $pdo = Conexion::conectar();
+    // Usuario administrador de la base (DB_ADMIN_USER), si esta definido.
+    $pdo = Conexion::conectar(true);
 } catch (Exception $e) {
     fwrite(STDERR, "[ERROR] No se pudo conectar a la base de datos: " . $e->getMessage() . "\n");
     exit(1);

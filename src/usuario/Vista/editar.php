@@ -135,7 +135,7 @@ unset($_SESSION['errores_usuario']);
             padding: 0;
         }
     </style>
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
 </head>
 <body>
 
@@ -155,7 +155,7 @@ unset($_SESSION['errores_usuario']);
         </div>
     <?php endif; ?>
 
-    <form class="tarjeta-formulario" action="../Controlador/ControladorUsuarios.php" method="POST">
+    <form class="tarjeta-formulario" action="../Controlador/ControladorUsuarios.php" method="POST" data-validar-form>
         <input type="hidden" name="token"
        value="<?= htmlspecialchars($_SESSION['csrf_usuarios'], ENT_QUOTES, 'UTF-8') ?>">
         <input type="hidden" name="accion" value="editar">
@@ -164,20 +164,32 @@ unset($_SESSION['errores_usuario']);
         <div class="campo">
             <label for="cedula"><?= te('usuarios.cedula_identidad') ?></label>
             <input type="text" id="cedula" name="cedula" maxlength="12"
-                   value="<?= htmlspecialchars($usuario['cedula'] ?? '') ?>">
+                   value="<?= htmlspecialchars($usuario['cedula'] ?? '') ?>"
+                   data-validar="<?= !empty($usuario['cedula']) ? 'requerido ' : '' ?>cedula"
+                   data-msg-requerido="<?= te('usuarios.error_quitar_cedula') ?>"
+                   data-msg-cedula="<?= te('usuarios.error_cedula') ?>">
         </div>
         <div class="campo">
             <label for="nombre_completo"><?= te('usuarios.nombre_completo') ?></label>
             <input type="text" id="nombre_completo" name="nombre_completo" maxlength="150"
-                   value="<?= htmlspecialchars($usuario['nombre_completo'] ?? '') ?>">
+                   value="<?= htmlspecialchars($usuario['nombre_completo'] ?? '') ?>"
+                   data-validar="<?= !empty($usuario['nombre_completo']) ? 'requerido ' : '' ?>nombre"
+                   data-msg-requerido="<?= te('usuarios.error_quitar_nombre') ?>"
+                   data-msg-nombre="<?= te('usuarios.error_nombre_completo') ?>">
         </div>
         <div class="campo">
             <label for="nombre_usuario"><?= te('usuarios.nombre_usuario') ?> *</label>
             <input type="text" id="nombre_usuario" name="nombre_usuario"
-                   value="<?= htmlspecialchars($usuario['nombre_usuario']) ?>" required>
+                   value="<?= htmlspecialchars($usuario['nombre_usuario']) ?>" required
+                   data-validar="requerido bytesmin:3 bytesmax:50 patron" data-patron="^[a-zA-Z0-9_.-]+$"
+                   data-msg-requerido="<?= te('usuarios.error_nombre_obligatorio') ?>"
+                   data-msg-bytesmin="<?= te('usuarios.error_nombre_largo') ?>"
+                   data-msg-bytesmax="<?= te('usuarios.error_nombre_largo') ?>"
+                   data-msg-patron="<?= te('usuarios.error_nombre_caracteres') ?>">
         </div>
 
-                <fieldset class="campo">
+                <fieldset class="campo" id="roles" data-validar="grupo"
+                  data-msg-grupo="<?= te('usuarios.error_sin_rol') ?>">
             <legend><?= te('usuarios.roles') ?> *</legend>
 
             <p class="campo-ayuda">
@@ -211,7 +223,9 @@ unset($_SESSION['errores_usuario']);
 
         <div class="campo">
             <label for="password"><?= te('usuarios.nueva_contrasena') ?></label>
-           <input type="password" id="password" name="password">
+           <input type="password" id="password" name="password"
+                  data-validar="bytesmin:12"
+                  data-msg-bytesmin="<?= te('usuarios.error_nueva_corta') ?>">
         </div>
         <div class="campo">
             <label for="activo"><?= te('usuarios.estado_cuenta') ?> *</label>
@@ -228,5 +242,6 @@ unset($_SESSION['errores_usuario']);
     </form>
 </div>
 
+<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-6"></script>
 </body>
 </html>

@@ -64,21 +64,36 @@ NOMBRE_DB="${NOMBRE_DB:-sigsm}"
 [[ "$NOMBRE_DB" =~ ^[A-Za-z0-9_]+$ ]] || fallo "DB_NAME no es válido en .env."
 
 # 2. Base de datos --------------------------------------------------------------
+# Se respalda con el administrador de la base (DB_ADMIN_USER). Sin él (instalación
+# anterior) se usa DB_USER, que en esas instalaciones es root.
 # La clave viaja como variable de entorno (MYSQL_PWD), nunca como argumento:
 # los argumentos de los procesos se ven con ps.
-MYSQL_PWD="$(env_get DB_PASS)"
-[[ -n "$MYSQL_PWD" ]] || fallo "DB_PASS está vacío en .env."
+USUARIO_DB="$(env_get DB_ADMIN_USER)"
+if [[ -n "$USUARIO_DB" ]]; then
+    MYSQL_PWD="$(env_get DB_ADMIN_PASS)"
+else
+    USUARIO_DB="$(env_get DB_USER)"
+    USUARIO_DB="${USUARIO_DB:-root}"
+    MYSQL_PWD="$(env_get DB_PASS)"
+fi
+[[ "$USUARIO_DB" =~ ^[A-Za-z0-9_]+$ ]] || fallo "El usuario de la base no es válido en .env."
+[[ -n "$MYSQL_PWD" ]] || fallo "La clave de $USUARIO_DB está vacía en .env."
 export MYSQL_PWD
 
+# Las vistas son SQL SECURITY INVOKER: se quita su DEFINER del volcado para que el
+# respaldo se pueda restaurar con cualquier usuario con permisos sobre la base.
 docker compose exec -T -e MYSQL_PWD db \
-    mariadb-dump -uroot --single-transaction --routines --events --triggers \
-    --databases "$NOMBRE_DB" 2>> "$LOG_RESPALDOS" | gzip -c > "$ARCHIVO_DB.tmp" \
+    mariadb-dump -u"$USUARIO_DB" --single-transaction --routines --events --triggers \
+    --databases "$NOMBRE_DB" 2>> "$LOG_RESPALDOS" \
+    | sed -E 's#^/\*!50013 DEFINER=`[^`]*`@`[^`]*` #/*!50013 #' \
+    | gzip -c > "$ARCHIVO_DB.tmp" \
     || fallo "Falló el volcado de la base '$NOMBRE_DB' (detalle arriba en el registro)."
 unset MYSQL_PWD
 
 gzip -t "$ARCHIVO_DB.tmp" 2>/dev/null || fallo "El volcado de la base está dañado (gzip -t)."
 tablas=$(gzip -dc "$ARCHIVO_DB.tmp" | grep -c '^CREATE TABLE' || true)
 (( tablas > 0 )) || fallo "El volcado de la base quedó vacío (sin CREATE TABLE)."
+vistas=$(gzip -dc "$ARCHIVO_DB.tmp" | grep -c '^/\*!50001 VIEW' || true)
 mv "$ARCHIVO_DB.tmp" "$ARCHIVO_DB"
 
 # 3. Documentos -----------------------------------------------------------------
@@ -92,4 +107,4 @@ minutos=$(( DIAS_RETENCION * 24 * 60 ))
 borrados=$(find "$DIR_RESPALDOS/databases" "$DIR_RESPALDOS/documentos" -maxdepth 1 -type f \
     \( -name 'db_sigsm_*.sql.gz' -o -name 'documentos_*.tar.gz' \) -mmin "+$minutos" -print -delete | wc -l)
 
-registrar OK "Respaldo correcto: $(basename "$ARCHIVO_DB") ($tablas tablas, $(du -h "$ARCHIVO_DB" | cut -f1)), $(basename "$ARCHIVO_DOCS") ($(du -h "$ARCHIVO_DOCS" | cut -f1)). Copias antiguas borradas: $borrados."
+registrar OK "Respaldo correcto: $(basename "$ARCHIVO_DB") ($tablas tablas, $vistas vistas, $(du -h "$ARCHIVO_DB" | cut -f1)), $(basename "$ARCHIVO_DOCS") ($(du -h "$ARCHIVO_DOCS" | cut -f1)). Copias antiguas borradas: $borrados."

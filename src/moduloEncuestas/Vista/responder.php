@@ -1,4 +1,7 @@
 <?php
+// Solo para los mensajes de validacion en el navegador (idioma de la cookie)
+require_once __DIR__ . '/../../serviciosComunes/idioma/idioma.php';
+
 // Recibir la categoría del paciente (por defecto 1 si no viene)
 $idCategoria = isset($_GET['categoria']) ? (int)$_GET['categoria'] : 1;
 
@@ -45,7 +48,7 @@ $encuestaInstitucional = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S.I.G.S.M. | Encuesta Institucional de Satisfacción</title>
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css">
-    <link rel="stylesheet" href="assets/css/encuesta.css">
+    <link rel="stylesheet" href="assets/css/encuesta.css?v=20261109-1">
 </head>
 <body>
 
@@ -62,7 +65,7 @@ $encuestaInstitucional = [
             </div>
         </div>
 
-        <form id="formEncuesta" method="POST" action="../Controlador/GuardarEncuesta.php">
+        <form id="formEncuesta" method="POST" action="../Controlador/GuardarEncuesta.php" data-validar-form>
             <!-- Campo oculto para saber de qué área viene -->
             <input type="hidden" name="id_categoria" value="<?php echo $idCategoria; ?>">
 
@@ -74,7 +77,9 @@ $encuestaInstitucional = [
                 <div class="formulario">
                     
                     <?php foreach ($seccion['preguntas'] as $pregunta): ?>
-                    <div class="pregunta">
+                    <div class="pregunta" id="pregunta-<?php echo (int) $pregunta['id']; ?>"
+                         data-validar="grupo"
+                         data-msg-grupo="<?= te('encuesta.error_pregunta', ['n' => (int) $pregunta['id']]) ?>">
                         <h3><?php echo htmlspecialchars($pregunta['texto']); ?></h3>
                         
                         <?php if ($pregunta['tipo'] === 'escala'): ?>
@@ -98,7 +103,10 @@ $encuestaInstitucional = [
                 <div class="seccion-header">Comentarios Adicionales</div>
                 <div class="formulario">
                     <p class="text-muted" style="margin-top:0; color:#667085;">¿Desea agregar alguna sugerencia o detalle sobre su atención?</p>
-                    <textarea name="comentario_libre" maxlength="500" placeholder="Escriba aquí (opcional)..."></textarea>
+                    <textarea id="comentario_libre" name="comentario_libre" maxlength="500" placeholder="Escriba aquí (opcional)..."
+                              data-validar="max:500"
+                              data-msg-max="<?= te('encuesta.error_comentario') ?>"
+                              data-contador="<?= te('encuesta.contador') ?>" data-contador-max="500"></textarea>
                 </div>
             </div>
 
@@ -113,6 +121,7 @@ $encuestaInstitucional = [
 
     </div>
 
+    <script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-6"></script>
     <script>
         // Si venimos de un envío exitoso, mostrar el mensaje de éxito
         const urlParams = new URLSearchParams(window.location.search);

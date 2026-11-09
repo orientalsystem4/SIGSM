@@ -56,46 +56,11 @@ class SolicitudModelo
     {
         $conexion = Conexion::conectar();
 
+        // La vista ya filtra las pendientes sin traslado.
         $sql = "
-            SELECT
-                s.id_solicitud,
-                s.ci_paciente,
-                s.id_tipo_elemento,
-                s.fecha_solicitud,
-                s.estado_solicitud,
-                s.prioridad,
-                s.fecha_hora_limite,
-                s.observaciones,
-                te.nombre AS tipo_elemento,
-                origen.nombre AS origen,
-                origen.tipo_ubicacion AS origen_tipo,
-                destino.nombre AS destino,
-                destino.tipo_ubicacion AS destino_tipo,
-                s.id_canal,
-                c.nombre AS canal,
-                u.nombre_usuario AS solicitante,
-                p.nombre AS nombre_paciente,
-                p.apellido AS apellido_paciente
-            FROM solicitud_traslado s
-            INNER JOIN tipo_elemento te
-                ON te.id_tipo_elemento = s.id_tipo_elemento
-            INNER JOIN ubicacion origen
-                ON origen.id_ubicacion = s.id_origen
-            INNER JOIN ubicacion destino
-                ON destino.id_ubicacion = s.id_destino
-            INNER JOIN canal_solicitud c
-                ON c.id_canal = s.id_canal
-            INNER JOIN usuario u
-                ON u.id_usuario = s.id_usuario_solicit
-            LEFT JOIN paciente p
-                ON p.ci = s.ci_paciente
-            WHERE s.estado_solicitud = 'Pendiente'
-              AND NOT EXISTS (
-                  SELECT 1
-                  FROM traslado t
-                  WHERE t.id_solicitud = s.id_solicitud
-              )
-            ORDER BY s.fecha_solicitud DESC, s.id_solicitud DESC
+            SELECT *
+            FROM v_solicitud_pendiente
+            ORDER BY fecha_solicitud DESC, id_solicitud DESC
         ";
 
         $consulta = $conexion->prepare($sql);

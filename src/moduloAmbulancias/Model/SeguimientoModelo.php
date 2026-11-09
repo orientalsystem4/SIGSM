@@ -8,58 +8,43 @@ class SeguimientoModelo
     public static function listar(?int $idChofer, bool $verDomicilio = false): array
     {
         $conexion = Conexion::conectar();
-        $columnaDomicilio = $verDomicilio ? 's.direccion_domicilio' : 'NULL';
+        // La vista v_traslado_detalle no incluye la direccion: se lee de la solicitud solo con permiso.
+        $columnaDomicilio = $verDomicilio
+            ? '(SELECT s.direccion_domicilio FROM solicitud_traslado s WHERE s.id_solicitud = vt.id_solicitud)'
+            : 'NULL';
 
         $sql = "
             SELECT
-                t.id_traslado,
-                t.id_solicitud,
-                t.id_chofer,
-                t.id_vehiculo,
-                t.id_proveedor,
-                s.ci_paciente,
-                s.id_tipo_elemento,
+                vt.id_traslado,
+                vt.id_solicitud,
+                vt.id_chofer,
+                vt.id_vehiculo,
+                vt.id_proveedor,
+                vt.ci_paciente,
+                vt.id_tipo_elemento,
                 $columnaDomicilio AS direccion_domicilio,
-                v.matricula,
-                pe.nombre AS proveedor,
-                ch.nombre_usuario AS chofer,
-                en.nombre_usuario AS enfermeria,
-                o.nombre AS origen,
-                o.tipo_ubicacion AS origen_tipo,
-                d.nombre AS destino,
-                d.tipo_ubicacion AS destino_tipo,
-                te.nombre AS elemento,
-                h.id_estado,
-                e.nombre AS estado
-            FROM traslado t
-            JOIN solicitud_traslado s
-                ON s.id_solicitud = t.id_solicitud
-            JOIN ubicacion o ON o.id_ubicacion = s.id_origen
-            JOIN ubicacion d ON d.id_ubicacion = s.id_destino
-            JOIN tipo_elemento te
-                ON te.id_tipo_elemento = s.id_tipo_elemento
-            LEFT JOIN vehiculo v ON v.id_vehiculo = t.id_vehiculo
-            LEFT JOIN proveedor_externo pe ON pe.id_proveedor = t.id_proveedor
-            LEFT JOIN usuario ch ON ch.id_usuario = t.id_chofer
-            LEFT JOIN usuario en ON en.id_usuario = t.id_enfermero
-            LEFT JOIN historial_estado h ON h.id_historial = (
-                SELECT hx.id_historial
-                FROM historial_estado hx
-                WHERE hx.id_traslado = t.id_traslado
-                ORDER BY hx.fecha_hora DESC, hx.id_historial DESC
-                LIMIT 1
-            )
-            LEFT JOIN estado_traslado e ON e.id_estado = h.id_estado
+                vt.matricula,
+                vt.proveedor,
+                vt.chofer,
+                vt.enfermeria,
+                vt.origen,
+                vt.origen_tipo,
+                vt.destino,
+                vt.destino_tipo,
+                vt.elemento,
+                vt.id_estado,
+                vt.estado
+            FROM v_traslado_detalle vt
         ";
 
         $params = [];
 
         if ($idChofer !== null) {
-            $sql .= ' WHERE t.id_chofer = :chofer';
+            $sql .= ' WHERE vt.id_chofer = :chofer';
             $params[':chofer'] = $idChofer;
         }
 
-        $sql .= ' ORDER BY t.id_traslado DESC';
+        $sql .= ' ORDER BY vt.id_traslado DESC';
 
         $consulta = $conexion->prepare($sql);
         $consulta->execute($params);

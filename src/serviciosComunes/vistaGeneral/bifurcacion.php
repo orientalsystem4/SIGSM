@@ -28,7 +28,7 @@ if (tieneRol([1])) {
     <title>S.I.G.S.M. | <?= te('modulos.titulo') ?></title>
     <link rel="stylesheet" href="assets/css/bifurcacion.css">
     <script src="assets/vendor/lucide-1.70.0.min.js"></script>
-    <link rel="stylesheet" href="assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="assets/css/tema-institucional.css?v=20261109-1">
 </head>
 <body>
     <main class="bifurcacion-container">

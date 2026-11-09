@@ -453,5 +453,8 @@
     "asignar.error_proveedor": "The selected external provider is not valid.",
     "traslado.tercerizado": "Outsourced",
     "hist.asignado_proveedor": "Transfer assigned to an external provider.",
-    "asignar.terceros": "Third parties"
+    "asignar.terceros": "Third parties",
+    "encuesta.error_pregunta": "Answer question {n}: choose a value from 1 to 5.",
+    "encuesta.error_comentario": "The comment cannot exceed 500 characters.",
+    "encuesta.contador": "{n} of {max} characters"
 }

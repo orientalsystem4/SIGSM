@@ -173,7 +173,7 @@ unset($_SESSION['errores_documento']);
 
     </style>
 
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
 </head>
 
 <body>
@@ -216,6 +216,7 @@ unset($_SESSION['errores_documento']);
         action="../Controlador/ControladorDocumentos.php"
         method="POST"
         enctype="multipart/form-data"
+        data-validar-form
     >
         <input type="hidden" name="token" value="<?= htmlspecialchars($_SESSION['csrf_documentos'], ENT_QUOTES, 'UTF-8') ?>">
 
@@ -259,6 +260,8 @@ unset($_SESSION['errores_documento']);
                 id="id_categoria"
                 name="id_categoria"
                 required
+                data-validar="requerido en:<?= implode(',', array_map(fn ($c) => (int) $c['id_categoria'], $categorias)) ?>"
+                data-msg="<?= te('doc.error_categoria') ?>"
             >
 
                 <option value="">
@@ -304,6 +307,9 @@ unset($_SESSION['errores_documento']);
                 id="archivo"
                 name="archivo"
                 accept=".pdf,application/pdf"
+                data-validar="tamano:15728640 pdf"
+                data-msg-tamano="<?= te('doc.error_tamano') ?>"
+                data-msg-pdf="<?= te('doc.error_formato') ?>"
             >
 
             <span class="ayuda">
@@ -335,5 +341,6 @@ unset($_SESSION['errores_documento']);
 
 </div>
 
+<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-6"></script>
 </body>
 </html>

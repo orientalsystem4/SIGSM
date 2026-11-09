@@ -108,7 +108,7 @@ $tituloPagina = t('usuarios.detalle');
         .boton-secundario { background: #e2e8f0; color: #334155; }
         .boton-secundario:hover { background: #cbd5e1; }
     </style>
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
 </head>
 <body>
 

@@ -34,7 +34,9 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      # Clave de root: solo para administrar el contenedor. Sin DB_ROOT_PASS (instalaciones
+      # anteriores, con DB_USER=root) sigue siendo DB_PASS.
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS:-${DB_PASS}}
       MYSQL_DATABASE: ${DB_NAME}
       # Actualiza las tablas de sistema si el volumen viene de una version anterior (10.4)
       MARIADB_AUTO_UPGRADE: "1"
@@ -49,8 +51,10 @@ services:
       start_period: 30s
     volumes:
       - db_data:/var/lib/mysql
-      # Auto-importa el volcado SQL al levantar el contenedor por primera vez
-      - ./src/documentacion/sigsm.sql:/docker-entrypoint-initdb.d/init.sql
+      # Solo la primera vez (volumen vacío), en orden alfabético: estructura y datos,
+      # después los usuarios sigsm_admin y sigsm_app (lee DB_* del .env)
+      - ./src/documentacion/sigsm.sql:/docker-entrypoint-initdb.d/10-sigsm.sql:ro
+      - ./bin/usuarios_bd.sh:/docker-entrypoint-initdb.d/20-usuarios.sh:ro
     ports:
       - "127.0.0.1:3306:3306"
 
@@ -64,7 +68,7 @@ services:
     environment:
       PMA_HOST: db
       PMA_USER: root
-      PMA_PASSWORD: ${DB_PASS}
+      PMA_PASSWORD: ${DB_ROOT_PASS:-${DB_PASS}}
     depends_on:
       db:
         condition: service_healthy
