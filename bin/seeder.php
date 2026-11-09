@@ -22,7 +22,8 @@ try {
     if (!$encontrada) {
         throw new RuntimeException('No se encontro conexion.php. Ejecutar desde el proyecto completo.');
     }
-    $pdo = Conexion::conectar();
+    // Usuario administrador de la base (DB_ADMIN_USER): crea tablas, columnas y vistas.
+    $pdo = Conexion::conectar(true);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // La estructura base debe estar importada antes de ejecutar este script.

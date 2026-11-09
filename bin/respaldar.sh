@@ -64,16 +64,26 @@ NOMBRE_DB="${NOMBRE_DB:-sigsm}"
 [[ "$NOMBRE_DB" =~ ^[A-Za-z0-9_]+$ ]] || fallo "DB_NAME no es válido en .env."
 
 # 2. Base de datos --------------------------------------------------------------
+# Se respalda con el administrador de la base (DB_ADMIN_USER). Sin él (instalación
+# anterior) se usa DB_USER, que en esas instalaciones es root.
 # La clave viaja como variable de entorno (MYSQL_PWD), nunca como argumento:
 # los argumentos de los procesos se ven con ps.
-MYSQL_PWD="$(env_get DB_PASS)"
-[[ -n "$MYSQL_PWD" ]] || fallo "DB_PASS está vacío en .env."
+USUARIO_DB="$(env_get DB_ADMIN_USER)"
+if [[ -n "$USUARIO_DB" ]]; then
+    MYSQL_PWD="$(env_get DB_ADMIN_PASS)"
+else
+    USUARIO_DB="$(env_get DB_USER)"
+    USUARIO_DB="${USUARIO_DB:-root}"
+    MYSQL_PWD="$(env_get DB_PASS)"
+fi
+[[ "$USUARIO_DB" =~ ^[A-Za-z0-9_]+$ ]] || fallo "El usuario de la base no es válido en .env."
+[[ -n "$MYSQL_PWD" ]] || fallo "La clave de $USUARIO_DB está vacía en .env."
 export MYSQL_PWD
 
 # Las vistas son SQL SECURITY INVOKER: se quita su DEFINER del volcado para que el
 # respaldo se pueda restaurar con cualquier usuario con permisos sobre la base.
 docker compose exec -T -e MYSQL_PWD db \
-    mariadb-dump -uroot --single-transaction --routines --events --triggers \
+    mariadb-dump -u"$USUARIO_DB" --single-transaction --routines --events --triggers \
     --databases "$NOMBRE_DB" 2>> "$LOG_RESPALDOS" \
     | sed -E 's#^/\*!50013 DEFINER=`[^`]*`@`[^`]*` #/*!50013 #' \
     | gzip -c > "$ARCHIVO_DB.tmp" \

@@ -40,18 +40,46 @@ fi
 ok "Requisitos verificados."
 
 # 2. Archivo .env ---------------------------------------------------------------
+env_nuevo=0
 if [[ ! -f .env ]]; then
     cp .env.example .env
-    clave_db="$(openssl rand -base64 24 | tr -d '/+=')"
-    sed -i "s|^DB_PASS=.*|DB_PASS=${clave_db}|" .env
+    # Tres claves distintas: aplicación (DB_PASS), administrador (DB_ADMIN_PASS) y root
+    for variable in DB_PASS DB_ADMIN_PASS DB_ROOT_PASS; do
+        clave="$(openssl rand -base64 24 | tr -d '/+=')"
+        sed -i "s|^${variable}=.*|${variable}=${clave}|" .env
+    done
     chown --reference=. .env
-    ok "Archivo .env creado con una clave de base de datos generada."
+    env_nuevo=1
+    ok "Archivo .env creado con las claves de base de datos generadas."
 else
     info "El archivo .env ya existe; no se modifica su contenido."
 fi
-# Contiene la clave root de la base: solo lectura/escritura del dueño
+# Contiene las claves de la base: solo lectura/escritura del dueño
 chmod 600 .env
 [[ -n "$(env_get DB_PASS)" ]] || fallo "DB_PASS está vacío en .env. Definirlo antes de continuar."
+usuario_app="$(env_get DB_USER)"
+usuario_db_admin="$(env_get DB_ADMIN_USER)"
+if [[ -n "$usuario_db_admin" ]]; then
+    [[ -n "$(env_get DB_ADMIN_PASS)" ]] || fallo "DB_ADMIN_PASS está vacío en .env. Definirlo antes de continuar."
+fi
+# Con un usuario de aplicación propio, root necesita su clave aparte (si no, sería DB_PASS)
+if [[ "${usuario_app:-root}" != "root" ]]; then
+    [[ -n "$(env_get DB_ROOT_PASS)" ]] || fallo "DB_ROOT_PASS está vacío en .env. Definirlo antes de continuar."
+fi
+
+# Consultas de verificación con el administrador de la base. Sin DB_ADMIN_USER
+# (instalación anterior) se usa DB_USER, como antes. La clave va por MYSQL_PWD.
+nombre_db="$(env_get DB_NAME)"; nombre_db="${nombre_db:-sigsm}"
+if [[ -n "$usuario_db_admin" ]]; then
+    usuario_consulta="$usuario_db_admin"; clave_consulta="$(env_get DB_ADMIN_PASS)"
+else
+    usuario_consulta="${usuario_app:-root}"; clave_consulta="$(env_get DB_PASS)"
+fi
+[[ "$nombre_db$usuario_consulta" =~ ^[A-Za-z0-9_]+$ ]] || fallo "DB_NAME o el usuario de la base tienen caracteres no válidos."
+consulta_bd() {
+    MYSQL_PWD="$clave_consulta" docker compose exec -T -e MYSQL_PWD db \
+        mariadb -u"$usuario_consulta" -N -D "$nombre_db" -e "$1"
+}
 
 # 3. Carpeta de documentos ------------------------------------------------------
 install -d -o 33 -g 33 -m 750 "$DIR_DOCUMENTOS"
@@ -85,12 +113,12 @@ done
 ok "Base de datos lista."
 
 # 5. Estructura y datos iniciales -----------------------------------------------
-docker compose exec -T web php bin/seeder.php
+docker compose exec -T web php bin/seeder.php \
+    || fallo "El seeder falló. Si la base viene de una instalación anterior, crear los usuarios con: bash bin/usuarios_bd.sh"
 
 # Las 9 preguntas se comparten entre las 7 encuestas: 7 x 9 = 63 filas. Si falta
 # alguna, las encuestas no pasarían la validación; se avisa y la instalación sigue.
-filas_encuestas="$(docker compose exec -T db sh -c \
-    'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -N -D "$MYSQL_DATABASE" -e "SELECT COUNT(*) FROM encuesta_pregunta"' 2>&1 || true)"
+filas_encuestas="$(consulta_bd "SELECT COUNT(*) FROM encuesta_pregunta" 2>&1 || true)"
 filas_encuestas="${filas_encuestas//[$'\r\n ']/}"
 if [[ "$filas_encuestas" == "63" ]]; then
     ok "Encuestas verificadas (63 combinaciones encuesta-pregunta)."
@@ -104,8 +132,7 @@ usuario_admin="$(env_get SEED_ADMIN_USER)"
 usuario_admin="${usuario_admin:-admin}"
 [[ "$usuario_admin" =~ ^[A-Za-z0-9_.-]+$ ]] || fallo "SEED_ADMIN_USER solo admite letras, números, punto, guion y guion bajo."
 
-existe="$(docker compose exec -T db sh -c \
-    "mariadb -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -N -D \"\$MYSQL_DATABASE\" -e \"SELECT COUNT(*) FROM usuario WHERE nombre_usuario='${usuario_admin}'\"")"
+existe="$(consulta_bd "SELECT COUNT(*) FROM usuario WHERE nombre_usuario='${usuario_admin}'")"
 existe="${existe//[$'\r\n ']/}"
 
 clave_admin=""
@@ -219,7 +246,7 @@ else
 fi
 
 # 8. Resumen --------------------------------------------------------------------
-ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+ip="$(hostname -I 2>/dev/null | awk '{print $1}' || true)"
 echo
 echo "========================================================="
 echo " S.I.G.S.M. instalado"
@@ -230,5 +257,18 @@ if [[ -n "$clave_admin" ]]; then
     echo "  (se muestra una sola vez; guardarla ahora)"
 else
     echo "  Clave:    sin cambios (ya existía)"
+fi
+echo
+echo " Usuarios de la base de datos ($nombre_db)"
+echo "  Aplicación:     ${usuario_app:-root}"
+echo "  Administrador:  ${usuario_db_admin:-(no definido: se usa ${usuario_app:-root})}"
+echo "  root:           solo para administrar el contenedor"
+if (( env_nuevo )); then
+    echo "  Claves generadas (guardadas en $RAIZ/.env, permisos 600):"
+    echo "    DB_PASS=$(env_get DB_PASS)"
+    echo "    DB_ADMIN_PASS=$(env_get DB_ADMIN_PASS)"
+    echo "    DB_ROOT_PASS=$(env_get DB_ROOT_PASS)"
+else
+    echo "  Claves: sin cambios (ver $RAIZ/.env)"
 fi
 echo "========================================================="

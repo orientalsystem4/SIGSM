@@ -23,7 +23,9 @@ class Conexion
         }
     }
 
-    public static function conectar(): PDO
+    // $administrador: solo para los scripts de consola (seeder, crear_admin), que cambian
+    // estructura. La aplicacion web usa siempre DB_USER.
+    public static function conectar(bool $administrador = false): PDO
     {
         try {
             self::cargarEntorno();
@@ -37,6 +39,11 @@ class Conexion
             $dbname = getenv('DB_NAME') ?: 'sigsm';
             $user = getenv('DB_USER') ?: 'root';
             $password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
+            // Sin DB_ADMIN_USER (instalaciones anteriores) se sigue usando DB_USER como antes.
+            if ($administrador && getenv('DB_ADMIN_USER')) {
+                $user = getenv('DB_ADMIN_USER');
+                $password = getenv('DB_ADMIN_PASS') !== false ? getenv('DB_ADMIN_PASS') : '';
+            }
             $port = getenv('DB_PORT') ?: '3306';
 
             $conexion = new PDO(
