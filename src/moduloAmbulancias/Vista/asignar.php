@@ -210,5 +210,6 @@ function escaparAsignacion($valor): string
         </button>
     </form>
 </main>
+<script src="assets/js/asignar.js?v=20261109-1"></script>
 </body>
 </html>
