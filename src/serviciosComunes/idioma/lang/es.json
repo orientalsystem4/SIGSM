@@ -425,5 +425,8 @@
     "asignar.error_proveedor": "El proveedor externo seleccionado no es válido.",
     "traslado.tercerizado": "Tercerizado",
     "hist.asignado_proveedor": "Traslado asignado a un proveedor externo.",
-    "asignar.terceros": "Terceros"
+    "asignar.terceros": "Terceros",
+    "encuesta.error_pregunta": "Responda la pregunta {n}: elija un valor del 1 al 5.",
+    "encuesta.error_comentario": "El comentario no puede superar los 500 caracteres.",
+    "encuesta.contador": "{n} de {max} caracteres"
 }

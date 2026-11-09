@@ -653,7 +653,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
 
 
-                            <form id="form-generador" class="mt-3">
+                            <form id="form-generador" class="mt-3" data-validar-form>
 
                                 <div class="form-group">
 
@@ -661,7 +661,9 @@ if (empty($_SESSION['csrf_cancelacion'])) {
                                         <?= te('enfermeria.area_categoria') ?>
                                     </label>
 
-                                    <select id="qr-categoria" class="form-input" required>
+                                    <select id="qr-categoria" class="form-input" required
+                                        data-validar="requerido entero:1:7"
+                                        data-msg="<?= te('js.enf.error_area') ?>">
 
                                         <option value="">
                                             <?= te('enfermeria.seleccione_area') ?>
@@ -789,8 +791,8 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
     <?= scriptTraduccionesJs(['js.enf.']) ?>
-    <script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-4"></script>
-    <script src="Assets/js/enfermeria.js?v=20261107-1"></script>
+    <script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-6"></script>
+    <script src="Assets/js/enfermeria.js?v=20261109-1"></script>
     <script>
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();

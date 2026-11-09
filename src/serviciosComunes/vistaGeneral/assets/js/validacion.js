@@ -6,6 +6,7 @@
 // Un campo opcional vacio no se valida. Los errores aparecen al salir del campo
 // o al enviar, nunca antes de que la persona lo haya tocado.
 // data-validar-si="ID=valor": las reglas del campo solo aplican si se cumple.
+// data-contador="texto con {n} y {max}": muestra cuantos caracteres lleva el campo.
 //
 // Reglas:
 //   requerido      no vacio (se recorta como trim() de PHP; las contrasenas no)
@@ -215,6 +216,15 @@
             if (foco) {
                 foco.focus();
             }
+            // Si no pudo tomar el foco (por ejemplo, radios ocultos por CSS en la
+            // encuesta), se enfoca el contenedor y se lo muestra en pantalla
+            if (!foco || document.activeElement !== foco) {
+                if (!primero.hasAttribute('tabindex')) {
+                    primero.setAttribute('tabindex', '-1');
+                }
+                primero.focus();
+                primero.scrollIntoView({ block: 'center' });
+            }
             return false;
         }
         // Restricciones HTML de los campos sin data-validar (required, maxlength...)
@@ -281,10 +291,40 @@
         }
     }, true);
 
+    // Contador de caracteres: data-contador="{n} de {max} caracteres" (texto impreso con te())
+    // y data-contador-max (o el maxlength del campo). Cuenta como el servidor: sin los
+    // espacios de los extremos y en caracteres.
+    function actualizarContador(el) {
+        if (!el.dataset.contador) {
+            return;
+        }
+        var p = el.validacionContador;
+        if (!p || !p.isConnected) {
+            p = document.createElement('p');
+            p.className = 'validacion-contador';
+            p.setAttribute('aria-live', 'polite');
+            el.insertAdjacentElement('afterend', p);
+            el.validacionContador = p;
+        }
+        var max = el.dataset.contadorMax || el.maxLength;
+        p.textContent = el.dataset.contador
+            .split('{n}').join(String(largo(trimPhp(String(el.value)))))
+            .split('{max}').join(String(max));
+    }
+    document.addEventListener('input', function (e) {
+        if (e.target && e.target.dataset && e.target.dataset.contador) {
+            actualizarContador(e.target);
+        }
+    });
+
     // Al vaciar el formulario (por ejemplo, despues de guardar) vuelve a su estado inicial
     document.addEventListener('reset', function (e) {
         var form = formularioDe(e.target);
         if (form) {
+            // El reset cambia los valores despues de este evento
+            setTimeout(function () {
+                Array.prototype.forEach.call(form.querySelectorAll('[data-contador]'), actualizarContador);
+            }, 0);
             campos(form).forEach(function (el) {
                 delete el.dataset.validarTocado;
                 el.removeAttribute('aria-invalid');
@@ -300,4 +340,5 @@
     Array.prototype.forEach.call(document.querySelectorAll('form[data-validar-form]'), function (form) {
         form.noValidate = true;
     });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-contador]'), actualizarContador);
 })();

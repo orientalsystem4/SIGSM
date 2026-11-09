@@ -200,7 +200,7 @@ try {
             </p>
         <?php endif; ?>
 
-        <form method="POST" action="seleccionarRol.php">
+        <form method="POST" action="seleccionarRol.php" data-validar-form>
             <input
                 type="hidden"
                 name="token"
@@ -213,7 +213,13 @@ try {
 
             <label for="id_rol"><?= te('rol.etiqueta') ?></label>
 
-            <select id="id_rol" name="id_rol" required>
+            <?php
+            // Solo los roles que se listan abajo (los que tienen pantalla de destino)
+            $rolesValidos = array_filter($roles, fn ($rol) => destinoPorRol((int) $rol['id_rol']) !== null);
+            ?>
+            <select id="id_rol" name="id_rol" required
+                    data-validar="requerido en:<?= implode(',', array_map(fn ($rol) => (int) $rol['id_rol'], $rolesValidos)) ?>"
+                    data-msg="<?= te('rol.error_rol_no_habilitado') ?>">
                 <option value=""><?= te('rol.placeholder') ?></option>
 
                 <?php foreach ($roles as $rol): ?>
@@ -232,5 +238,6 @@ try {
             <button type="submit"><?= te('rol.boton') ?></button>
         </form>
     </main>
+    <script src="../vistaGeneral/assets/js/validacion.js?v=20261109-6"></script>
 </body>
 </html>

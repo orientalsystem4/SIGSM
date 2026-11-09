@@ -642,8 +642,12 @@ document.addEventListener("DOMContentLoaded", () => {
         btnGenerarQR.addEventListener('click', () => {
 
 
-            // VALIDAR ÁREA
-
+            // VALIDAR ÁREA (el boton no envia el formulario: se valida aca con el
+            // script comun; sin el, queda el aviso anterior)
+            const formGenerador = document.getElementById('form-generador');
+            if (window.SIGSMValidacion && formGenerador && !window.SIGSMValidacion.validar(formGenerador)) {
+                return;
+            }
 
             if (
                 !categoriaQR ||
