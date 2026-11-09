@@ -19,7 +19,7 @@ sudo bash bin/instalar.sh
 
 Invocar siempre con `bash bin/instalar.sh`, no con `./bin/instalar.sh`, para no depender del bit de ejecución.
 
-El instalador verifica los requisitos, genera `.env` con una clave de base de datos aleatoria, crea la carpeta de documentos, levanta los contenedores, prepara la estructura con el seeder, crea el administrador (pide la clave o la genera) configura Apache como proxy inverso, programa el respaldo diario y el monitoreo, y hace un primer respaldo (si falla, avisa y la instalación continúa). Al final muestra la URL, el usuario y la clave una sola vez. Se puede ejecutar de nuevo sin cambiar la clave de la base ni la del administrador existente.
+El instalador verifica los requisitos, genera `.env` con tres claves aleatorias (aplicación, administrador de la base y root; ver [Base de datos](#base-de-datos)), crea la carpeta de documentos, levanta los contenedores, prepara la estructura con el seeder, crea el administrador (pide la clave o la genera) configura Apache como proxy inverso, programa el respaldo diario y el monitoreo, y hace un primer respaldo (si falla, avisa y la instalación continúa). Al final muestra la URL, el usuario y la clave una sola vez, y los usuarios de la base (las claves generadas solo la vez que crea el `.env`). Se puede ejecutar de nuevo sin cambiar las claves de la base ni la del administrador existente.
 
 ### Instalación desde pendrive
 
@@ -34,7 +34,7 @@ En el servidor: extraer `sigsm.tar.gz` y dejar `imagenes.tar.gz` en la carpeta d
 
 ## Instalación manual (respaldo y referencia)
 
-1. Copiar `.env.example` a `.env` y completar `DB_PASS` con una clave propia. No subir `.env` a Git.
+1. Copiar `.env.example` a `.env` y completar `DB_PASS`, `DB_ADMIN_PASS` y `DB_ROOT_PASS` con tres claves distintas (por ejemplo `openssl rand -base64 24 | tr -d '/+='`). Dejarlo con `chmod 600 .env`. No subir `.env` a Git.
 2. Crear la carpeta de documentos y copiar el `.htaccess` (que bloquea el acceso directo por URL):
 
    ```sh
@@ -49,7 +49,7 @@ En el servidor: extraer `sigsm.tar.gz` y dejar `imagenes.tar.gz` en la carpeta d
    docker compose ps
    ```
 
-   En una instalación nueva, Docker importa `src/documentacion/sigsm.sql` al crear el volumen de datos. Los siguientes reinicios conservan la base.
+   En una instalación nueva, al crear el volumen de datos la imagen de MariaDB ejecuta, en orden, `src/documentacion/sigsm.sql` (montado como `10-sigsm.sql`: estructura, datos de partida y vistas) y `bin/usuarios_bd.sh` (montado como `20-usuarios.sh`: crea `sigsm_admin` y `sigsm_app`). Los siguientes reinicios conservan la base y no repiten esos pasos.
 
 4. Preparar la estructura y los datos iniciales (se puede repetir sin duplicar datos; no crea usuarios ni restablece contraseñas):
 
@@ -57,7 +57,7 @@ En el servidor: extraer `sigsm.tar.gz` y dejar `imagenes.tar.gz` en la carpeta d
    docker compose exec -T web php bin/seeder.php
    ```
 
-   Verifica las columnas de solicitudes (incluida `direccion_domicilio`) y usuarios, la tabla `intento_login` (límite de intentos de inicio de sesión), la ubicación genérica «Domicilio del paciente» con sus rutas hacia los hospitales 1, 2 y 3, las siete categorías y encuestas, las nueve preguntas, la tabla `encuesta_pregunta` (las 63 combinaciones de las 7 encuestas con las 9 preguntas) y las rutas entre las ubicaciones 1, 2 y 3, y actualiza los nombres de los roles 2, 3 y 6. Si la base tenía la columna anterior `pregunta.id_encuesta`, el seeder la quita (junto con su clave foránea) solo después de confirmar las 63 combinaciones; en cualquier ejecución posterior no cambia nada. Las rutas iniciales no incluyen distancias ni tiempos oficiales. La búsqueda de pacientes por cédula consulta la tabla local `paciente`.
+   Verifica las columnas de solicitudes (incluida `direccion_domicilio`) y usuarios, la tabla `intento_login` (límite de intentos de inicio de sesión), la ubicación genérica «Domicilio del paciente» con sus rutas hacia los hospitales 1, 2 y 3, las siete categorías y encuestas, las nueve preguntas, la tabla `encuesta_pregunta` (las 63 combinaciones de las 7 encuestas con las 9 preguntas) y las rutas entre las ubicaciones 1, 2 y 3, actualiza los nombres de los roles 2, 3 y 6, y crea o actualiza las vistas (`CREATE OR REPLACE`). Usa el administrador de la base (`DB_ADMIN_USER`). Si la base tenía la columna anterior `pregunta.id_encuesta`, el seeder la quita (junto con su clave foránea) solo después de confirmar las 63 combinaciones; en cualquier ejecución posterior no cambia nada. Las rutas iniciales no incluyen distancias ni tiempos oficiales. La búsqueda de pacientes por cédula consulta la tabla local `paciente`.
 
 5. Crear el administrador. Si el usuario ya existe, este comando restablece su contraseña, lo activa y agrega el rol DTI:
 
@@ -102,6 +102,10 @@ docker compose up -d --build
 docker compose exec -T web php bin/seeder.php
 ```
 
+El seeder es obligatorio después de cada actualización: el código consulta vistas que crea el seeder en las bases existentes; sin él fallan Unidad de Enlace, el seguimiento y las métricas.
+
+Si la instalación es anterior a los usuarios de base de datos (`.env` con `DB_USER=root`), sigue funcionando igual. Para pasar a `sigsm_app` y `sigsm_admin`, ver [Crear los usuarios en una base existente](#crear-los-usuarios-en-una-base-existente).
+
 No importar nuevamente el SQL completo sobre una base en uso. Los PDF viven en `/var/lib/sigsm/documentos` y no se ven afectados por la actualización. Los cambios de estructura del seeder no se revierten si luego falla la carga de datos; el script informa el error y puede repetirse después de corregirlo.
 
 ## Respaldo y restauración
@@ -116,7 +120,7 @@ No importar nuevamente el SQL completo sobre una base en uso. Los PDF viven en `
 | PDF subidos | `/var/backups/sigsm/documentos/documentos_FECHA.tar.gz` |
 | Registro (fecha, `[OK]` o `[ERROR]` y el motivo) | `/var/log/respaldos_sigsm.log` |
 
-Se conservan 14 días: las copias más antiguas se borran solo después de un respaldo correcto. Si el volcado queda vacío o el archivo está dañado (`gzip -t`), el script registra `[ERROR]` y termina con un código distinto de 0. La clave de la base se lee del `.env` y no aparece en la línea de comandos (no se ve con `ps`).
+Se conservan 14 días: las copias más antiguas se borran solo después de un respaldo correcto. Si el volcado queda vacío o el archivo está dañado (`gzip -t`), el script registra `[ERROR]` y termina con un código distinto de 0. El volcado se hace con `sigsm_admin` (o con `DB_USER` si no hay `DB_ADMIN_USER`); la clave se lee del `.env` y no aparece en la línea de comandos (no se ve con `ps`). El volcado incluye las vistas, sin su `DEFINER`, para que se pueda restaurar con cualquier usuario con permisos sobre la base; el registro indica cuántas tablas y vistas contiene.
 
 Comandos útiles:
 
@@ -130,10 +134,10 @@ Los respaldos quedan en el mismo equipo: si el disco falla, se pierden junto con
 
 ### Comprobar un respaldo sin tocar la base real
 
-Desde la carpeta del proyecto. El volcado incluye `CREATE DATABASE` y `USE`; se quitan para cargarlo en una base de prueba:
+Desde la carpeta del proyecto. El volcado incluye `CREATE DATABASE` y `USE`; se quitan para cargarlo en una base de prueba. Crear otra base requiere root (`sigsm_admin` solo tiene permisos sobre `sigsm`). En una instalación anterior sin `DB_ROOT_PASS`, la clave de root es `DB_PASS`:
 
 ```sh
-export MYSQL_PWD="$(grep '^DB_PASS=' .env | cut -d= -f2-)"
+export MYSQL_PWD="$(grep '^DB_ROOT_PASS=' .env | cut -d= -f2-)"
 ULTIMO=$(ls -t /var/backups/sigsm/databases/db_sigsm_*.sql.gz | head -1)
 docker compose exec -T -e MYSQL_PWD db mariadb -uroot -e "CREATE DATABASE sigsm_prueba"
 gzip -dc "$ULTIMO" | grep -v -E '^(CREATE DATABASE|USE )' | docker compose exec -T -e MYSQL_PWD db mariadb -uroot sigsm_prueba
@@ -142,15 +146,15 @@ docker compose exec -T -e MYSQL_PWD db mariadb -uroot -e "DROP DATABASE sigsm_pr
 unset MYSQL_PWD
 ```
 
-Los números deben coincidir con los de la base `sigsm`.
+Los números deben coincidir con los de la base `sigsm`. Para comprobar también las vistas: `SELECT COUNT(*) FROM information_schema.views WHERE table_schema='sigsm_prueba'` (deben ser 3).
 
 ### Restaurar
 
-Detener la aplicación para que nadie escriba durante la restauración. El volcado reemplaza las tablas de la base `sigsm`:
+Detener la aplicación para que nadie escriba durante la restauración. El volcado reemplaza las tablas y vistas de la base `sigsm`. Se restaura con root (en una instalación anterior sin `DB_ROOT_PASS`, la clave de root es `DB_PASS`), porque los respaldos hechos antes de este cambio todavía traen el `DEFINER` de las vistas:
 
 ```sh
 docker compose stop web
-export MYSQL_PWD="$(grep '^DB_PASS=' .env | cut -d= -f2-)"
+export MYSQL_PWD="$(grep '^DB_ROOT_PASS=' .env | cut -d= -f2-)"
 gzip -dc /var/backups/sigsm/databases/db_sigsm_FECHA.sql.gz | docker compose exec -T -e MYSQL_PWD db mariadb -uroot
 unset MYSQL_PWD
 sudo tar -xzf /var/backups/sigsm/documentos/documentos_FECHA.tar.gz -C /var/lib/sigsm
@@ -378,20 +382,73 @@ Hay 7 encuestas (una por área médica) y 9 preguntas comunes: las ocho primeras
 - `cedula` es `VARCHAR(8)`, única y puede ser `NULL`.
 - `nombre_completo` admite hasta 150 caracteres y puede ser `NULL`.
 - Los usuarios anteriores quedan con ambas columnas vacías hasta completar sus fichas.
-- Estas columnas no están en el SQL base: las agrega `bin/seeder.php` (`ADD COLUMN IF NOT EXISTS`), por lo que hay que ejecutarlo en toda instalación.
+- Una base nueva ya trae estas columnas en `sigsm.sql`; en una base existente las agrega `bin/seeder.php` (`ADD COLUMN IF NOT EXISTS`).
 
 ## Roles
 
-| ID | Rol | Acceso |
+Roles de la aplicación (tabla `rol`). El acceso se controla en cada página con `requiereRol([...])` (`src/serviciosComunes/seguridad/guardian.php`); DTI (rol 1) figura en todas las listas. Todos los roles entran al panel de módulos (`serviciosComunes/vistaGeneral/bifurcacion.php`), que solo muestra las tarjetas de su rol.
+
+| ID | Rol | Páginas y acciones |
 | --- | --- | --- |
-| 1 | Administrador de DTI | Todos los portales y gestión de usuarios |
-| 2 | Administrador de Enfermería | Enfermería y consulta de Unidad de Enlace |
-| 3 | Coordinador de Traslados | Unidad de Enlace, asignación y consulta de seguimiento |
-| 4 | Funcionario Administrativo de Registros Médicos | Documentos y métricas |
-| 5 | Chofer | Seguimiento de sus traslados |
-| 6 | Enfermería | Solicitudes, documentos por categoría y encuestas |
+| 1 | Administrador de DTI | Todas. Exclusivo: gestión de usuarios (`usuario/Vista/listado.php`, `crear.php`, `editar.php`, `ver.php` y `usuario/Controlador/ControladorUsuarios.php`), tarjeta de Monitoreo y avance de estado de traslados tercerizados. |
+| 2 | Administrador de Enfermería | Portal de Enfermería (`moduloDocumentacion/Vista/enfermeria.php`): crear solicitudes, buscar pacientes, editar y cancelar sus solicitudes (`editarSolicitud.php`, `EditarSolicitud.php`, `CancelarSolicitud.php`); directorio QR (`directorioQR.php`); consulta de Unidad de Enlace (`unidadEnlace.php`), sin la dirección de domicilio. |
+| 3 | Coordinador de Traslados | Unidad de Enlace (`unidadEnlace.php`, con dirección de domicilio); asignación (`asignar.php`, `AsignarTraslado.php`); cancelar cualquier solicitud; panel y seguimiento de todos los traslados, solo consulta (`choferes.php`, `seguimientoChofer.php`). |
+| 4 | Funcionario Administrativo de Registros Médicos | Documentos (`moduloDocumentacion/Vista/documentacion.php`, `crear.php`, `editar.php`, `ver.php`, `ControladorDocumentos.php`) y métricas de encuestas (`MetricasControlador.php`). |
+| 5 | Chofer | Panel y seguimiento de sus traslados (`choferes.php`, `seguimientoChofer.php`); avance de estado de los traslados que tiene asignados (`CambiarEstadoTraslado.php`). |
+| 6 | Enfermería | Lo mismo que el rol 2 en el portal de Enfermería y el directorio QR (solicitudes propias), sin Unidad de Enlace. |
+
+Sin sesión (públicas): inicio de sesión (`serviciosComunes/autenticacion/sesion.php`), listado y archivo públicos de documentos (`documentosPublicos.php`, `archivoPublico.php`) y responder encuestas (`moduloEncuestas/Vista/responder.php`, `GuardarEncuesta.php`).
 
 Si una cuenta tiene varios roles, elige el rol activo al ingresar. La aprobación especial de solicitudes por parte de Administración de Enfermería no tiene un flujo independiente implementado.
+
+## Base de datos
+
+### Usuarios de la base
+
+| Usuario | Para qué | Permisos | Por qué |
+| --- | --- | --- | --- |
+| `sigsm_app` (`DB_USER`) | La aplicación web (PHP) | `SELECT` en toda la base `sigsm` (tablas y vistas). Escritura solo donde el código escribe: `INSERT, UPDATE` en `solicitud_traslado`, `usuario` y `documento`; `INSERT` en `traslado`, `historial_estado`, `respuesta_encuesta` y `respuesta_pregunta`; `INSERT, DELETE` en `usuario_rol` e `intento_login`. Sin permisos de estructura. | Menor privilegio: si alguien abusara de la aplicación, no podría cambiar la estructura, borrar tablas, leer otras bases ni las cuentas de MariaDB (`mysql.user`), ni borrar o modificar datos que el código no modifica (por ejemplo, traslados o historial). |
+| `sigsm_admin` (`DB_ADMIN_USER`) | `bin/seeder.php`, `bin/crear_admin.php` y `bin/respaldar.sh` | `ALL PRIVILEGES` solo sobre la base `sigsm` | El seeder crea tablas, columnas y vistas, y el respaldo necesita leer todo; no necesita acceso a otras bases ni a la administración del servidor. |
+| `root` (`DB_ROOT_PASS`) | Solo la administración interna del contenedor: crear los usuarios (`bin/usuarios_bd.sh`), bases de prueba y restauraciones | Todos | No lo usan ni la aplicación ni los scripts habituales. phpMyAdmin (perfil `debug`, no arranca solo) entra como root. |
+
+La lista de permisos está en un solo lugar: `bin/usuarios_bd.sh`. Si el código empieza a escribir en otra tabla, hay que agregarla ahí y volver a ejecutarlo. Para ver los permisos: `SHOW GRANTS FOR 'sigsm_app'@'%';`.
+
+**Compatibilidad:** si el `.env` no tiene `DB_ADMIN_USER` (instalaciones anteriores, con `DB_USER=root`), los scripts usan `DB_USER`/`DB_PASS` como antes y la clave de root sigue siendo `DB_PASS`. Nada cambia hasta migrar.
+
+### Crear los usuarios en una base existente
+
+La imagen de MariaDB crea los usuarios solo con el volumen vacío. En una base que ya existe (por ejemplo, una instalación con `DB_USER=root`):
+
+1. Respaldar: `sudo bash bin/respaldar.sh`.
+2. Actualizar la estructura (crea las tablas y vistas sobre las que se dan los permisos): `docker compose exec -T web php bin/seeder.php`.
+3. Editar `.env` (dejarlo con `chmod 600`):
+   - `DB_ROOT_PASS=` el valor que tenía `DB_PASS` (la clave actual de root).
+   - `DB_USER=sigsm_app` y `DB_PASS=` una clave nueva.
+   - Agregar `DB_ADMIN_USER=sigsm_admin` y `DB_ADMIN_PASS=` otra clave nueva.
+4. Crear los usuarios (idempotente: `CREATE USER IF NOT EXISTS`, fija la clave del `.env` y vuelve a dar los permisos desde cero). Al final muestra los permisos:
+
+   ```sh
+   bash bin/usuarios_bd.sh
+   ```
+
+5. Recrear los contenedores para que la aplicación tome el usuario nuevo: `docker compose up -d`.
+6. Comprobar: `docker compose exec -T web php bin/seeder.php`, `sudo bash bin/respaldar.sh` e ingresar a la aplicación.
+
+Para volver atrás, restaurar el `.env` anterior y `docker compose up -d`: root no cambia.
+
+En un entorno sin Docker Compose (por ejemplo, el servidor de demostración con Podman), `bash bin/usuarios_bd.sh --sql` solo imprime el SQL, para ejecutarlo como root. Por ejemplo: `export MYSQL_PWD=...; bash bin/usuarios_bd.sh --sql | podman exec -i -e MYSQL_PWD CONTENEDOR mariadb -uroot`.
+
+### Vistas
+
+Las tres son `SQL SECURITY INVOKER`: se ejecutan con los permisos de quien consulta, no dependen del usuario que las creó y no fallan al restaurar un respaldo en otro servidor. Están en `sigsm.sql` (bases nuevas) y en `bin/seeder.php` (bases existentes), con la misma definición.
+
+| Vista | Reemplaza | La usa |
+| --- | --- | --- |
+| `v_traslado_detalle` | Los JOIN de traslado con solicitud, origen, destino, tipo de elemento, vehículo, chofer, enfermería, proveedor y último estado (`SeguimientoModelo::listar`) | Unidad de Enlace y Seguimiento de traslados |
+| `v_respuestas_encuesta` | El JOIN de `respuesta_pregunta` con `respuesta_encuesta`, más encuesta, categoría, pregunta, valor y fecha (`MetricasControlador.php`) | Métricas por área (portal de Documentos) |
+| `v_solicitud_pendiente` | La consulta de solicitudes pendientes sin traslado (`SolicitudModelo::listarPendientes`) | Lista de pendientes de Unidad de Enlace |
+
+`v_traslado_detalle` no incluye la dirección del domicilio (dato personal): `SeguimientoModelo::listar` la agrega desde la solicitud solo si quien consulta puede verla: en Unidad de Enlace, DTI y Coordinador (Administración de Enfermería no); en Seguimiento, quien entra (el chofer solo ve sus propios traslados).
 
 ## Prueba funcional de instalación
 
@@ -415,7 +472,7 @@ Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Lo
 - **Traslados tercerizados (limitación conocida):** al asignar, Unidad de Enlace puede elegir un *proveedor externo* (por ejemplo SAME) en lugar de vehículo y chofer propios; se muestra solo como «Tercerizado», sin el nombre del proveedor. Un traslado tercerizado no tiene chofer, y solo DTI (rol 1) o el chofer asignado (rol 5) pueden avanzar su estado, así que **solo DTI puede marcarlo** como en camino, llegado o finalizado. El coordinador (rol 3) no puede hacerlo.
 - `bin/operador_sigsm.sh` es la herramienta del servidor de demostración (Caddy + `php8.4-fpm`). La instalación Docker del instituto usa `bin/monitorear.sh` y `bin/respaldar.sh`.
 - No hay HTTPS (red interna, solo HTTP). Si se publica fuera, revisar las cookies de sesión (`secure`, `HttpOnly`).
-- La aplicación usa el usuario `root` de la base; a mediano plazo conviene un usuario con privilegios limitados.
+- La aplicación usa el usuario `sigsm_app`, con privilegios limitados (ver [Base de datos](#base-de-datos)). Pendientes: el contenedor web recibe todo el `.env` (`env_file`), incluidas `DB_ADMIN_PASS` y `DB_ROOT_PASS`, porque el seeder y `crear_admin.php` corren dentro de él; y la imagen crea `root@'%'`, accesible desde la red interna de Docker (con `MARIADB_ROOT_HOST=localhost` quedaría solo dentro del contenedor, pero phpMyAdmin dejaría de entrar). Las instalaciones anteriores con `DB_USER=root` siguen usando root hasta migrarlas.
 
 ## Organización
 
@@ -424,8 +481,9 @@ Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Lo
 - `bin/monitorear.sh`: monitoreo de la instalación Docker.
 - `bin/prueba_carga.sh`: prueba de carga sobre el login.
 - `bin/crear_admin.php`: creación o restablecimiento del administrador.
-- `bin/seeder.php`: preparación de estructura y datos iniciales.
-- `src/documentacion/sigsm.sql`: estructura y datos de partida.
+- `bin/seeder.php`: preparación de estructura, vistas y datos iniciales (bases existentes).
+- `bin/usuarios_bd.sh`: usuarios `sigsm_admin` y `sigsm_app` y sus permisos.
+- `src/documentacion/sigsm.sql`: estructura, datos de partida y vistas; alcanza por sí solo para crear una base nueva.
 - `src/moduloAmbulancias`: solicitudes, asignación y seguimiento.
 - `src/moduloDocumentacion`: documentos, QR y portal de Enfermería.
 - `src/moduloEncuestas`: respuestas y métricas.
