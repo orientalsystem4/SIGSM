@@ -250,7 +250,7 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
         }
     </style>
     <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/layout.css?v=2">
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
     <script src="../../serviciosComunes/vistaGeneral/assets/vendor/lucide-1.70.0.min.js"></script>
     <style>
         /* Ajustes exclusivos de Gestión de Usuarios */

@@ -36,7 +36,7 @@ function escaparEdicion($valor): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIGSM | <?= te('editar_solicitud.titulo_pagina') ?></title>
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
     <style>
         body { margin:0; padding:24px; font-family:Arial,sans-serif; background:#eef2f6; color:#1f2937; }
         main { max-width:700px; margin:auto; padding:28px; background:white; border-radius:16px; }

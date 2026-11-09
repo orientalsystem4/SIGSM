@@ -28,7 +28,7 @@ unset($_SESSION['mensaje']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S.I.G.S.M. | <?= te('login.titulo') ?></title>
-<link rel="stylesheet" href="assets/login_sistema.css?v=5">
+<link rel="stylesheet" href="assets/login_sistema.css?v=6">
 </head><body class="pagina-login">
     <?php $otroIdioma = idiomaActual() === 'es' ? 'en' : 'es'; ?>
     <a
@@ -86,7 +86,7 @@ unset($_SESSION['mensaje']);
                     </div>
                 <?php endif; ?>
 
-                <form action="login.php" method="POST" class="login-form">
+                <form action="login.php" method="POST" class="login-form" data-validar-form>
                     <div class="login-field">
                         <label for="usuario"><?= te('login.usuario') ?></label>
                         <input
@@ -96,6 +96,8 @@ unset($_SESSION['mensaje']);
                             placeholder="<?= te('login.usuario_placeholder') ?>"
                             autocomplete="username"
                             required
+                            data-validar="requerido"
+                            data-msg-requerido="<?= te('login.error_campos') ?>"
                             autofocus
                         >
                     </div>
@@ -109,6 +111,8 @@ unset($_SESSION['mensaje']);
                             placeholder="<?= te('login.contrasena_placeholder') ?>"
                             autocomplete="current-password"
                             required
+                            data-validar="requerido"
+                            data-msg-requerido="<?= te('login.error_campos') ?>"
                         >
                     </div>
 
@@ -121,5 +125,6 @@ unset($_SESSION['mensaje']);
             </div>
         </section>
     </main>
+    <script src="../vistaGeneral/assets/js/validacion.js?v=20261109-1"></script>
 </body>
 </html>

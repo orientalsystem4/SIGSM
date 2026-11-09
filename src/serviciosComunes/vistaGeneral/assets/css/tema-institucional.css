@@ -97,3 +97,6 @@ summary { color: var(--primary); font-weight: 700; }
 }
 .tabla-historial th, .tabla-datos th { background: #f0f7f5; color: #115e59; }
 .enlace-accion { color: var(--primary); }
+/* Validacion en el navegador (assets/js/validacion.js) */
+.validacion-mensaje { color: #991b1b; font-size: .875rem; margin: 4px 0 0; }
+[aria-invalid="true"] { border-color: #b91c1c; }

@@ -173,7 +173,7 @@ unset($_SESSION['errores_documento']);
 
     </style>
 
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
 </head>
 
 <body>

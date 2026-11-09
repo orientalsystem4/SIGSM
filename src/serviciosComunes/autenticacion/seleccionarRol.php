@@ -184,7 +184,7 @@ try {
             border-radius: 6px;
         }
     </style>
-    <link rel="stylesheet" href="../vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
 </head>
 <body>
     <main class="tarjeta">

@@ -127,7 +127,7 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
             padding: 0;
         }
     </style>
-    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261021-1">
+    <link rel="stylesheet" href="../../serviciosComunes/vistaGeneral/assets/css/tema-institucional.css?v=20261109-1">
 </head>
 <body>
 
@@ -147,7 +147,7 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
         </div>
     <?php endif; ?>
 
-    <form class="tarjeta-formulario" action="../Controlador/ControladorUsuarios.php" method="POST">
+    <form class="tarjeta-formulario" action="../Controlador/ControladorUsuarios.php" method="POST" data-validar-form>
         <input type="hidden" name="token"
        value="<?= htmlspecialchars($_SESSION['csrf_usuarios'], ENT_QUOTES, 'UTF-8') ?>">
         <input type="hidden" name="accion" value="crear">
@@ -155,21 +155,31 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
         <div class="campo">
             <label for="cedula"><?= te('usuarios.cedula_identidad') ?> *</label>
             <input type="text" id="cedula" name="cedula" maxlength="12" required
+                   data-validar="requerido cedula"
+                   data-msg="<?= te('usuarios.error_cedula_digito') ?>"
                    placeholder="<?= te('usuarios.cedula_placeholder') ?>" value="<?= htmlspecialchars($previos['cedula'] ?? '') ?>">
         </div>
         <div class="campo">
             <label for="nombre_completo"><?= te('usuarios.nombre_completo') ?> *</label>
             <input type="text" id="nombre_completo" name="nombre_completo" maxlength="150" required
+                   data-validar="requerido nombre"
+                   data-msg="<?= te('usuarios.error_nombre_completo') ?>"
                    value="<?= htmlspecialchars($previos['nombre_completo'] ?? '') ?>">
         </div>
         <div class="campo">
             <label for="nombre_usuario"><?= te('usuarios.nombre_usuario') ?> *</label>
             <input type="text" id="nombre_usuario" name="nombre_usuario"
                    value="<?= htmlspecialchars($previos['nombre_usuario']) ?>"
-                   placeholder="<?= te('usuarios.usuario_placeholder') ?>" required autofocus>
+                   placeholder="<?= te('usuarios.usuario_placeholder') ?>" required autofocus
+                   data-validar="requerido bytesmin:3 bytesmax:50 patron" data-patron="^[a-zA-Z0-9_.-]+$"
+                   data-msg-requerido="<?= te('usuarios.error_nombre_obligatorio') ?>"
+                   data-msg-bytesmin="<?= te('usuarios.error_nombre_corto') ?>"
+                   data-msg-bytesmax="<?= te('usuarios.error_nombre_largo') ?>"
+                   data-msg-patron="<?= te('usuarios.error_nombre_caracteres') ?>">
         </div>
 
-               <fieldset class="campo">
+               <fieldset class="campo" id="roles" data-validar="grupo"
+                  data-msg-grupo="<?= te('usuarios.error_sin_rol') ?>">
             <legend><?= te('usuarios.roles') ?> *</legend>
 
             <p><?= te('usuarios.seleccione_rol') ?></p>
@@ -201,12 +211,17 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
 
         <div class="campo">
             <label for="password"><?= te('login.contrasena') ?> *</label>
-            <input type="password" id="password" name="password" placeholder="<?= te('usuarios.contrasena_placeholder') ?>" required>
+            <input type="password" id="password" name="password" placeholder="<?= te('usuarios.contrasena_placeholder') ?>" required
+                   data-validar="requerido bytesmin:12"
+                   data-msg-requerido="<?= te('usuarios.error_contrasena_obligatoria') ?>"
+                   data-msg-bytesmin="<?= te('usuarios.error_contrasena_corta') ?>">
         </div>
 
         <div class="campo">
             <label for="confirmar_password"><?= te('usuarios.confirmar_contrasena') ?> *</label>
-            <input type="password" id="confirmar_password" name="confirmar_password" placeholder="<?= te('usuarios.repetir_placeholder') ?>" required>
+            <input type="password" id="confirmar_password" name="confirmar_password" placeholder="<?= te('usuarios.repetir_placeholder') ?>" required
+                   data-validar="igual:password"
+                   data-msg-igual="<?= te('usuarios.error_no_coinciden') ?>">
         </div>
 
         <div class="acciones-formulario">
@@ -216,5 +231,6 @@ unset($_SESSION['errores_usuario'], $_SESSION['datos_previos_usuario']);
     </form>
 </div>
 
+<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-1"></script>
 </body>
 </html>
