@@ -406,9 +406,21 @@ CREATE TABLE `ruta` (
 -- Volcado de datos para la tabla `ruta`
 --
 
+-- Rutas entre los tres hospitales y entre cada hospital y el domicilio del paciente.
+-- Sin distancia ni tiempo: no son datos oficiales.
 INSERT INTO `ruta` (`id_ruta`, `id_origen`, `id_destino`, `distancia_km`, `tiempo_min`) VALUES
 (1, 1, 2, NULL, NULL),
-(2, 1, 3, NULL, NULL);
+(2, 1, 3, NULL, NULL),
+(3, 2, 1, NULL, NULL),
+(4, 3, 1, NULL, NULL),
+(5, 3, 2, NULL, NULL),
+(6, 2, 3, NULL, NULL),
+(7, 4, 1, NULL, NULL),
+(8, 4, 2, NULL, NULL),
+(9, 4, 3, NULL, NULL),
+(10, 1, 4, NULL, NULL),
+(11, 2, 4, NULL, NULL),
+(12, 3, 4, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -431,7 +443,8 @@ CREATE TABLE `solicitud_traslado` (
   `observaciones` varchar(500) DEFAULT NULL,
   `motivo_cancelacion` varchar(500) DEFAULT NULL,
   `fecha_cancelacion` datetime DEFAULT NULL,
-  `id_usuario_cancelacion` int(11) DEFAULT NULL
+  `id_usuario_cancelacion` int(11) DEFAULT NULL,
+  `direccion_domicilio` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -515,7 +528,8 @@ CREATE TABLE `ubicacion` (
 INSERT INTO `ubicacion` (`id_ubicacion`, `nombre`, `direccion`, `tipo_ubicacion`) VALUES
 (1, 'Hospital de Clínicas', NULL, 'Hospital'),
 (2, 'Hospital Maciel', NULL, 'Hospital'),
-(3, 'CHPR', NULL, 'Hospital');
+(3, 'CHPR', NULL, 'Hospital'),
+(4, 'Domicilio del paciente', NULL, 'Domicilio');
 
 -- --------------------------------------------------------
 
@@ -527,7 +541,23 @@ CREATE TABLE `usuario` (
   `id_usuario` int(11) NOT NULL,
   `nombre_usuario` varchar(50) NOT NULL,
   `contrasenha_hash` varchar(255) NOT NULL,
-  `activo` tinyint(1) NOT NULL DEFAULT 1
+  `activo` tinyint(1) NOT NULL DEFAULT 1,
+  `cedula` varchar(8) DEFAULT NULL,
+  `nombre_completo` varchar(150) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `intento_login`
+-- Intentos fallidos de inicio de sesion (limite por usuario).
+--
+
+CREATE TABLE `intento_login` (
+  `id` int(11) NOT NULL,
+  `nombre_usuario` varchar(50) NOT NULL,
+  `fecha` datetime NOT NULL DEFAULT current_timestamp(),
+  `ip` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -736,7 +766,15 @@ ALTER TABLE `ubicacion`
 --
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`id_usuario`),
-  ADD UNIQUE KEY `nombre_usuario` (`nombre_usuario`);
+  ADD UNIQUE KEY `nombre_usuario` (`nombre_usuario`),
+  ADD UNIQUE KEY `cedula` (`cedula`);
+
+--
+-- Indices de la tabla `intento_login`
+--
+ALTER TABLE `intento_login`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_intento_usuario_fecha` (`nombre_usuario`,`fecha`);
 
 --
 -- Indices de la tabla `usuario_rol`
@@ -833,7 +871,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `ruta`
 --
 ALTER TABLE `ruta`
-  MODIFY `id_ruta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_ruta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitud_traslado`
@@ -863,13 +901,19 @@ ALTER TABLE `traslado`
 -- AUTO_INCREMENT de la tabla `ubicacion`
 --
 ALTER TABLE `ubicacion`
-  MODIFY `id_ubicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_ubicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
   MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT de la tabla `intento_login`
+--
+ALTER TABLE `intento_login`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `vehiculo`
