@@ -216,12 +216,92 @@ INSERT INTO `paciente` (`ci`, `nombre`, `apellido`, `fecha_nacimiento`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `encuesta_pregunta`
+-- Preguntas que usa cada encuesta (las 9 preguntas se comparten entre las 7 encuestas).
+--
+
+CREATE TABLE `encuesta_pregunta` (
+  `id_encuesta` int(11) NOT NULL,
+  `id_pregunta` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `encuesta_pregunta`
+--
+
+INSERT INTO `encuesta_pregunta` (`id_encuesta`, `id_pregunta`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(1, 5),
+(1, 6),
+(1, 7),
+(1, 8),
+(1, 9),
+(2, 1),
+(2, 2),
+(2, 3),
+(2, 4),
+(2, 5),
+(2, 6),
+(2, 7),
+(2, 8),
+(2, 9),
+(3, 1),
+(3, 2),
+(3, 3),
+(3, 4),
+(3, 5),
+(3, 6),
+(3, 7),
+(3, 8),
+(3, 9),
+(4, 1),
+(4, 2),
+(4, 3),
+(4, 4),
+(4, 5),
+(4, 6),
+(4, 7),
+(4, 8),
+(4, 9),
+(5, 1),
+(5, 2),
+(5, 3),
+(5, 4),
+(5, 5),
+(5, 6),
+(5, 7),
+(5, 8),
+(5, 9),
+(6, 1),
+(6, 2),
+(6, 3),
+(6, 4),
+(6, 5),
+(6, 6),
+(6, 7),
+(6, 8),
+(6, 9),
+(7, 1),
+(7, 2),
+(7, 3),
+(7, 4),
+(7, 5),
+(7, 6),
+(7, 7),
+(7, 8),
+(7, 9);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `pregunta`
 --
 
 CREATE TABLE `pregunta` (
   `id_pregunta` int(11) NOT NULL,
-  `id_encuesta` int(11) NOT NULL,
   `tipo_pregunta` enum('abierta','opcion_unica','opcion_multiple','escala') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -229,16 +309,16 @@ CREATE TABLE `pregunta` (
 -- Volcado de datos para la tabla `pregunta`
 --
 
-INSERT INTO `pregunta` (`id_pregunta`, `id_encuesta`, `tipo_pregunta`) VALUES
-(1, 1, 'escala'),
-(2, 1, 'escala'),
-(3, 1, 'escala'),
-(4, 1, 'escala'),
-(5, 1, 'escala'),
-(6, 1, 'escala'),
-(7, 1, 'escala'),
-(8, 1, 'escala'),
-(9, 1, 'abierta');
+INSERT INTO `pregunta` (`id_pregunta`, `tipo_pregunta`) VALUES
+(1, 'escala'),
+(2, 'escala'),
+(3, 'escala'),
+(4, 'escala'),
+(5, 'escala'),
+(6, 'escala'),
+(7, 'escala'),
+(8, 'escala'),
+(9, 'abierta');
 
 -- --------------------------------------------------------
 
@@ -545,6 +625,13 @@ ALTER TABLE `historial_estado`
   ADD KEY `fk_historial_usuario` (`id_usuario`);
 
 --
+-- Indices de la tabla `encuesta_pregunta`
+--
+ALTER TABLE `encuesta_pregunta`
+  ADD PRIMARY KEY (`id_encuesta`,`id_pregunta`),
+  ADD KEY `fk_encuesta_pregunta_pregunta` (`id_pregunta`);
+
+--
 -- Indices de la tabla `opcion_respuesta`
 --
 ALTER TABLE `opcion_respuesta`
@@ -561,8 +648,7 @@ ALTER TABLE `paciente`
 -- Indices de la tabla `pregunta`
 --
 ALTER TABLE `pregunta`
-  ADD PRIMARY KEY (`id_pregunta`),
-  ADD KEY `fk_pregunta_encuesta` (`id_encuesta`);
+  ADD PRIMARY KEY (`id_pregunta`);
 
 --
 -- Indices de la tabla `proveedor_externo`
@@ -830,10 +916,11 @@ ALTER TABLE `opcion_respuesta`
   ADD CONSTRAINT `fk_opcion_pregunta` FOREIGN KEY (`id_pregunta`) REFERENCES `pregunta` (`id_pregunta`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `pregunta`
+-- Filtros para la tabla `encuesta_pregunta`
 --
-ALTER TABLE `pregunta`
-  ADD CONSTRAINT `fk_pregunta_encuesta` FOREIGN KEY (`id_encuesta`) REFERENCES `encuesta` (`id_encuesta`) ON DELETE CASCADE;
+ALTER TABLE `encuesta_pregunta`
+  ADD CONSTRAINT `fk_encuesta_pregunta_encuesta` FOREIGN KEY (`id_encuesta`) REFERENCES `encuesta` (`id_encuesta`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_encuesta_pregunta_pregunta` FOREIGN KEY (`id_pregunta`) REFERENCES `pregunta` (`id_pregunta`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `respuesta_encuesta`

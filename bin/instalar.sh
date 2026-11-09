@@ -87,6 +87,18 @@ ok "Base de datos lista."
 # 5. Estructura y datos iniciales -----------------------------------------------
 docker compose exec -T web php bin/seeder.php
 
+# Las 9 preguntas se comparten entre las 7 encuestas: 7 x 9 = 63 filas. Si falta
+# alguna, las encuestas no pasarían la validación; se avisa y la instalación sigue.
+filas_encuestas="$(docker compose exec -T db sh -c \
+    'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -N -D "$MYSQL_DATABASE" -e "SELECT COUNT(*) FROM encuesta_pregunta"' 2>&1 || true)"
+filas_encuestas="${filas_encuestas//[$'\r\n ']/}"
+if [[ "$filas_encuestas" == "63" ]]; then
+    ok "Encuestas verificadas (63 combinaciones encuesta-pregunta)."
+else
+    printf '[ADVERTENCIA] encuesta_pregunta debería tener 63 filas y se obtuvo: %s\n' "${filas_encuestas:-sin respuesta}" >&2
+    printf '[ADVERTENCIA] La instalación continúa. Repetir con: docker compose exec -T web php bin/seeder.php\n' >&2
+fi
+
 # 6. Administrador --------------------------------------------------------------
 usuario_admin="$(env_get SEED_ADMIN_USER)"
 usuario_admin="${usuario_admin:-admin}"

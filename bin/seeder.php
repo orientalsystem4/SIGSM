@@ -56,6 +56,19 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     echo "[OK] Tabla de intentos de inicio de sesion verificada.\n";
 
+    // Preguntas de cada encuesta: las 9 preguntas se comparten entre las 7 encuestas.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS encuesta_pregunta (
+        id_encuesta INT NOT NULL,
+        id_pregunta INT NOT NULL,
+        PRIMARY KEY (id_encuesta, id_pregunta),
+        KEY fk_encuesta_pregunta_pregunta (id_pregunta),
+        CONSTRAINT fk_encuesta_pregunta_encuesta FOREIGN KEY (id_encuesta)
+            REFERENCES encuesta (id_encuesta) ON DELETE CASCADE,
+        CONSTRAINT fk_encuesta_pregunta_pregunta FOREIGN KEY (id_pregunta)
+            REFERENCES pregunta (id_pregunta) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    echo "[OK] Tabla encuesta_pregunta verificada.\n";
+
     $pdo->beginTransaction();
     // Conserva los IDs y permisos; actualiza los nombres acordados.
     $nombreRol = $pdo->prepare('UPDATE rol SET nombre_rol = ? WHERE id_rol = ?');
@@ -95,17 +108,36 @@ try {
         }
     }
 
-    $buscarPregunta = $pdo->prepare('SELECT id_encuesta, tipo_pregunta FROM pregunta WHERE id_pregunta = ?');
-    $crearPregunta = $pdo->prepare('INSERT INTO pregunta (id_pregunta, id_encuesta, tipo_pregunta) VALUES (?, 1, ?)');
+    // Una base anterior todavia tiene pregunta.id_encuesta (NOT NULL): se completa
+    // mientras la columna exista; la limpieza se hace al final.
+    $columnaVieja = (int) $pdo->query("SELECT COUNT(*) FROM information_schema.columns
+        WHERE table_schema = DATABASE() AND table_name = 'pregunta' AND column_name = 'id_encuesta'")->fetchColumn() > 0;
+    $buscarPregunta = $pdo->prepare('SELECT tipo_pregunta FROM pregunta WHERE id_pregunta = ?');
+    $crearPregunta = $pdo->prepare($columnaVieja
+        ? 'INSERT INTO pregunta (id_pregunta, id_encuesta, tipo_pregunta) VALUES (?, 1, ?)'
+        : 'INSERT INTO pregunta (id_pregunta, tipo_pregunta) VALUES (?, ?)');
     for ($id = 1; $id <= 9; $id++) {
         $tipo = $id === 9 ? 'abierta' : 'escala';
         $buscarPregunta->execute([$id]);
         $existente = $buscarPregunta->fetch(PDO::FETCH_ASSOC);
         if (!$existente) {
             $crearPregunta->execute([$id, $tipo]);
-        } elseif ((int) $existente['id_encuesta'] !== 1 || $existente['tipo_pregunta'] !== $tipo) {
+        } elseif ($existente['tipo_pregunta'] !== $tipo) {
             throw new RuntimeException("La pregunta $id tiene otra configuracion. Revisarla antes de continuar.");
         }
+    }
+
+    // Las 63 combinaciones (encuestas 1 a 7 x preguntas 1 a 9), sin duplicarlas.
+    $vincular = $pdo->prepare('INSERT IGNORE INTO encuesta_pregunta (id_encuesta, id_pregunta) VALUES (?, ?)');
+    for ($idEncuesta = 1; $idEncuesta <= 7; $idEncuesta++) {
+        for ($idPregunta = 1; $idPregunta <= 9; $idPregunta++) {
+            $vincular->execute([$idEncuesta, $idPregunta]);
+        }
+    }
+    $vinculadas = (int) $pdo->query('SELECT COUNT(*) FROM encuesta_pregunta
+        WHERE id_encuesta BETWEEN 1 AND 7 AND id_pregunta BETWEEN 1 AND 9')->fetchColumn();
+    if ($vinculadas !== 63) {
+        throw new RuntimeException("encuesta_pregunta tiene $vinculadas de 63 combinaciones. No se elimino la columna anterior.");
     }
 
     // Completa las combinaciones entre los tres puntos actuales, sin duplicarlas.
@@ -136,6 +168,14 @@ try {
               WHERE r.id_origen = a.id_ubicacion AND r.id_destino = b.id_ubicacion)");
     $pdo->commit();
     echo "[OK] Ubicacion y rutas de domicilio verificadas.\n";
+
+    // Con las 63 combinaciones confirmadas, se quita la relacion anterior (1 encuesta por pregunta,
+    // con ON DELETE CASCADE). Cada paso se omite si ya no existe, asi que se puede repetir.
+    $pdo->exec('ALTER TABLE pregunta
+        DROP FOREIGN KEY IF EXISTS fk_pregunta_encuesta,
+        DROP INDEX IF EXISTS fk_pregunta_encuesta,
+        DROP COLUMN IF EXISTS id_encuesta');
+    echo "[OK] Relacion encuesta-pregunta verificada (63 combinaciones).\n";
     echo "[OK] 7 encuestas y 9 preguntas verificadas.\n";
     echo "[OK] Rutas iniciales verificadas.\n";
     echo "Preparacion completada. Usuarios y contrasenas sin cambios.\n";

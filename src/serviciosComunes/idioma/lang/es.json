@@ -250,8 +250,6 @@
     "usuarios.contrasena_placeholder": "Mínimo 12 caracteres",
     "usuarios.repetir_placeholder": "Repita la contraseña",
     "usuarios.editar_numero": "Editar Usuario #{id}",
-    "usuarios.cedula_antiguas": "Cédula de identidad (pendiente para cuentas antiguas)",
-    "usuarios.nombre_antiguas": "Nombre completo (pendiente para cuentas antiguas)",
     "usuarios.seleccione_roles": "Seleccione uno o varios roles.",
     "usuarios.nueva_contrasena": "Nueva Contraseña (Opcional)",
     "error.recargar_formulario": "Recargue el formulario e intente nuevamente.",
@@ -419,5 +417,13 @@
     "hist.traslado_finalizado": "Traslado finalizado.",
     "login.error_bloqueado": "Demasiados intentos fallidos. Esperá {minutos} minutos e intentá nuevamente.",
     "modulos.monitoreo": "Monitoreo",
-    "modulos.monitoreo_ayuda": "Abre Cockpit en una pestaña nueva"
+    "modulos.monitoreo_ayuda": "Abre Cockpit en una pestaña nueva",
+    "asignar.proveedor": "Proveedor externo (opcional)",
+    "asignar.proveedor_ninguno": "Ninguno (vehículo y chofer propios)",
+    "asignar.proveedor_ayuda": "Si elige un proveedor externo, deje vehículo y chofer sin seleccionar.",
+    "asignar.error_ambos": "Elija vehículo propio o proveedor externo, no ambos.",
+    "asignar.error_proveedor": "El proveedor externo seleccionado no es válido.",
+    "traslado.tercerizado": "Tercerizado",
+    "hist.asignado_proveedor": "Traslado asignado a un proveedor externo.",
+    "asignar.terceros": "Terceros"
 }

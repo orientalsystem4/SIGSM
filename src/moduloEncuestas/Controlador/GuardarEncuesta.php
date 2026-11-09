@@ -17,6 +17,21 @@ try {
         throw new DomainException('La encuesta no esta disponible. Avise al responsable del sistema.');
     }
 
+    // Solo se aceptan preguntas que pertenecen a esta encuesta (tabla encuesta_pregunta).
+    $consulta = $conexion->prepare('SELECT id_pregunta FROM encuesta_pregunta WHERE id_encuesta = ?');
+    $consulta->execute([$datos['categoria']]);
+    $permitidas = array_map('intval', $consulta->fetchAll(PDO::FETCH_COLUMN));
+    if (!$permitidas) {
+        throw new DomainException('La encuesta no esta disponible. Avise al responsable del sistema.');
+    }
+    $enviadas = array_keys($datos['respuestas']);
+    if ($datos['comentario'] !== '') {
+        $enviadas[] = 9;
+    }
+    if (array_diff($enviadas, $permitidas)) {
+        throw new DomainException('Las preguntas enviadas no corresponden a esta encuesta.');
+    }
+
     $conexion->beginTransaction();
     $cabecera = $conexion->prepare('INSERT INTO respuesta_encuesta (id_encuesta, fecha_envio) VALUES (?, NOW())');
     $cabecera->execute([$datos['categoria']]);

@@ -57,7 +57,7 @@ En el servidor: extraer `sigsm.tar.gz` y dejar `imagenes.tar.gz` en la carpeta d
    docker compose exec -T web php bin/seeder.php
    ```
 
-   Verifica las columnas de solicitudes (incluida `direccion_domicilio`) y usuarios, la tabla `intento_login` (límite de intentos de inicio de sesión), la ubicación genérica «Domicilio del paciente» con sus rutas hacia los hospitales 1, 2 y 3, las siete categorías y encuestas, las nueve preguntas y las rutas entre las ubicaciones 1, 2 y 3, y actualiza los nombres de los roles 2, 3 y 6. Las rutas iniciales no incluyen distancias ni tiempos oficiales. La búsqueda de pacientes por cédula consulta la tabla local `paciente`.
+   Verifica las columnas de solicitudes (incluida `direccion_domicilio`) y usuarios, la tabla `intento_login` (límite de intentos de inicio de sesión), la ubicación genérica «Domicilio del paciente» con sus rutas hacia los hospitales 1, 2 y 3, las siete categorías y encuestas, las nueve preguntas, la tabla `encuesta_pregunta` (las 63 combinaciones de las 7 encuestas con las 9 preguntas) y las rutas entre las ubicaciones 1, 2 y 3, y actualiza los nombres de los roles 2, 3 y 6. Si la base tenía la columna anterior `pregunta.id_encuesta`, el seeder la quita (junto con su clave foránea) solo después de confirmar las 63 combinaciones; en cualquier ejecución posterior no cambia nada. Las rutas iniciales no incluyen distancias ni tiempos oficiales. La búsqueda de pacientes por cédula consulta la tabla local `paciente`.
 
 5. Crear el administrador. Si el usuario ya existe, este comando restablece su contraseña, lo activa y agrega el rol DTI:
 
@@ -204,7 +204,7 @@ Comandos básicos del servidor (Linux):
 | `top` | Procesos y uso de CPU y memoria en tiempo real (`q` para salir) |
 | `free -h` | Memoria RAM usada y libre |
 | `df -h` | Espacio en disco por partición |
-| `docker stats` | CPU, memoria y red de cada contenedor, con su límite (`--no-stream` para una sola lectura) |
+| `docker stats` | CPU, memoria y red de cada contenedor, con su límite (`--no-stream` para una sola lectura). Solo en la instalación con Docker (instituto y desarrollo), no en el servidor de demostración |
 
 Ejemplo de `docker stats --no-stream` con los límites del compose (columna `MEM USAGE / LIMIT`):
 
@@ -217,6 +217,34 @@ sigsm-db-1    0.01%     131.7MiB / 768MiB   17.14%    6.01kB / 126B
 Si en la columna del límite aparece la memoria total del equipo (por ejemplo `15.5GiB`), los límites no se aplicaron: recrear los contenedores con `docker compose up -d`.
 
 **Cockpit** es un panel web del servidor (CPU, memoria, discos, servicios y registros), en el puerto 9090. Para que DTI tenga un acceso directo, definir en el `.env` `COCKPIT_URL=http://IP_DEL_SERVIDOR:9090` y aplicar con `docker compose up -d`: aparece la tarjeta *Monitoreo* en el panel de módulos, solo para el rol DTI. Sin la variable no se muestra. En el servidor de demostración Cockpit ya está instalado y solo se accede por túnel SSH (ver *Configuración manual del servidor*); su instalación no forma parte de este repositorio.
+
+**Cómo mostrar Cockpit en el servidor de demostración**
+
+Cockpit no es público: solo se llega por un túnel SSH desde la PC del administrador.
+
+1. **Abrir el túnel** (en una terminal; queda abierta, sin imprimir nada):
+
+   ```sh
+   ssh -i ~/.ssh/CLAVE_PRIVADA -N -L 9090:127.0.0.1:9090 USUARIO@IP_DEL_SERVIDOR
+   ```
+
+2. **Abrir Cockpit** en el navegador: `http://localhost:9090/cockpit/` (usar `localhost`, no `127.0.0.1`). Se entra con el usuario habilitado en el servidor; `root` está vetado. La pantalla *Overview* muestra los gráficos de CPU y memoria.
+
+3. **Generar carga** desde otra terminal, contra la página pública del login (sin escrituras en la base):
+
+   ```sh
+   for i in $(seq 1 500); do curl -s -o /dev/null https://DOMINIO/SIGSM/serviciosComunes/autenticacion/sesion.php; done
+   ```
+
+   Mientras corre, el gráfico de CPU de Cockpit sube y vuelve a bajar al terminar. Si apenas se mueve, aumentar el número de peticiones o lanzar el bucle en varias terminales. Es producción: hacerlo con poca gente usando el sistema.
+
+4. **Cerrar** el túnel con `Ctrl+C`.
+
+Si algo falla: `Permission denied (publickey)` indica clave incorrecta o falta de `-i`; "no se puede conectar" indica que el túnel no está abierto; `address already in use` indica que quedó otro túnel en el puerto 9090.
+
+En Cockpit del servidor la memoria total corresponde al equipo físico, no al límite real del contenedor: el límite lo aplica el proveedor por fuera.
+
+`bin/prueba_carga.sh` y `docker stats` no sirven en el servidor de demostración, porque ahí no se usa Docker; son para la instalación del instituto.
 
 **Monitor del operador** (`bin/operador_sigsm.sh`, solo en el servidor de demostración): con `sudo bash bin/operador_sigsm.sh --instalar` queda como comando global `operador-sigsm` y activa dos timers de systemd:
 
@@ -245,7 +273,7 @@ journalctl -t SIGSM_MONITOR --since today  # las mismas, en el journal
 
 Las unidades de este monitor se llaman `sigsm-monitor-docker.*`, distintas de las `sigsm-monitor.*` del operador, así que no se pisan si alguien instala los dos.
 
-**Prueba de carga** (`bin/prueba_carga.sh`): envía peticiones al login (página pública, sin escrituras en la base) y muestra `docker stats` antes, durante y después.
+**Prueba de carga** (`bin/prueba_carga.sh`, solo instalación con Docker; en el servidor de demostración ver el procedimiento con Cockpit): envía peticiones al login (página pública, sin escrituras en la base) y muestra `docker stats` antes, durante y después.
 
 ```sh
 bash bin/prueba_carga.sh          # 500 peticiones al login
@@ -336,6 +364,15 @@ Caddyfile del servidor de demostración (hosts genéricos):
 
 El VPS tiene además otro Caddy en el host, que funciona como proxy de borde con TLS. No forma parte de este repositorio.
 
+## Encuestas
+
+Hay 7 encuestas (una por área médica) y 9 preguntas comunes: las ocho primeras son de escala del 1 al 5 y la novena es el comentario libre. La tabla `encuesta_pregunta (id_encuesta, id_pregunta)` indica qué preguntas usa cada encuesta: 7 × 9 = 63 filas, con clave primaria compuesta y claves foráneas a `encuesta` y `pregunta`. Antes, cada pregunta figuraba en una sola encuesta (`pregunta.id_encuesta = 1`), con `ON DELETE CASCADE`: borrar esa encuesta habría borrado las nueve preguntas para todas las demás.
+
+- **Instalación nueva:** `src/documentacion/sigsm.sql` ya crea `encuesta_pregunta` con las 63 filas y la tabla `pregunta` sin `id_encuesta`.
+- **Base existente:** `bin/seeder.php` crea la tabla, inserta las combinaciones y quita la columna anterior. Es el mismo paso de *Actualizar una instalación existente*; antes de actualizar conviene respaldar con `bin/respaldar.sh`.
+- **Al responder:** `GuardarEncuesta.php` solo acepta preguntas que pertenecen a esa encuesta según `encuesta_pregunta`; si la encuesta no tiene preguntas, responde «La encuesta no está disponible».
+- **Instalador:** después del seeder comprueba que haya 63 filas; si no, muestra una `[ADVERTENCIA]` y sigue.
+
 ## Usuarios
 
 - `cedula` es `VARCHAR(8)`, única y puede ser `NULL`.
@@ -375,6 +412,7 @@ Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Lo
 
 ## Notas pendientes
 
+- **Traslados tercerizados (limitación conocida):** al asignar, Unidad de Enlace puede elegir un *proveedor externo* (por ejemplo SAME) en lugar de vehículo y chofer propios; se muestra solo como «Tercerizado», sin el nombre del proveedor. Un traslado tercerizado no tiene chofer, y solo DTI (rol 1) o el chofer asignado (rol 5) pueden avanzar su estado, así que **solo DTI puede marcarlo** como en camino, llegado o finalizado. El coordinador (rol 3) no puede hacerlo.
 - `bin/operador_sigsm.sh` es la herramienta del servidor de demostración (Caddy + `php8.4-fpm`). La instalación Docker del instituto usa `bin/monitorear.sh` y `bin/respaldar.sh`.
 - No hay HTTPS (red interna, solo HTTP). Si se publica fuera, revisar las cookies de sesión (`secure`, `HttpOnly`).
 - La aplicación usa el usuario `root` de la base; a mediano plazo conviene un usuario con privilegios limitados.

@@ -162,12 +162,12 @@ unset($_SESSION['errores_usuario']);
         <input type="hidden" name="id_usuario" value="<?= (int)$usuario['id_usuario'] ?>">
 
         <div class="campo">
-            <label for="cedula"><?= te('usuarios.cedula_antiguas') ?></label>
+            <label for="cedula"><?= te('usuarios.cedula_identidad') ?></label>
             <input type="text" id="cedula" name="cedula" maxlength="12"
                    value="<?= htmlspecialchars($usuario['cedula'] ?? '') ?>">
         </div>
         <div class="campo">
-            <label for="nombre_completo"><?= te('usuarios.nombre_antiguas') ?></label>
+            <label for="nombre_completo"><?= te('usuarios.nombre_completo') ?></label>
             <input type="text" id="nombre_completo" name="nombre_completo" maxlength="150"
                    value="<?= htmlspecialchars($usuario['nombre_completo'] ?? '') ?>">
         </div>

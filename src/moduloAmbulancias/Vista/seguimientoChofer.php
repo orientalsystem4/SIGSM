@@ -66,7 +66,7 @@ $activosSeguimiento = array_filter(
                     <div class="header-info">
                         <h3>
                             <?= te('traslado.numero', ['id' => (int) $viaje['id_traslado']]) ?>
-                            — <?= escaparSeguimiento($viaje['matricula'] ?? t('traslado.sin_vehiculo')) ?>
+                            — <?= escaparSeguimiento(textoVehiculoTraslado($viaje['matricula'], $viaje['proveedor'])) ?>
                         </h3>
                         <span class="badge urgencia-media">
                             <?= escaparSeguimiento($viaje['estado'] !== null ? etiquetaBd('estado', $viaje['id_estado'], $viaje['estado']) : t('traslado.sin_estado')) ?>
@@ -83,7 +83,7 @@ $activosSeguimiento = array_filter(
                             t('campo.tipo_elemento') => etiquetaBd('elemento', $viaje['id_tipo_elemento'], $viaje['elemento']),
                             t('campo.origen') => nombreUbicacion($viaje['origen'], $viaje['origen_tipo']),
                             t('campo.destino') => nombreUbicacion($viaje['destino'], $viaje['destino_tipo']),
-                            t('campo.chofer') => $viaje['chofer'] ?? t('comun.sin_asignar'),
+                            t('campo.chofer') => textoChoferTraslado($viaje['chofer'], $viaje['proveedor']),
                             t('campo.enfermeria') => $viaje['enfermeria'] ?? t('comun.sin_asignar')
                         ];
                         if (!empty($viaje['direccion_domicilio'])) {
