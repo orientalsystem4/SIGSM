@@ -19,7 +19,7 @@
 //   en:a,b,c       uno de esos valores
 //   grupo          en un contenedor: al menos una casilla marcada
 //   futura         fecha y hora posterior al momento actual
-//   pdf            archivo con extension .pdf y tipo application/pdf
+//   pdf            archivo con extension .pdf (el contenido lo revisa el servidor)
 //   tamano:N       archivo de N bytes como maximo
 //   entero:A:B     numero entero entre A y B
 (function () {
@@ -91,7 +91,10 @@
         },
         pdf: function (el) {
             var archivo = el.files && el.files[0];
-            return !archivo || (/\.pdf$/i.test(archivo.name) && archivo.type === 'application/pdf');
+            // Solo la extension, como pathinfo() del controlador. El tipo que informa el
+            // navegador sale de la misma extension (o viene vacio) y no se usa: rechazaria
+            // archivos que el servidor acepta. El contenido lo comprueba el servidor con finfo.
+            return !archivo || /\.pdf$/i.test(archivo.name);
         },
         tamano: function (el, v, a) {
             var archivo = el.files && el.files[0];

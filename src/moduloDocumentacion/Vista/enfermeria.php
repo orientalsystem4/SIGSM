@@ -789,7 +789,7 @@ if (empty($_SESSION['csrf_cancelacion'])) {
 
     <script src="../../serviciosComunes/vistaGeneral/assets/js/layout.js"></script>
     <?= scriptTraduccionesJs(['js.enf.']) ?>
-    <script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-2"></script>
+    <script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-4"></script>
     <script src="Assets/js/enfermeria.js?v=20261107-1"></script>
     <script>
         if (typeof lucide !== 'undefined') {

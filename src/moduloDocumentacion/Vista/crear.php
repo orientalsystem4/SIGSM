@@ -205,6 +205,7 @@ unset(
         action="../Controlador/ControladorDocumentos.php"
         method="POST"
         enctype="multipart/form-data"
+        data-validar-form
     >
         <input type="hidden" name="token" value="<?= htmlspecialchars($_SESSION['csrf_documentos'], ENT_QUOTES, 'UTF-8') ?>">
 
@@ -225,6 +226,8 @@ unset(
                 id="id_categoria"
                 name="id_categoria"
                 required
+                data-validar="requerido en:<?= implode(',', array_map(fn ($c) => (int) $c['id_categoria'], $categorias)) ?>"
+                data-msg="<?= te('doc.error_categoria') ?>"
             >
 
                 <option value="">
@@ -266,6 +269,10 @@ unset(
                 name="archivo"
                 accept=".pdf,application/pdf"
                 required
+                data-validar="requerido tamano:15728640 pdf"
+                data-msg-requerido="<?= te('doc.error_sin_archivo') ?>"
+                data-msg-tamano="<?= te('doc.error_tamano') ?>"
+                data-msg-pdf="<?= te('doc.error_formato') ?>"
             >
 
             <span class="ayuda">
@@ -297,5 +304,6 @@ unset(
 
 </div>
 
+<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-4"></script>
 </body>
 </html>

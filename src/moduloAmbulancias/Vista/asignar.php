@@ -220,7 +220,7 @@ function escaparAsignacion($valor): string
         </button>
     </form>
 </main>
-<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-2"></script>
+<script src="../../serviciosComunes/vistaGeneral/assets/js/validacion.js?v=20261109-4"></script>
 <script src="assets/js/asignar.js?v=20261109-1"></script>
 </body>
 </html>
