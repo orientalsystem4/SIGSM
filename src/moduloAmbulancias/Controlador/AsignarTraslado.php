@@ -43,11 +43,40 @@ try {
         );
     }
 
-    if (!$idSolicitud || !$idVehiculo || !$idChofer || !$idRuta) {
+    // Proveedor externo (tercerizado): o es propio, o es de un proveedor.
+    $campoProveedor = $_POST['id_proveedor'] ?? '';
+    $campoProveedor = is_string($campoProveedor) ? trim($campoProveedor) : null;
+    $idProveedor = 0;
+
+    if ($campoProveedor === null) {
+        throw new DomainException(t('asignar.error_proveedor'));
+    }
+
+    if ($campoProveedor !== '') {
+        $idProveedor = leerIdAsignacion('id_proveedor');
+        if (!$idProveedor) {
+            throw new DomainException(t('asignar.error_proveedor'));
+        }
+
+        // Con proveedor, vehiculo y chofer deben venir vacios (aunque sean invalidos).
+        foreach (['id_vehiculo', 'id_chofer'] as $campo) {
+            $valor = $_POST[$campo] ?? '';
+            if (!is_string($valor) || trim($valor) !== '') {
+                throw new DomainException(t('asignar.error_ambos'));
+            }
+        }
+    }
+
+    $esTercerizado = $idProveedor > 0;
+
+    if (
+        !$idSolicitud || !$idRuta
+        || (!$esTercerizado && (!$idVehiculo || !$idChofer))
+    ) {
         throw new DomainException(t('asignar.error_obligatorios'));
     }
 
-    if ($idChofer === $idEnfermero) {
+    if ($idChofer && $idChofer === $idEnfermero) {
         throw new DomainException(
             t('asignar.error_mismas_personas')
         );
@@ -127,36 +156,51 @@ try {
         );
     }
 
-    // Bloquear el vehiculo.
-    $consulta = $conexion->prepare(
-        'SELECT id_tipo_vehiculo, activo FROM vehiculo
-         WHERE id_vehiculo = :id FOR UPDATE'
-    );
-    $consulta->execute([':id' => $idVehiculo]);
-    $vehiculo = $consulta->fetch(PDO::FETCH_ASSOC);
-
-    if (!$vehiculo || (int) $vehiculo['activo'] !== 1) {
-        throw new DomainException(t('asignar.error_vehiculo_inactivo'));
-    }
-
-    $consulta = $conexion->prepare(
-        'SELECT 1 FROM compatibilidad
-         WHERE id_tipo_vehiculo = :vehiculo
-           AND id_tipo_elemento = :elemento'
-    );
-    $consulta->execute([
-        ':vehiculo' => $vehiculo['id_tipo_vehiculo'],
-        ':elemento' => $solicitud['id_tipo_elemento']
-    ]);
-
-    if (!$consulta->fetchColumn()) {
-        throw new DomainException(
-            t('asignar.error_vehiculo_incompatible')
+    if ($esTercerizado) {
+        // El proveedor debe existir.
+        $consulta = $conexion->prepare(
+            'SELECT 1 FROM proveedor_externo WHERE id_proveedor = :id'
         );
+        $consulta->execute([':id' => $idProveedor]);
+
+        if (!$consulta->fetchColumn()) {
+            throw new DomainException(t('asignar.error_proveedor'));
+        }
+    } else {
+        // Bloquear el vehiculo.
+        $consulta = $conexion->prepare(
+            'SELECT id_tipo_vehiculo, activo FROM vehiculo
+             WHERE id_vehiculo = :id FOR UPDATE'
+        );
+        $consulta->execute([':id' => $idVehiculo]);
+        $vehiculo = $consulta->fetch(PDO::FETCH_ASSOC);
+
+        if (!$vehiculo || (int) $vehiculo['activo'] !== 1) {
+            throw new DomainException(t('asignar.error_vehiculo_inactivo'));
+        }
+
+        $consulta = $conexion->prepare(
+            'SELECT 1 FROM compatibilidad
+             WHERE id_tipo_vehiculo = :vehiculo
+               AND id_tipo_elemento = :elemento'
+        );
+        $consulta->execute([
+            ':vehiculo' => $vehiculo['id_tipo_vehiculo'],
+            ':elemento' => $solicitud['id_tipo_elemento']
+        ]);
+
+        if (!$consulta->fetchColumn()) {
+            throw new DomainException(
+                t('asignar.error_vehiculo_incompatible')
+            );
+        }
     }
 
     // Bloquear las personas siempre en el mismo orden.
-    $personas = [$idChofer];
+    $personas = [];
+    if ($idChofer) {
+        $personas[] = $idChofer;
+    }
     if ($idEnfermero) {
         $personas[] = $idEnfermero;
     }
@@ -195,37 +239,46 @@ try {
 
     // Finalizado = 6; Cancelado = 7.
     // Sin historial se considera ocupado por precaucion.
-    $sqlOcupados = "
-        SELECT t.id_traslado
-        FROM traslado t
-        WHERE (
-            t.id_vehiculo = ?
-            OR t.id_chofer IN (?, ?)
-            OR t.id_enfermero IN (?, ?)
-        )
-        AND COALESCE((
-            SELECT h.id_estado
-            FROM historial_estado h
-            WHERE h.id_traslado = t.id_traslado
-            ORDER BY h.fecha_hora DESC, h.id_historial DESC
+    // Las condiciones se arman solo con lo que se eligio: un vehiculo o chofer
+    // ausente (tercerizado) no entra en la consulta.
+    $condiciones = [];
+    $parametros = [];
+
+    if (!$esTercerizado) {
+        $condiciones[] = 't.id_vehiculo = ?';
+        $parametros[] = $idVehiculo;
+    }
+
+    if ($personas) {
+        $marcas = implode(', ', array_fill(0, count($personas), '?'));
+        $condiciones[] = "t.id_chofer IN ($marcas)";
+        $condiciones[] = "t.id_enfermero IN ($marcas)";
+        $parametros = array_merge($parametros, $personas, $personas);
+    }
+
+    if ($condiciones) {
+        $sqlOcupados = "
+            SELECT t.id_traslado
+            FROM traslado t
+            WHERE (" . implode(' OR ', $condiciones) . ")
+            AND COALESCE((
+                SELECT h.id_estado
+                FROM historial_estado h
+                WHERE h.id_traslado = t.id_traslado
+                ORDER BY h.fecha_hora DESC, h.id_historial DESC
+                LIMIT 1
+            ), 0) NOT IN (6, 7)
             LIMIT 1
-        ), 0) NOT IN (6, 7)
-        LIMIT 1
-    ";
+        ";
 
-    $consulta = $conexion->prepare($sqlOcupados);
-    $consulta->execute([
-        $idVehiculo,
-        $idChofer,
-        $idEnfermero,
-        $idChofer,
-        $idEnfermero
-    ]);
+        $consulta = $conexion->prepare($sqlOcupados);
+        $consulta->execute($parametros);
 
-    if ($consulta->fetchColumn()) {
-        throw new DomainException(
-            t('asignar.error_ocupado')
-        );
+        if ($consulta->fetchColumn()) {
+            throw new DomainException(
+                t('asignar.error_ocupado')
+            );
+        }
     }
 
     $consulta = $conexion->prepare(
@@ -252,14 +305,15 @@ try {
             id_enfermero, id_proveedor, id_ruta
          ) VALUES (
             :solicitud, :vehiculo, :chofer,
-            :enfermero, NULL, :ruta
+            :enfermero, :proveedor, :ruta
          )'
     );
     $consulta->execute([
         ':solicitud' => $idSolicitud,
-        ':vehiculo' => $idVehiculo,
-        ':chofer' => $idChofer,
+        ':vehiculo' => $esTercerizado ? null : $idVehiculo,
+        ':chofer' => $esTercerizado ? null : $idChofer,
         ':enfermero' => $idEnfermero ?: null,
+        ':proveedor' => $esTercerizado ? $idProveedor : null,
         ':ruta' => $idRuta
     ]);
 
@@ -282,12 +336,13 @@ try {
             id_usuario, observaciones
          ) VALUES (
             :traslado, 2, NOW(),
-            :usuario, 'hist.asignado'
+            :usuario, :observacion
          )"
     );
     $consulta->execute([
         ':traslado' => $idTraslado,
-        ':usuario' => (int) $_SESSION['id_usuario']
+        ':usuario' => (int) $_SESSION['id_usuario'],
+        ':observacion' => $esTercerizado ? 'hist.asignado_proveedor' : 'hist.asignado'
     ]);
 
     $conexion->commit();

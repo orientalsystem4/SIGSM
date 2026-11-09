@@ -103,6 +103,30 @@ if (!function_exists('idiomasDisponibles')) {
         return (string) $original;
     }
 
+    // Vehiculo de un traslado: la matricula, o "Tercerizado" si lo hace un proveedor externo (sin nombrar al proveedor).
+    function textoVehiculoTraslado(?string $matricula, ?string $proveedor): string
+    {
+        if ($matricula !== null && $matricula !== '') {
+            return $matricula;
+        }
+
+        return $proveedor !== null && $proveedor !== ''
+            ? t('traslado.tercerizado')
+            : t('traslado.sin_vehiculo');
+    }
+
+    // Chofer de un traslado: su nombre, o el proveedor externo, o "Sin asignar".
+    function textoChoferTraslado(?string $chofer, ?string $proveedor): string
+    {
+        if ($chofer !== null && $chofer !== '') {
+            return $chofer;
+        }
+
+        return $proveedor !== null && $proveedor !== ''
+            ? t('traslado.tercerizado')
+            : t('comun.sin_asignar');
+    }
+
     // Prioridad de una solicitud (valores fijos de la columna prioridad).
     function textoPrioridad(?string $prioridad): string
     {

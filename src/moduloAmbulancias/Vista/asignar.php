@@ -21,6 +21,7 @@ $vehiculos = TrasladoModelo::listarVehiculosCompatibles(
 );
 
 $choferes = TrasladoModelo::listarPersonalPorRol(5);
+$proveedores = TrasladoModelo::listarProveedores();
 $enfermeria = TrasladoModelo::listarPersonalPorRol(6);
 
 $rutas = TrasladoModelo::listarRutas(
@@ -120,8 +121,21 @@ function escaparAsignacion($valor): string
         <input type="hidden" name="id_solicitud"
                value="<?= (int) $idSolicitud ?>">
 
+        <?php if ($proveedores): ?>
+            <label for="proveedor"><?= te('asignar.proveedor') ?></label>
+            <select id="proveedor" name="id_proveedor">
+                <option value=""><?= te('asignar.proveedor_ninguno') ?></option>
+                <?php foreach ($proveedores as $proveedor): ?>
+                    <option value="<?= (int) $proveedor['id_proveedor'] ?>">
+                        <?= te('asignar.terceros') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <p><?= te('asignar.proveedor_ayuda') ?></p>
+        <?php endif; ?>
+
         <label for="vehiculo"><?= te('campo.vehiculo') ?></label>
-        <select id="vehiculo" name="id_vehiculo" required>
+        <select id="vehiculo" name="id_vehiculo">
             <option value=""><?= te('asignar.seleccione_vehiculo') ?></option>
             <?php foreach ($vehiculos as $vehiculo): ?>
                 <option value="<?= (int) $vehiculo['id_vehiculo'] ?>">
@@ -137,7 +151,7 @@ function escaparAsignacion($valor): string
         <?php endif; ?>
 
         <label for="chofer"><?= te('campo.chofer') ?></label>
-        <select id="chofer" name="id_chofer" required>
+        <select id="chofer" name="id_chofer">
             <option value=""><?= te('asignar.seleccione_chofer') ?></option>
             <?php foreach ($choferes as $chofer): ?>
                 <option value="<?= (int) $chofer['id_usuario'] ?>">
@@ -190,7 +204,7 @@ function escaparAsignacion($valor): string
         <?php endif; ?>
 
         <button type="submit"
-            <?= (!$vehiculos || !$choferes || !$rutas || $domicilioInvalido
+            <?= ((!$proveedores && (!$vehiculos || !$choferes)) || !$rutas || $domicilioInvalido
                 || ($esPaciente && !$enfermeria)) ? 'disabled' : '' ?>>
             <?= te('asignar.confirmar') ?>
         </button>

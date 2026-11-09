@@ -321,12 +321,6 @@ unset($_SESSION['mensaje'], $_SESSION['error']);
             </header>
             <section class="content-wrapper">
                 <div class="contenedor">
-                    <div class="cabecera-seccion">
-                        <div class="grupo-botones">
-                            <a href="crear.php" class="boton boton-primario">+ <?= te('menu.nuevo_usuario') ?></a>
-                        </div>
-                    </div>
-
                     <?php if ($mensaje): ?>
                         <div class="aviso"><?= htmlspecialchars($mensaje) ?></div>
                     <?php endif; ?>

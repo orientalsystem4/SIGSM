@@ -85,6 +85,15 @@ class TrasladoModelo
         return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function listarProveedores(): array
+    {
+        $consulta = Conexion::conectar()->query(
+            'SELECT id_proveedor, nombre FROM proveedor_externo ORDER BY nombre'
+        );
+
+        return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public static function listarRutas(
         int $idOrigen,
         int $idDestino

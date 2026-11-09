@@ -16,10 +16,12 @@ class SeguimientoModelo
                 t.id_solicitud,
                 t.id_chofer,
                 t.id_vehiculo,
+                t.id_proveedor,
                 s.ci_paciente,
                 s.id_tipo_elemento,
                 $columnaDomicilio AS direccion_domicilio,
                 v.matricula,
+                pe.nombre AS proveedor,
                 ch.nombre_usuario AS chofer,
                 en.nombre_usuario AS enfermeria,
                 o.nombre AS origen,
@@ -37,6 +39,7 @@ class SeguimientoModelo
             JOIN tipo_elemento te
                 ON te.id_tipo_elemento = s.id_tipo_elemento
             LEFT JOIN vehiculo v ON v.id_vehiculo = t.id_vehiculo
+            LEFT JOIN proveedor_externo pe ON pe.id_proveedor = t.id_proveedor
             LEFT JOIN usuario ch ON ch.id_usuario = t.id_chofer
             LEFT JOIN usuario en ON en.id_usuario = t.id_enfermero
             LEFT JOIN historial_estado h ON h.id_historial = (

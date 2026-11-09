@@ -278,8 +278,6 @@
     "usuarios.contrasena_placeholder": "At least 12 characters",
     "usuarios.repetir_placeholder": "Repeat the password",
     "usuarios.editar_numero": "Edit User #{id}",
-    "usuarios.cedula_antiguas": "ID number (pending for older accounts)",
-    "usuarios.nombre_antiguas": "Full name (pending for older accounts)",
     "usuarios.seleccione_roles": "Select one or more roles.",
     "usuarios.nueva_contrasena": "New Password (Optional)",
     "error.recargar_formulario": "Reload the form and try again.",
@@ -447,5 +445,13 @@
     "hist.traslado_finalizado": "Transfer finished.",
     "login.error_bloqueado": "Too many failed attempts. Wait {minutos} minutes and try again.",
     "modulos.monitoreo": "Monitoring",
-    "modulos.monitoreo_ayuda": "Opens Cockpit in a new tab"
+    "modulos.monitoreo_ayuda": "Opens Cockpit in a new tab",
+    "asignar.proveedor": "External provider (optional)",
+    "asignar.proveedor_ninguno": "None (own vehicle and driver)",
+    "asignar.proveedor_ayuda": "If you choose an external provider, leave vehicle and driver unselected.",
+    "asignar.error_ambos": "Choose an own vehicle or an external provider, not both.",
+    "asignar.error_proveedor": "The selected external provider is not valid.",
+    "traslado.tercerizado": "Outsourced",
+    "hist.asignado_proveedor": "Transfer assigned to an external provider.",
+    "asignar.terceros": "Third parties"
 }

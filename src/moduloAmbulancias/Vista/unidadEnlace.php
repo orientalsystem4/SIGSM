@@ -204,7 +204,7 @@ $activosEnlace = array_filter(
                                         <h3>
                                             <?= te('traslado.numero', ['id' => (int) $viaje['id_traslado']]) ?>
                                             — <?= htmlspecialchars(
-                                                    $viaje['matricula'] ?? t('traslado.sin_vehiculo'),
+                                                    textoVehiculoTraslado($viaje['matricula'], $viaje['proveedor']),
                                                     ENT_QUOTES,
                                                     'UTF-8'
                                                 ) ?>
@@ -230,7 +230,7 @@ $activosEnlace = array_filter(
                                             t('campo.tipo_elemento') => etiquetaBd('elemento', $viaje['id_tipo_elemento'], $viaje['elemento']),
                                             t('campo.origen') => nombreUbicacion($viaje['origen'], $viaje['origen_tipo']),
                                             t('campo.destino') => nombreUbicacion($viaje['destino'], $viaje['destino_tipo']),
-                                            t('campo.chofer') => $viaje['chofer'] ?? t('comun.sin_asignar'),
+                                            t('campo.chofer') => textoChoferTraslado($viaje['chofer'], $viaje['proveedor']),
                                             t('campo.enfermeria') => $viaje['enfermeria'] ?? t('comun.sin_asignar')
                                         ];
                                         if (!empty($viaje['direccion_domicilio'])) {
@@ -479,7 +479,7 @@ $activosEnlace = array_filter(
                                                 </td>
 
                                                 <td><?= htmlspecialchars((string) ($viaje['ci_paciente'] ?? t('comun.no_corresponde')), ENT_QUOTES, 'UTF-8') ?></td>
-                                                <td><?= htmlspecialchars((string) ($viaje['matricula'] ?? t('traslado.sin_vehiculo')), ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars(textoVehiculoTraslado($viaje['matricula'], $viaje['proveedor']), ENT_QUOTES, 'UTF-8') ?></td>
                                                 <?php foreach (
                                                     ['fecha_hora', 'estado', 'usuario', 'observaciones']
                                                     as $campo
