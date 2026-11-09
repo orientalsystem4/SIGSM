@@ -450,6 +450,31 @@ Las tres son `SQL SECURITY INVOKER`: se ejecutan con los permisos de quien consu
 
 `v_traslado_detalle` no incluye la dirección del domicilio (dato personal): `SeguimientoModelo::listar` la agrega desde la solicitud solo si quien consulta puede verla: en Unidad de Enlace, DTI y Coordinador (Administración de Enfermería no); en Seguimiento, quien entra (el chofer solo ve sus propios traslados).
 
+## Validación
+
+Cada formulario se valida dos veces: en el navegador, por comodidad, y en el servidor (PHP), que es la autoridad. El JavaScript copia las reglas del controlador; no agrega reglas propias ni reemplaza las de PHP. Si el JavaScript no carga o se lo saltea (por ejemplo, con `curl`), el servidor rechaza los mismos datos con su propio mensaje.
+
+**Cómo funciona.** Un único script, `src/serviciosComunes/vistaGeneral/assets/js/validacion.js`, sin librerías. Cada formulario se marca con `data-validar-form` y cada campo declara sus reglas con `data-validar="..."` (por ejemplo `requerido cedula`, `bytesmin:12`, `max:500`, `pdf tamano:15728640`). Los mensajes los imprime PHP con `te()` en atributos `data-msg-...`, así salen en el idioma activo (español o inglés); en general son los mismos textos que devuelve el servidor. Valida al salir de cada campo y al enviar; si hay errores no envía, muestra el mensaje debajo del campo (`aria-live`) y lleva el foco al primero. No valida campos opcionales vacíos ni muestra errores antes de que la persona toque el campo. Escucha en `document`, así que también cubre formularios que se recargan por `fetch` (Mis solicitudes) y se ejecuta antes que los manejadores propios del formulario (la solicitud de traslado se envía por `fetch`).
+
+| Formulario | En el navegador | Regla del servidor |
+| --- | --- | --- |
+| Inicio de sesión (`sesion.php`) | Usuario y contraseña no vacíos. Sin reglas de largo ni formato, para no revelar nada. | `login.php` |
+| Crear usuario (`usuario/Vista/crear.php`) | Cédula con el formato y dígito verificador de `normalizarCedula()`; nombre completo de 3 a 150 caracteres (letras, espacios, `.`, `'`, `-`); usuario de 3 a 50 bytes con `[a-zA-Z0-9_.-]`; contraseña de al menos 12 bytes (se mide como `strlen`); confirmación igual; al menos un rol. | `ControladorUsuarios.php` (crear), `ValidacionIdentidad.php` |
+| Editar usuario (`usuario/Vista/editar.php`) | Igual que crear, pero cédula y nombre opcionales (cuentas antiguas), salvo que la cuenta ya los tenga: entonces no se pueden borrar. Contraseña opcional; si se escribe, al menos 12 bytes. | `ControladorUsuarios.php` (editar) |
+| Seleccionar rol (`seleccionarRol.php`) | Un rol elegido entre los de la cuenta. | `seleccionarRol.php` |
+| Solicitud de traslado (`form-traslado`, `enfermeria.php`) | Tipo, origen, destino y canal obligatorios; origen distinto de destino; si es paciente, cédula de 7 u 8 dígitos (admite puntos, guiones y espacios); prioridad `normal`, `alta` o `maxima`; fecha límite futura si se completa; observaciones de hasta 500 caracteres. Que el paciente exista lo sigue comprobando `enfermeria.js` contra el servidor. | `GuardarSolicitud.php` |
+| Editar solicitud (`editarSolicitud.php`) | Origen y destino obligatorios y distintos; prioridad válida; fecha límite futura si se completa; observaciones de hasta 500 caracteres. | `EditarSolicitud.php`, `EdicionSolicitudModelo::validar` |
+| Cancelar solicitud (Mis solicitudes) | Motivo obligatorio, de hasta 500 caracteres. | `CancelarSolicitud.php` |
+| Asignar traslado (`asignar.php`) | Ruta obligatoria; sin proveedor, vehículo y chofer obligatorios (con proveedor quedan vacíos y deshabilitados, `asignar.js`); enfermería obligatoria si es paciente y distinta del chofer; dirección de domicilio obligatoria si el origen o el destino es Domicilio, de hasta 255 caracteres y sin caracteres de control. | `AsignarTraslado.php` |
+| Crear documento (`moduloDocumentacion/Vista/crear.php`) | Categoría obligatoria (una de la lista); archivo obligatorio, con extensión `.pdf` y de hasta 15 MB (15.728.640 bytes). | `ControladorDocumentos.php` (crear) |
+| Editar documento (`moduloDocumentacion/Vista/editar.php`) | Categoría obligatoria; el archivo es opcional y, si se elige, `.pdf` de hasta 15 MB. | `ControladorDocumentos.php` (editar) |
+| Encuesta pública (`responder.php`) | Las 8 preguntas respondidas (1 a 5), con un mensaje por cada pregunta que falta; comentario de hasta 500 caracteres, con contador. | `ValidacionEncuesta.php` |
+| Generador de QR (`form-generador`, `enfermeria.php`) | Área obligatoria, de 1 a 7. No se envía al servidor: arma el enlace a la encuesta. | `ValidacionEncuesta.php` (categoría de 1 a 7, al responder) |
+
+Quedan solo en el servidor las reglas que necesitan la base o el contenido del archivo: usuario o cédula ya registrados, paciente inexistente, «Domicilio» solo para pacientes, vehículo o personal ocupados, que el archivo sea realmente un PDF (`finfo`) y los permisos de cada rol. El tipo de archivo que informa el navegador no se usa: sale de la misma extensión y rechazaría archivos que el servidor acepta.
+
+**Pruebas.** Cada formulario se probó en Chromium (Playwright) en español y en inglés: un dato inválido no se envía y muestra el mensaje en el idioma activo; un dato válido se envía y el servidor lo acepta; sin errores de JavaScript en la consola. Para usuarios, solicitudes, asignación, documentos, encuesta y selección de rol se enviaron además datos inválidos directo al servidor (`curl`, sin JavaScript) y el servidor los rechazó con su propio mensaje. No se probó en Firefox ni Safari.
+
 ## Prueba funcional de instalación
 
 1. Ingresar como DTI y crear cuentas de prueba de Enfermería, Coordinador, Registros y Chofer.
@@ -471,6 +496,8 @@ Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Lo
 
 - **Traslados tercerizados (limitación conocida):** al asignar, Unidad de Enlace puede elegir un *proveedor externo* (por ejemplo SAME) en lugar de vehículo y chofer propios; se muestra solo como «Tercerizado», sin el nombre del proveedor. Un traslado tercerizado no tiene chofer, y solo DTI (rol 1) o el chofer asignado (rol 5) pueden avanzar su estado, así que **solo DTI puede marcarlo** como en camino, llegado o finalizado. El coordinador (rol 3) no puede hacerlo.
 - `bin/operador_sigsm.sh` es la herramienta del servidor de demostración (Caddy + `php8.4-fpm`). La instalación Docker del instituto usa `bin/monitorear.sh` y `bin/respaldar.sh`.
+- **Encuesta y teclado:** los botones del 1 al 5 de `responder.php` están ocultos por CSS (`display: none`) y se eligen con el clic sobre el número; con el teclado no se pueden marcar. Si falta una respuesta, la validación lleva la pantalla a esa pregunta.
+- **Documento de más de 15 MB sin JavaScript:** PHP lo corta por `upload_max_filesize` antes del controlador, y el mensaje es «Debe seleccionar un archivo PDF» en lugar de «no puede superar los 15 MB». En el navegador el mensaje es el correcto.
 - No hay HTTPS (red interna, solo HTTP). Si se publica fuera, revisar las cookies de sesión (`secure`, `HttpOnly`).
 - La aplicación usa el usuario `sigsm_app`, con privilegios limitados (ver [Base de datos](#base-de-datos)). Pendientes: el contenedor web recibe todo el `.env` (`env_file`), incluidas `DB_ADMIN_PASS` y `DB_ROOT_PASS`, porque el seeder y `crear_admin.php` corren dentro de él; y la imagen crea `root@'%'`, accesible desde la red interna de Docker (con `MARIADB_ROOT_HOST=localhost` quedaría solo dentro del contenedor, pero phpMyAdmin dejaría de entrar). Las instalaciones anteriores con `DB_USER=root` siguen usando root hasta migrarlas.
 
@@ -489,5 +516,6 @@ Los PDF cargados y los datos creados localmente no se sincronizan con GitHub. Lo
 - `src/moduloEncuestas`: respuestas y métricas.
 - `src/usuario`: gestión de cuentas, exclusiva de DTI.
 - `src/serviciosComunes`: autenticación, permisos, conexión y estilos compartidos.
+- `src/serviciosComunes/vistaGeneral/assets/js/validacion.js`: validación en el navegador, común a todos los formularios (ver [Validación](#validación)).
 
 La configuración incluida ejecuta PHP 8.4 y MariaDB 10.11 en contenedores, con zona horaria `America/Montevideo`; no requiere PHP ni MariaDB instalados en el servidor. Una base creada con MariaDB 10.4 se actualiza sola al primer arranque (`MARIADB_AUTO_UPGRADE`); respaldarla antes.
