@@ -49,13 +49,12 @@ try {
         ];
     }
 
-    // Consulta para agrupar respuestas
+    // Consulta para agrupar respuestas (vista v_respuestas_encuesta, con el mismo alias re del filtro)
     $sqlRespuestas = "
-        SELECT rp.id_pregunta, rp.texto_libre, COUNT(*) as cantidad
-        FROM respuesta_pregunta rp
-        INNER JOIN respuesta_encuesta re ON rp.id_resp_encuesta = re.id_resp_encuesta
+        SELECT re.id_pregunta, re.valor AS texto_libre, COUNT(*) as cantidad
+        FROM v_respuestas_encuesta re
         $filtroSql
-        GROUP BY rp.id_pregunta, rp.texto_libre
+        GROUP BY re.id_pregunta, re.valor
     ";
 
     $stmtResp = $conexion->prepare($sqlRespuestas);

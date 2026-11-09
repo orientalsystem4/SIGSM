@@ -1023,6 +1023,109 @@ ALTER TABLE `vehiculo`
   ADD CONSTRAINT `fk_vehiculo_tipo` FOREIGN KEY (`id_tipo_vehiculo`) REFERENCES `tipo_vehiculo` (`id_tipo_vehiculo`);
 COMMIT;
 
+--
+-- Vistas usadas por el sistema. Las mismas definiciones estan en bin/seeder.php
+-- (bases existentes). SQL SECURITY INVOKER: se ejecutan con los permisos de quien
+-- consulta, asi no dependen del usuario que las creo (ni al restaurar un respaldo).
+--
+
+--
+-- Traslados con solicitud, origen, destino, elemento, vehiculo, chofer, enfermeria,
+-- proveedor y ultimo estado. Sin la direccion de domicilio (dato personal): la
+-- agrega SeguimientoModelo::listar solo si quien consulta puede verla.
+--
+CREATE OR REPLACE SQL SECURITY INVOKER VIEW `v_traslado_detalle` AS
+SELECT
+    t.id_traslado,
+    t.id_solicitud,
+    t.id_chofer,
+    t.id_vehiculo,
+    t.id_proveedor,
+    s.ci_paciente,
+    s.id_tipo_elemento,
+    v.matricula,
+    pe.nombre AS proveedor,
+    ch.nombre_usuario AS chofer,
+    en.nombre_usuario AS enfermeria,
+    o.nombre AS origen,
+    o.tipo_ubicacion AS origen_tipo,
+    d.nombre AS destino,
+    d.tipo_ubicacion AS destino_tipo,
+    te.nombre AS elemento,
+    h.id_estado,
+    e.nombre AS estado
+FROM traslado t
+JOIN solicitud_traslado s ON s.id_solicitud = t.id_solicitud
+JOIN ubicacion o ON o.id_ubicacion = s.id_origen
+JOIN ubicacion d ON d.id_ubicacion = s.id_destino
+JOIN tipo_elemento te ON te.id_tipo_elemento = s.id_tipo_elemento
+LEFT JOIN vehiculo v ON v.id_vehiculo = t.id_vehiculo
+LEFT JOIN proveedor_externo pe ON pe.id_proveedor = t.id_proveedor
+LEFT JOIN usuario ch ON ch.id_usuario = t.id_chofer
+LEFT JOIN usuario en ON en.id_usuario = t.id_enfermero
+LEFT JOIN historial_estado h ON h.id_historial = (
+    SELECT hx.id_historial
+    FROM historial_estado hx
+    WHERE hx.id_traslado = t.id_traslado
+    ORDER BY hx.fecha_hora DESC, hx.id_historial DESC
+    LIMIT 1
+)
+LEFT JOIN estado_traslado e ON e.id_estado = h.id_estado;
+
+--
+-- Respuestas de encuestas con su encuesta, categoria, pregunta, valor y fecha.
+-- La usa MetricasControlador (metricas por area).
+--
+CREATE OR REPLACE SQL SECURITY INVOKER VIEW `v_respuestas_encuesta` AS
+SELECT
+    rp.id_resp_pregunta,
+    rp.id_resp_encuesta,
+    re.id_encuesta,
+    en.id_categoria,
+    rp.id_pregunta,
+    p.tipo_pregunta,
+    rp.texto_libre AS valor,
+    re.fecha_envio
+FROM respuesta_pregunta rp
+JOIN respuesta_encuesta re ON re.id_resp_encuesta = rp.id_resp_encuesta
+JOIN encuesta en ON en.id_encuesta = re.id_encuesta
+JOIN pregunta p ON p.id_pregunta = rp.id_pregunta;
+
+--
+-- Solicitudes pendientes todavia sin traslado (lista de Unidad de Enlace).
+--
+CREATE OR REPLACE SQL SECURITY INVOKER VIEW `v_solicitud_pendiente` AS
+SELECT
+    s.id_solicitud,
+    s.ci_paciente,
+    s.id_tipo_elemento,
+    s.fecha_solicitud,
+    s.estado_solicitud,
+    s.prioridad,
+    s.fecha_hora_limite,
+    s.observaciones,
+    te.nombre AS tipo_elemento,
+    origen.nombre AS origen,
+    origen.tipo_ubicacion AS origen_tipo,
+    destino.nombre AS destino,
+    destino.tipo_ubicacion AS destino_tipo,
+    s.id_canal,
+    c.nombre AS canal,
+    u.nombre_usuario AS solicitante,
+    p.nombre AS nombre_paciente,
+    p.apellido AS apellido_paciente
+FROM solicitud_traslado s
+JOIN tipo_elemento te ON te.id_tipo_elemento = s.id_tipo_elemento
+JOIN ubicacion origen ON origen.id_ubicacion = s.id_origen
+JOIN ubicacion destino ON destino.id_ubicacion = s.id_destino
+JOIN canal_solicitud c ON c.id_canal = s.id_canal
+JOIN usuario u ON u.id_usuario = s.id_usuario_solicit
+LEFT JOIN paciente p ON p.ci = s.ci_paciente
+WHERE s.estado_solicitud = 'Pendiente'
+  AND NOT EXISTS (
+      SELECT 1 FROM traslado t WHERE t.id_solicitud = s.id_solicitud
+  );
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
